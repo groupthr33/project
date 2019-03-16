@@ -13,7 +13,7 @@ DATABASES = {
 }
 
 INSTALLED_APPS = (
-    'db',
+    'app',
 )
 
 # SECURITY WARNING: Modify this secret key if using in production!
