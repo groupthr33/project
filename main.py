@@ -7,8 +7,16 @@ sys.dont_write_bytecode = True
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 django.setup()
 
-from app.models.user_model import *
+from app.controllers.command_line_controller import CommandLineController
+from app.services.auth_service import AuthService
+from app.models.account import Account
 
-for u in User.objects.all():
+Account.objects.create(name='Matt', username='mrwatts', password='thepassword')
+auth_service = AuthService()
 
-    print("ID: " + str(u.id) + "\tUsername: " + u.name)
+controller = CommandLineController(auth_service)
+
+while True:
+    command = input("---> ")
+    output = controller.command(command)
+    print(output)
