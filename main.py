@@ -9,12 +9,14 @@ django.setup()
 
 from app.controllers.command_line_controller import CommandLineController
 from app.services.auth_service import AuthService
+from app.services.account_service import AccountService
 from app.models.account import Account
 
-Account.objects.create(name='Matt', username='mrwatts', password='thepassword')
+# Account.objects.create(name='Matt', username='mrwattss', password='thepassword', roles='0x8')
 auth_service = AuthService()
+account_service = AccountService()
 
-controller = CommandLineController(auth_service)
+controller = CommandLineController(auth_service, account_service)
 
 while True:
     command = input("---> ")
