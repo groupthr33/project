@@ -27,4 +27,18 @@ cr_account <u>username</u> <u>name</u> <u>roles...</u>
 <h5> DESCRIPTION 
 
 Create a new account with the assigned </u>roles...</u> and <u>username</u> for   
-user with name <u>name</u>. This command is for administrators or supervisors only. 
+user with name <u>name</u>. This command is for administrators or supervisors only.
+
+<br>
+<h5> NAME 
+
+logout – logout current user 
+
+<h5> SYNOPSIS 
+
+logout 
+
+<h5> DESCRIPTION 
+
+Logout currently logged in user 
+  

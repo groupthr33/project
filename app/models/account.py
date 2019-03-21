@@ -6,4 +6,4 @@ class Account(models.Model):
     password = models.CharField(max_length=30, default='password')
     name = models.CharField(max_length=30)
     is_logged_in = models.BooleanField(default=False)
-    roles = models.CharField(max_length=6, default='0x1')
+    roles = models.CharField(max_length=6, default=0x1)

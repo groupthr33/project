@@ -12,6 +12,8 @@ class TestCommandLineController(TestCase):
 
         self.auth_service = Mock()
         self.auth_service.login = Mock(return_value="login result")
+        self.auth_service.logout = Mock(return_value="logout result")
+        self.auth_service.get_current_username = Mock(return_value="theusername")
         self.auth_service.is_logged_in = Mock(return_value=True)
         self.auth_service.is_authenticated = Mock(return_value=True)
         self.auth_service.current_account = account
@@ -75,5 +77,21 @@ class TestCommandLineController(TestCase):
         expected_response =\
             "cr_account must have at least 3 arguments. Correct usage: cr_account <username> <name> <roles...>"
         actual_response = self.controller.command("cr_account username name")
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_logout_uses_auth_service(self):
+        self.controller.command("logout")
+        self.auth_service.logout.assert_called_with('theusername')
+
+    def test_logout_returns_auth_service_result(self):
+        expected_response = "logout result"
+        actual_response = self.controller.command("logout")
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_logout_wrong_number_of_arguments(self):
+        expected_response = "logout must have exactly 0 arguments. Correct usage: logout"
+        actual_response = self.controller.command("logout arg")
 
         self.assertEqual(expected_response, actual_response)

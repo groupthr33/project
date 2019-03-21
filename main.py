@@ -12,7 +12,7 @@ from app.services.auth_service import AuthService
 from app.services.account_service import AccountService
 from app.models.account import Account
 
-# Account.objects.create(name='Matt', username='mrwattss', password='thepassword', roles='0x8')
+Account.objects.create(name='Matt', username='mrwatts', password='thepassword', roles=0x8)
 auth_service = AuthService()
 account_service = AccountService()
 

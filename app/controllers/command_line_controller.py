@@ -6,7 +6,8 @@ class CommandLineController:
 
         self.correct_args_lengths = {
             'login': 2,
-            'cr_account': 3
+            'cr_account': 3,
+            'logout': 0
         }
 
     def command(self, command_with_args):
@@ -32,11 +33,10 @@ class CommandLineController:
             return self.auth_service.login(args[0], args[1])
 
         if not (self.auth_service.current_account
-                and self.auth_service.is_logged_in(self.auth_service.current_account.username)):
+                and self.auth_service.is_logged_in(self.auth_service.get_current_username())):
             return 'You need to log in first.'
 
-        # if not authorized return 'not authorized' message
-        if not self.auth_service.is_authorized(self.auth_service.current_account.username,
+        if not self.auth_service.is_authorized(self.auth_service.get_current_username(),
                                                self.determine_req_permissions(command)):
             return "You don't have privileges."
 
@@ -47,9 +47,16 @@ class CommandLineController:
 
             return self.account_service.create_account(args[0], args[1], args[2::])
 
+        if command == 'logout':
+            if not self.is_args_length_correct(command, args):
+                return "logout must have exactly 0 arguments. Correct usage: logout"
+            return self.auth_service.logout(self.auth_service.get_current_username())
+
     def is_args_length_correct(self, command, args):
         return self.correct_args_lengths[command] == len(args)
 
     def determine_req_permissions(self, command):
         if command == 'cr_account':
             return 0xC
+        if command == 'logout':
+            return 0xF
