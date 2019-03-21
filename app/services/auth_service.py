@@ -19,6 +19,7 @@ class AuthService:
 
         if account.password == password:
             account.is_logged_in = True
+            account.save()  # todo: test
             self.current_account = account
             return f'Welcome, {account.name}.'
 
@@ -31,3 +32,11 @@ class AuthService:
             return False
 
         return accounts.first().is_logged_in
+
+    def is_authorized(self, username, required_permissions):
+        accounts = Account.objects.filter(username=username)
+
+        if accounts.count() == 0:
+            raise Exception("User does not exist.")
+
+        return int(accounts.first().roles, 16) & required_permissions != 0
