@@ -39,4 +39,4 @@ class AccountService:
             if role == 'ta':
                 role_string ^= 0x1
 
-        return str(role_string)
+        return role_string
