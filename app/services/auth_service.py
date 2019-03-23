@@ -45,7 +45,7 @@ class AuthService:
         if accounts.count() == 0:
             raise Exception("User does not exist.")
 
-        return int(accounts.first().roles, 16) & required_permissions != 0
+        return accounts.first().roles & required_permissions != 0
 
     def logout(self, username):
         if username is None:
@@ -67,4 +67,3 @@ class AuthService:
         self.current_account = None
 
         return 'You are now logged out.'
-

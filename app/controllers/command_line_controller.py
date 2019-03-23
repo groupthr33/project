@@ -1,12 +1,17 @@
+import re
+
+
 class CommandLineController:
 
-    def __init__(self, auth_service, account_service):
+    def __init__(self, auth_service, account_service, course_service):
         self.auth_service = auth_service
         self.account_service = account_service
+        self.course_service = course_service
 
         self.correct_args_lengths = {
             'login': 2,
             'cr_account': 3,
+            'cr_course': 4,
             'logout': 0
         }
 
@@ -16,7 +21,7 @@ class CommandLineController:
         return response
 
     def parse_command(self, command_with_args):
-        tokens = command_with_args.split()
+        tokens = [p for p in self.split_and_preserve_quoted_args(command_with_args) if p.strip()]
         parsed_command = {'command': tokens[0], 'args': tokens[1::]}
         return parsed_command
 
@@ -52,6 +57,15 @@ class CommandLineController:
                 return "logout must have exactly 0 arguments. Correct usage: logout"
             return self.auth_service.logout(self.auth_service.get_current_username())
 
+        if command == 'cr_course':
+            if not self.is_args_length_correct(command, args):
+                return "cr_course must have exactly 3 arguments. " \
+                       "Correct usage: 'cr_course <courseid> <section> <coursename> <schedule>"
+
+            return self.course_service.create_course(args[0], args[1], args[2], args[3])
+
+        return 'There is no service to handle your request.'
+
     def is_args_length_correct(self, command, args):
         return self.correct_args_lengths[command] == len(args)
 
@@ -60,3 +74,9 @@ class CommandLineController:
             return 0xC
         if command == 'logout':
             return 0xF
+        if command == 'cr_course':
+            return 0xC
+        return 0x0
+
+    def split_and_preserve_quoted_args(self, command_with_args):
+        return re.split("( |\\\".*?\\\"|'.*?')", command_with_args)
