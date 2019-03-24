@@ -6,7 +6,7 @@ from app.services.course_service import CourseService
 from app.models.account import Account
 
 
-class TestCreateAccount(TestCase):
+class TestAssignInstructor(TestCase):
 
     def setUp(self):
         self.account = Account.objects.create(username='theuser', password='thepassword', name='thename',

@@ -34,7 +34,7 @@ class TestCreateCourse(TestCase):
         actual_response = self.app.command("cr_course CS361")
         expected_response = \
             "cr_course must have exactly 3 arguments. " \
-            "Correct usage: 'cr_course <courseid> <section> <coursename> <schedule>"
+            "Correct usage: cr_course <course_id> <section> <course_name> <schedule>"
 
         self.assertEqual(expected_response, actual_response)
 
