@@ -58,3 +58,17 @@ and <u>course_schedule</u>. This command is for administrators or supervisors on
 <u>course_schedule</u> is of the form DDSSSSEEEE, where D represents a day that   
 the lecture takes place, SSSS is the start time, and EEEE is the end time.   
 e.g. MW14001550 is a class that meets on Monday and Wednesday from 2pm to 3:50pm.
+
+<br>
+<h5>NAME</h5>
+
+<b>assign_ins</b> – assigns an instructor to a specific section and course
+
+<h5>SYNOPSIS</h5>
+
+assign_ins <u>instructor</u> <u>course_id</u> <u>section_id</u>
+
+<h5>DESCRIPTION</h5>
+
+Assign <u>instructor</u> to section with <u>section_id</u> for course with   
+<u>course_id</u>. Can only be used by users with the supervisor role. 
