@@ -40,7 +40,7 @@ class TestLogin(TestCase):
 
         Account.objects.create(username='otheruser', password='thepassword', name='othername')
 
-        expected_response = "Welcome, othername."
+        expected_response = "theuser is already logged in."
         actual_response = self.app.command("login otheruser thepassword")
 
         self.assertEqual(expected_response, actual_response)

@@ -13,7 +13,7 @@ from app.services.account_service import AccountService
 from app.services.course_service import CourseService
 from app.models.account import Account
 
-Account.objects.create(name='Matt', username='mrwatts', password='thepassword', roles=0x8)
+# Account.objects.create(name='Matt', username='mrwatts', password='thepassword', roles=0x8)
 auth_service = AuthService()
 account_service = AccountService()
 course_service = CourseService()

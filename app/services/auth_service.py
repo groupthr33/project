@@ -13,15 +13,13 @@ class AuthService:
         return self.current_account.username
 
     def login(self, username, password):
-        if self.current_account and username == self.current_account.username:
-            return f"{username} is already logged in."
+        if self.current_account:
+            return f"{self.get_current_username()} is already logged in."
 
         accounts = Account.objects.filter(username=username)
 
         if accounts.count() == 0:
             return "Incorrect username."
-
-        # todo: if there is a current account, call logout on its username. Test this.
 
         account = accounts.first()
 
