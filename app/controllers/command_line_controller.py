@@ -1,4 +1,4 @@
-import app.util.parser_util as parser_util
+from app.util.parser_util import ParserUtil
 from collections import defaultdict
 
 
@@ -25,7 +25,7 @@ class CommandLineController:
         })
 
     def command(self, command_with_args):
-        parsed_command = parser_util.parse_command(command_with_args)
+        parsed_command = ParserUtil.parse_command(command_with_args)
         response = self.execute_command(parsed_command)
         return response
 

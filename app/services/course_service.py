@@ -1,14 +1,14 @@
-import app.util.validator_util as validator_util
+from app.util.validator_util import ValidatorUtil
 from app.models.account import Account
 from app.models.course import Course
 
 
 class CourseService:
     def create_course(self, course_id, section, name, schedule):
-        if not validator_util.is_valid_course_id(course_id):
+        if not ValidatorUtil.is_valid_course_id(course_id):
             return "course ID is not valid. Please use correct format, e.g. CS534"
 
-        if not validator_util.is_valid_schedule(schedule):
+        if not ValidatorUtil.is_valid_schedule(schedule):
             return "course_schedule is not valid. Please use format: DDDDSSSSEEEE"
 
         courses = Course.objects.filter(course_id=course_id, section=section)

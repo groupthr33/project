@@ -46,6 +46,7 @@ class TestCreateCourse(TestCase):
 
         self.assertEqual(expected_response, actual_response)
 
+    # todo: not yet implemented
     # def test_cr_course_id_wrong_format(self):
     #     actual_response = self.app.command("cr_course 534CS 001 'test course' TH12001315")
     #     expected_response = "course ID is not valid. Please use correct format, e.g. CS534"
