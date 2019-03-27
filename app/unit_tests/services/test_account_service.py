@@ -14,9 +14,12 @@ class TestAccountService(TestCase):
 
         expected_response = "Account for user jbarney successfully created with roles admin."
         actual_response = self.account_service.create_account(username, name, roles)
-
         self.assertEqual(expected_response, actual_response)
-        # todo: assert save was called
+
+        accounts = Account.objects.filter(username=username)
+        self.assertEqual(1, accounts.count())
+        self.assertEqual(name, accounts.first().name)
+        self.assertEqual(0x4, accounts.first().roles)
 
     def test_cr_account_multiple_roles(self):
         username = "jbarney"
@@ -25,9 +28,12 @@ class TestAccountService(TestCase):
 
         expected_response = "Account for user jbarney successfully created with roles admin, ta."
         actual_response = self.account_service.create_account(username, name, roles)
-
         self.assertEqual(expected_response, actual_response)
-        # todo: assert save was called
+
+        accounts = Account.objects.filter(username=username)
+        self.assertEqual(1, accounts.count())
+        self.assertEqual(name, accounts.first().name)
+        self.assertEqual(0x5, accounts.first().roles)
 
     def test_cr_account_already_exists(self):
         username = "jbarney"
@@ -38,9 +44,12 @@ class TestAccountService(TestCase):
 
         expected_response = "Account with username jbarney already exists."
         actual_response = self.account_service.create_account(username, name, roles)
-
         self.assertEqual(expected_response, actual_response)
-        # todo: assert save was not called
+
+        accounts = Account.objects.filter(username=username)
+        self.assertEqual(1, accounts.count())
+        self.assertEqual(name, accounts.first().name)
+        self.assertEqual(0x8, accounts.first().roles)
 
     def test_cr_account_invalid_role(self):
         username = "jbarney"
@@ -49,6 +58,7 @@ class TestAccountService(TestCase):
 
         expected_response = "superman is not a valid role. Valid roles are: supervisor, admin, instructor, and ta."
         actual_response = self.account_service.create_account(username, name, roles)
-
         self.assertEqual(expected_response, actual_response)
-        # todo: assert save was not called
+
+        accounts = Account.objects.filter(username=username)
+        self.assertEqual(0, accounts.count())
