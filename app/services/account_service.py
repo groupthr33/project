@@ -1,4 +1,4 @@
-import app.util.account_util as account_util
+from app.util.account_util import AccountUtil
 from app.models.account import Account
 
 
@@ -11,7 +11,7 @@ class AccountService:
             return f"Account with username {username} already exists."
 
         try:
-            role_string = account_util.generate_role_string(roles)
+            role_string = AccountUtil.generate_role_string(roles)
         except Exception as e:
             return str(e)
 
