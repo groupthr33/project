@@ -72,3 +72,21 @@ assign_ins <u>instructor</u> <u>course_id</u> <u>section_id</u>
 
 Assign <u>instructor</u> to section with <u>section_id</u> for course with   
 <u>course_id</u>. Can only be used by users with the supervisor role. 
+
+<h5>NAME</h5>
+
+<b>assign_ta</b> - assigns a TA to a course or lab section
+
+<h5>SYNOPSIS</h5>
+
+<b>assign_ta</b> <u>ta</u> <u>course</u> [-s <u>section</u>]
+
+<b>DESCRIPTION</b>
+
+Assign <u>ta</u> to <u>course</u> or lab <u>section</u>. If there is no <u>section</u>,
+ they are strictly a course grader. Can only be used by the Supervisor. 
+
+Options: 
+
+-s <u>section</u> assigns <u>ta</u> to lab <u>section</u>
+
