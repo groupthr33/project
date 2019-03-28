@@ -4,24 +4,30 @@ from collections import defaultdict
 
 class CommandLineController:
 
-    def __init__(self, auth_service, account_service, course_service):
+    def __init__(self, auth_service, account_service, course_service, ta_service):
         self.auth_service = auth_service
         self.account_service = account_service
         self.course_service = course_service
+        self.ta_service = ta_service
+
 
         self.correct_args_lengths = {
             "login": 2,
             "cr_account": 3,
             "cr_course": 4,
+            "assign_ta_lab": 4,
             "logout": 0,
-            "assign_ins": 3
+            "assign_ins": 3,
+            "assign_ta": 3
         }
 
         self.req_permissions = defaultdict(lambda: 0x0, {
             "cr_account": 0xC,
             "logout": 0xF,
             "cr_course": 0xC,
-            "assign_ins": 0x8
+            "assign_ins": 0x8,
+            "assign_ta_lab": 0xC,
+            "assign_ta": 0x8
         })
 
     def command(self, command_with_args):
@@ -74,6 +80,19 @@ class CommandLineController:
                        "Correct usage: assign_ins <user_name> <course_id> <section_id>"
 
             return self.course_service.assign_instructor(args[0], args[1], args[2])
+
+        if command == "assign_ta_lab":
+            if len(args) < 4:
+                return "assign_ta_lab must have at least 4 arguments. Correct usage: assign_ta_lab " \
+                            "<ta_user_name> <course_id> <course_section> <lab_sections...>"
+
+            return self.ta_service.assign_ta_to_labs(args[0], args[1], args[2], args[3::])
+
+        if command == "assign_ta":
+            if not self.is_args_length_correct(command, args):
+                return "assign_ta must have at least 3 arguments. " \
+                       "Correct usage: assign_ta <user_name> <course_id> <section_id> [remaining sections]"
+            return self.tacourse_service.assign_ta(args[0], args[1], args[2])
 
         return "There is no service to handle your request."
 

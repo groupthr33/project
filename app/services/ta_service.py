@@ -4,7 +4,7 @@ from app.models.ta_course import TaCourse
 
 
 class TaService:
-    def assign_ta(self, account, course_id, section, remaining_sections=0):
+    def assign_ta_to_course(self, account, course_id, section, remaining_sections=0):
 
         if remaining_sections < 0:
             return "Remaining sections must be greater or equal to zero."
@@ -34,3 +34,6 @@ class TaService:
         TaCourse.objects.create(remaining_sections=remaining_sections, course=course, assigned_ta=ta)
 
         return f"{account} assigned to {course_id}-{section}."
+
+    def assign_ta_to_labs(self, ta_user_name, course_id, course_section, lab_sections):
+        return ""

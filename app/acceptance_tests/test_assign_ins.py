@@ -3,6 +3,7 @@ from app.controllers.command_line_controller import CommandLineController
 from app.services.auth_service import AuthService
 from app.services.account_service import AccountService
 from app.services.course_service import CourseService
+from app.services.ta_service import TaService
 from app.models.account import Account
 from app.models.course import Course
 
@@ -18,8 +19,9 @@ class TestCreateAccount(TestCase):
         self.auth_service = AuthService()
         self.account_service = AccountService()
         self.course_service = CourseService()
+        self.ta_service = TaService()
 
-        self.app = CommandLineController(self.auth_service, self.account_service, self.course_service)
+        self.app = CommandLineController(self.auth_service, self.account_service, self.course_service, self.ta_service)
         self.app.auth_service.current_account = self.account
 
     def test_assign_ins_happy_path(self):
