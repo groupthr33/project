@@ -3,6 +3,7 @@ from app.controllers.command_line_controller import CommandLineController
 from app.services.auth_service import AuthService
 from app.services.account_service import AccountService
 from app.services.course_service import CourseService
+from app.services.ta_service import TaService
 
 
 class TestPermissions(TestCase):
@@ -11,8 +12,9 @@ class TestPermissions(TestCase):
         self.auth_service = AuthService()
         self.account_service = AccountService()
         self.course_service = CourseService()
+        self.ta_service = TaService()
 
-        self.app = CommandLineController(self.auth_service, self.account_service, self.course_service)
+        self.app = CommandLineController(self.auth_service, self.account_service, self.course_service, self.ta_service)
 
         self.commands = ['cr_account username name admin', "cr_course CS361 001 'Intro to Software Eng.' MW12301345"]
 

@@ -41,3 +41,6 @@ class CourseService:
         course.save()
 
         return f'{instructor_user_name} has been assigned as the instructor for {course_id}-{section_id}.'
+
+    def create_lab_section_for_course(self):
+        return ""

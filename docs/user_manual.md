@@ -73,20 +73,38 @@ assign_ins <u>instructor</u> <u>course_id</u> <u>section_id</u>
 Assign <u>instructor</u> to section with <u>section_id</u> for course with   
 <u>course_id</u>. Can only be used by users with the supervisor role. 
 
+<br>
 <h5>NAME</h5>
 
-<b>assign_ta</b> - assigns a TA to a course or lab section
+<b>assign_ta_course</b> - assigns a TA to a course
 
 <h5>SYNOPSIS</h5>
 
-<b>assign_ta</b> <u>ta</u> <u>course</u> [-s <u>section</u>]
+<b>assign_ta_course</b> <u>ta_user_name</u> <u>course_id</u>   
+<u>course_section_id</u> [-l <u>num_labs</u>]
 
 <b>DESCRIPTION</b>
 
-Assign <u>ta</u> to <u>course</u> or lab <u>section</u>. If there is no <u>section</u>,
- they are strictly a course grader. Can only be used by the Supervisor. 
+Assign TA with <u>ta_user_name</u> to course with <u>course_id</u> and   
+<u>course_section_id</u>, optionally specifying a number of labs. Without specifying   
+a number of labs, the TA will be assigned as a grader. Can only be used by the Supervisor. 
 
 Options: 
 
--s <u>section</u> assigns <u>ta</u> to lab <u>section</u>
+-l <u>number_of_labs</u> - allocates <u>number_of_labs</u> lab sections to TA with <u>ta_user_name</u>
 
+<br>
+<h5>NAME</h5>
+
+<b>assign_ta_lab</b> - assigns a TA to specific lab sections within a course
+
+<h5>SYNOPSIS</h5>
+
+<b>assign_ta_lab</b> <u>ta_user_name</u> <u>course_id</u>   
+<u>course_section_id</u> <u>lab_sections...</u>
+
+<b>DESCRIPTION</b>
+
+Assign TA with <u>ta_user_name</u> to <u>lab_sections...</u> for course with <u>course_id</u>   
+and <u>course_section_id</u>, optionally specifying a number of labs. Without specifying   
+a number of labs, the TA will be assigned as a grader. Can only be used by the Supervisor.
