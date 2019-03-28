@@ -25,7 +25,10 @@ class TestCommandLineController(TestCase):
         self.course_service.create_course = Mock(return_value="create course result")
         self.course_service.assign_instructor = Mock(return_value="assign instructor result")
 
-        self.controller = CommandLineController(self.auth_service, self.account_service, self.course_service)
+        self.ta_service = Mock()
+        self.ta_service.assign_ta_to_labs = Mock(return_value="assign ta to labs result")
+
+        self.controller = CommandLineController(self.auth_service, self.account_service, self.course_service, self.ta_service)
 
     def test_not_valid_command(self):
         expected_response = "do_something is not a valid command"
@@ -153,4 +156,33 @@ class TestCommandLineController(TestCase):
         actual_response = self.controller.command("assign_ins theinstructor CS417")
 
         self.course_service.assign_instructor.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_assign_ta_lab_happy_path(self):
+        expected_response = "assign ta to labs result"
+        actual_response = self.controller.command("assign_ta_lab test_ta CS417 001 801")
+        self.ta_service.assign_ta_to_labs.assert_called_with("test_ta", "CS417", "001", ["801"])
+        self.assertEqual(expected_response, actual_response)
+
+    def test_assign_ta_lab_logged_out(self):
+        self.auth_service.is_logged_in = Mock(return_value=False)
+
+        expected_response = "You need to log in first."
+        actual_response = self.controller.command("assign_ta_lab test_ta CS417 001 801")
+        self.ta_service.assign_ta_to_labs.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_assign_ta_lab_unauthorized(self):
+        self.auth_service.is_authorized = Mock(return_value=False)
+
+        expected_response = "You don't have privileges."
+        actual_response = self.controller.command("assign_ta_lab test_ta CS417 001 801")
+        self.ta_service.assign_ta_to_labs.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_assign_ta_lab_wrong_number_of_arguments(self):
+        expected_response = "assign_ta_lab must have at least 4 arguments. Correct usage: assign_ta_lab " \
+                            "<ta_user_name> <course_id> <course_section> <lab_sections...>"
+        actual_response = self.controller.command("assign_ta_lab test_ta CS417 001")
+        self.ta_service.assign_ta_to_labs.assert_not_called()
         self.assertEqual(expected_response, actual_response)

@@ -4,10 +4,12 @@ from app.controllers.command_line_controller import CommandLineController
 from app.services.auth_service import AuthService
 from app.services.account_service import AccountService
 from app.services.course_service import CourseService
+from app.services.ta_service import TaService
 
 auth_service = AuthService()
 account_service = AccountService()
 course_service = CourseService()
+ta_service = TaService()
 
 
 class Home(View):
@@ -15,7 +17,7 @@ class Home(View):
         return render(request, 'main/index.html')
 
     def post(self, request):
-        controller = CommandLineController(auth_service, account_service, course_service)
+        controller = CommandLineController(auth_service, account_service, course_service, ta_service)
 
         command_input = request.POST["command"]
         if command_input:
