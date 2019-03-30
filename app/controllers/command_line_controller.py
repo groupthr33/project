@@ -18,7 +18,8 @@ class CommandLineController:
             "assign_ta_lab": 4,
             "logout": 0,
             "assign_ins": 3,
-            "assign_ta": 3
+            "assign_ta": 3,
+            "course_assignments": 2
         }
 
         self.req_permissions = defaultdict(lambda: 0x0, {
@@ -27,7 +28,8 @@ class CommandLineController:
             "cr_course": 0xC,
             "assign_ins": 0x8,
             "assign_ta_lab": 0xC,
-            "assign_ta": 0x8
+            "assign_ta": 0x8,
+            "course_assignments": 0xE
         })
 
     def command(self, command_with_args):
@@ -93,6 +95,13 @@ class CommandLineController:
                 return "assign_ta must have at least 3 arguments. " \
                        "Correct usage: assign_ta <user_name> <course_id> <section_id> [remaining sections]"
             return self.tacourse_service.assign_ta(args[0], args[1], args[2])
+
+        if command == "course_assignments":
+            if not self.is_args_length_correct(command, args):
+                return "course_assignments must have exactly 2 arguments" \
+                       "Correct usage: course_assignments <course_id> <section_id>"
+
+            return self.course_service.view_course_assignments(args[0], args[1])
 
         return "There is no service to handle your request."
 
