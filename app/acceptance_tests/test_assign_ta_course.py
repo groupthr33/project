@@ -16,7 +16,7 @@ class TestAssignTaCourse(TestCase):
                                               is_logged_in=True, roles=0x8)
         Account.objects.create(username="theta", password="p", name="n", is_logged_in=False, roles=0x1)
         self.course = Course.objects.create(course_id="cs417", section="001", name="Theory of Comp",
-                               schedule="MW13001400")
+                                            schedule="MW13001400")
 
         self.auth_service = AuthService()
         self.account_service = AccountService()
@@ -66,5 +66,3 @@ class TestAssignTaCourse(TestCase):
         expected_response = "User justanadmin does not have the ta role."
 
         self.assertEqual(expected_response, actual_response)
-
-# todo: make sure that the instructor for that course is the one assigning TA's

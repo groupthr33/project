@@ -10,11 +10,11 @@ class CommandLineController:
         self.course_service = course_service
         self.ta_service = ta_service
 
-
         self.correct_args_lengths = {
             "login": 2,
             "cr_account": 3,
             "cr_course": 4,
+            "cr_lab": 4,
             "assign_ta_lab": 4,
             "logout": 0,
             "assign_ins": 3,
@@ -26,6 +26,7 @@ class CommandLineController:
             "cr_account": 0xC,
             "logout": 0xF,
             "cr_course": 0xC,
+            "cr_lab": 0xC,
             "assign_ins": 0x8,
             "assign_ta_lab": 0xC,
             "assign_ta": 0x8,
@@ -76,6 +77,13 @@ class CommandLineController:
 
             return self.course_service.create_course(args[0], args[1], args[2], args[3])
 
+        if command == "cr_lab":
+            if not self.is_args_length_correct(command, args):
+                return "cr_lab must have exactly 4 arguments. " \
+                       "Correct usage: cr_lab <lab_id> <course_id> <course_section> <lab_schedule>"
+
+            return self.course_service.create_lab_section(args[0], args[1], args[2], args[3])
+
         if command == "assign_ins":
             if not self.is_args_length_correct(command, args):
                 return "assign_ins must have exactly 3 arguments. " \
@@ -86,7 +94,7 @@ class CommandLineController:
         if command == "assign_ta_lab":
             if len(args) < 4:
                 return "assign_ta_lab must have at least 4 arguments. Correct usage: assign_ta_lab " \
-                            "<ta_user_name> <course_id> <course_section> <lab_sections...>"
+                       "<ta_user_name> <course_id> <course_section> <lab_sections...>"
 
             return self.ta_service.assign_ta_to_labs(args[0], args[1], args[2], args[3::])
 
