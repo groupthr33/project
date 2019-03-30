@@ -8,7 +8,6 @@ from app.models.course import Course
 from app.services.ta_service import TaService
 
 
-# todo: all these
 class TestAssignTaCourse(TestCase):
 
     def setUp(self):
@@ -28,9 +27,6 @@ class TestAssignTaCourse(TestCase):
         self.app.auth_service.current_account = self.account
 
     def test_assign_ta_course_happy_path(self):
-        # put course with ID cs417 in storage
-        # put ta with user_name theta in storage
-
         actual_response = self.app.command("assign_ta_course theta cs417 001")
         expected_response = "theta assigned to cs417-001."
 
@@ -44,7 +40,6 @@ class TestAssignTaCourse(TestCase):
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_course_ta_does_not_exist(self):
-        # put course with ID cs417 in storage
         self.ta.delete()
 
         expected_response = "theta dne."
@@ -53,7 +48,6 @@ class TestAssignTaCourse(TestCase):
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_course_course_does_not_exist(self):
-        # put ta with user_name theta in storage
         self.course.delete()
 
         expected_response = "Course cs417 dne."
@@ -62,7 +56,6 @@ class TestAssignTaCourse(TestCase):
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_course_ta_is_not_a_ta(self):
-        # put admin with user_name justanadmin in storage
         Account.objects.create(username="justanadmin", password="p", name="n", is_logged_in=False, roles=0x4)
 
         expected_response = "justanadmin does not have the ta role."

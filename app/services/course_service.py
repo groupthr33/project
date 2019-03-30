@@ -72,7 +72,7 @@ class CourseService:
 
         instructor_name = "no instructor assigned to course"
 
-        if not instructor is None:
+        if instructor is not None:
             instructor_name = instructor.name
 
         tas = TaCourse.objects.filter(course=course)

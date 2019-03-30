@@ -11,6 +11,7 @@ from app.models.account import Account
 class TestPermissions(TestCase):
 
     def setUp(self):
+        self.has_privileges = True
         self.account = Account.objects.create(username='theuser', password='thepassword', name='thename',
                                               is_logged_in=True, roles=0x8)
 
@@ -26,98 +27,109 @@ class TestPermissions(TestCase):
         self.account.roles = 0x8
         self.account.save()
 
-        commands = ['cr_account username name admin', "cr_course CS361 001 'Intro to Software Eng.' MW12301345"]
+        commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
+                    "assign_ins theinstructor CS417 001", "assign_ta_course theta cs417 001",
+                    "assign_ta_lab test_ta CS417 001 801", "cr_lab 801 CS361 001 MW12301345", "logout",
+                    "course_assignments CS417 001"]
 
-        for command in commands:
-            actual_response = self.app.command(command)
-            self.assertNotEqual("You don't have privileges.", actual_response)
+        self.assert_privileges(commands, self.has_privileges)
 
     def test_admin_has_permission(self):
         self.account.roles = 0x4
         self.account.save()
 
-        commands = ['cr_account username name admin', "cr_course CS361 001 'Intro to Software Eng.' MW12301345"]
+        commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
+                    "cr_lab 801 CS361 001 MW12301345", "logout", "course_assignments CS417 001"]
 
-        for command in commands:
-            actual_response = self.app.command(command)
-            self.assertNotEqual("You don't have privileges.", actual_response)
+        self.assert_privileges(commands, self.has_privileges)
 
     def test_instructor_has_permission(self):
         self.account.roles = 0x2
         self.account.save()
 
-        commands = []
+        commands = ["assign_ta_lab test_ta CS417 001 801", "logout", "course_assignments CS417 001"]
 
-        for command in commands:
-            actual_response = self.app.command(command)
-            self.assertNotEqual("You don't have privileges.", actual_response)
+        self.assert_privileges(commands, self.has_privileges)
 
     def test_ta_has_permission(self):
         self.account.roles = 0x1
         self.account.save()
 
+        commands = ["logout", "course_assignments CS417 001"]
+
+        self.assert_privileges(commands, self.has_privileges)
+
+    def test_supervisor_no_permission(self):
+        self.account.roles = 0x8
+        self.account.save()
+
         commands = []
 
-        for command in commands:
-            actual_response = self.app.command(command)
-            self.assertNotEqual("You don't have privileges.", actual_response)
+        self.assert_privileges(commands, self.has_privileges)
 
     def test_admin_no_permission(self):
+        self.has_privileges = False
         self.account.roles = 0x4
         self.account.save()
 
-        commands = []
+        commands = ["assign_ins theinstructor CS417 001", "assign_ta_course theta cs417 001",
+                    "assign_ta_lab test_ta CS417 001 801"]
 
-        for command in commands:
-            actual_response = self.app.command(command)
-            self.assertEqual("You don't have privileges.", actual_response)
+        self.assert_privileges(commands, self.has_privileges)
 
     def test_instructor_no_permission(self):
+        self.has_privileges = False
         self.account.roles = 0x2
         self.account.save()
 
-        commands = []
+        commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
+                    "assign_ins theinstructor CS417 001", "assign_ta_course theta cs417 001",
+                    "cr_lab 801 CS361 001 MW12301345"]
 
-        for command in commands:
-            actual_response = self.app.command(command)
-            self.assertEqual("You don't have privileges.", actual_response)
+        self.assert_privileges(commands, self.has_privileges)
 
     def test_ta_no_permission(self):
+        self.has_privileges = False
         self.account.roles = 0x1
         self.account.save()
 
-        commands = []
+        commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
+                    "assign_ins theinstructor CS417 001", "assign_ta_course theta cs417 001",
+                    "assign_ta_lab test_ta CS417 001 801", "cr_lab 801 CS361 001 MW12301345"]
 
-        for command in commands:
-            actual_response = self.app.command(command)
-            self.assertEqual("You don't have privileges.", actual_response)
+        self.assert_privileges(commands, self.has_privileges)
 
     def test_mixed_roles_has_both_req_roles(self):
-        self.account.roles = 0xC
-        self.account.save()
-
-        commands = ['cr_account username name admin', "cr_course CS361 001 'Intro to Software Eng.' MW12301345"]
-
-        for command in commands:
-            actual_response = self.app.command(command)
-            self.assertNotEqual("You don't have privileges.", actual_response)
-
-    def test_mixed_roles_has_one_req_role(self):
         self.account.roles = 0x5
         self.account.save()
 
-        commands = ['cr_account username name admin', "cr_course CS361 001 'Intro to Software Eng.' MW12301345"]
+        commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
+                    "cr_lab 801 CS361 001 MW12301345", "logout", "course_assignments CS417 001"]
 
-        for command in commands:
-            actual_response = self.app.command(command)
-            self.assertNotEqual("You don't have privileges.", actual_response)
+        self.assert_privileges(commands, self.has_privileges)
+
+    def test_mixed_roles_has_one_req_role(self):
+        self.account.roles = 0x4
+        self.account.save()
+
+        commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
+                    "cr_lab 801 CS361 001 MW12301345", "logout", "course_assignments CS417 001"]
+
+        self.assert_privileges(commands, self.has_privileges)
 
     def test_mixed_roles_has_no_req_roles(self):
+        self.has_privileges = False
         self.account.roles = 0x3
         self.account.save()
 
-        commands = ['cr_account username name admin', "cr_course CS361 001 'Intro to Software Eng.' MW12301345"]
+        commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
+                    "assign_ins theinstructor CS417 001", "assign_ta_course theta cs417 001",
+                    "cr_lab 801 CS361 001 MW12301345"]
 
+        self.assert_privileges(commands, self.has_privileges)
+
+    def assert_privileges(self, commands, has_privileges):
         for command in commands:
             actual_response = self.app.command(command)
-            self.assertEqual("You don't have privileges.", actual_response)
+            fxn = self.assertNotEqual if has_privileges else self.assertEqual
+            fxn("You don't have privileges.", actual_response, command)

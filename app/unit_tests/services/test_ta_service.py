@@ -66,7 +66,6 @@ class TestTaService(TestCase):
             self.ta_user_name, self.course_id, self.course_section, self.remaining_sections)
         self.assertEqual(expected_response, actual_response)
 
-    # todo: not correct
     def test_assign_ta_to_course_rem_labs_less_than_zero(self):
         expected_response = "Remaining sections must be greater or equal to zero."
         actual_response = self.ta_service.assign_ta_to_course(self.ta_user_name, self.course_id, self.course_section,

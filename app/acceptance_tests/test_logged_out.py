@@ -16,7 +16,10 @@ class TestPermissions(TestCase):
 
         self.app = CommandLineController(self.auth_service, self.account_service, self.course_service, self.ta_service)
 
-        self.commands = ['cr_account username name admin', "cr_course CS361 001 'Intro to Software Eng.' MW12301345"]
+        self.commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
+                         "assign_ins theinstructor CS417 001", "assign_ta_course theta cs417 001",
+                         "assign_ta_lab test_ta CS417 001 801", "cr_lab 801 CS361 001 MW12301345", "logout",
+                         "course_assignments CS417 001"]
 
     def test_logged_out(self):
         for command in self.commands:

@@ -28,7 +28,7 @@ class CommandLineController:
             "cr_course": 0xC,
             "cr_lab": 0xC,
             "assign_ins": 0x8,
-            "assign_ta_lab": 0xC,
+            "assign_ta_lab": 0xA,
             "course_assignments": 0xE,
             "assign_ta_course": 0x8
         })
