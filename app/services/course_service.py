@@ -60,6 +60,7 @@ class CourseService:
 
         return f"Lab {lab_section_id} for {course_id}-{course_section_id} created."
 
+    # todo: show any current assignments
     def view_course_assignments(self, course_id, section_id):
         courses = Course.objects.filter(course_id=course_id, section=section_id)
 

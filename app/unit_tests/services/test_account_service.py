@@ -35,6 +35,8 @@ class TestAccountService(TestCase):
         self.assertEqual(name, accounts.first().name)
         self.assertEqual(0x5, accounts.first().roles)
 
+    # todo : test multiroles one invalid
+
     def test_cr_account_already_exists(self):
         username = "jbarney"
         name = "Joe"

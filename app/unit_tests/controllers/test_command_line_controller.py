@@ -115,7 +115,7 @@ class TestCommandLineController(TestCase):
 
     def test_cr_course_wrong_number_of_arguments(self):
         expected_response = \
-            "cr_course must have exactly 3 arguments. " \
+            "cr_course must have exactly 4 arguments. " \
             "Correct usage: cr_course <course_id> <section> <course_name> <schedule>"
 
         actual_response = self.controller.command("cr_course CS361 'Intro to Software Eng.' MW12301345")

@@ -50,3 +50,6 @@ class TestCreateAccount(TestCase):
         actual_response = self.app.command("assign_ins an_admin cs417 002")
         expected_response = "User an_admin does not have the instructor role."
         self.assertEqual(expected_response, actual_response)
+
+    # todo: test another inst assigned, remove but notify
+

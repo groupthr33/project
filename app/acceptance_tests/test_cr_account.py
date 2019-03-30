@@ -47,3 +47,5 @@ class TestAssignInstructor(TestCase):
         expected_response = 'Account for user mrwatts successfully created with roles admin, ta.'
         actual_response = self.app.command('cr_account mrwatts matt admin ta')
         self.assertEqual(expected_response, actual_response)
+
+    # todo : test multiroles one invalid

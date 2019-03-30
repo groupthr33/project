@@ -84,6 +84,8 @@ class TestCourseService(TestCase):
         course = Course.objects.filter(course_id=self.course_id, section=self.lecture_section).first()
         self.assertEqual(None, course.instructor)
 
+    # todo: test another inst assigned, remove but notify
+
     def test_create_lab_section_happy_path(self):
         expected_response = "Lab 801 for CS535-001 created."
         actual_response = self.course_service.create_lab_section("801", self.course_id, self.lecture_section,

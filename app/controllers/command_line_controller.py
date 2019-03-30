@@ -72,7 +72,7 @@ class CommandLineController:
 
         if command == "cr_course":
             if not self.is_args_length_correct(command, args):
-                return "cr_course must have exactly 3 arguments. " \
+                return "cr_course must have exactly 4 arguments. " \
                        "Correct usage: cr_course <course_id> <section> <course_name> <schedule>"
 
             return self.course_service.create_course(args[0], args[1], args[2], args[3])
