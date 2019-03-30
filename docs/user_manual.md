@@ -108,3 +108,17 @@ Options:
 Assign TA with <u>ta_user_name</u> to <u>lab_sections...</u> for course with <u>course_id</u>   
 and <u>course_section_id</u>, optionally specifying a number of labs. Without specifying   
 a number of labs, the TA will be assigned as a grader. Can only be used by the Supervisor.
+
+
+<br>
+<h5>NAME</h5>
+
+<b>cr_lab</b> - creates a lab for a given course and course section
+
+<h5>SYNOPSIS</h5>
+
+<b>cr_lab</b> <u>lab_id</u> <u>course_id</u> <u>course_section_id</u> <u>schedule</u>
+
+<b>DESCRIPTION</b>
+
+Create a lab section with id <u>lab_id</u> for course <u>course_id</u>-<u>course_section_id</u>.
