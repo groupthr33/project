@@ -89,14 +89,14 @@ class CommandLineController:
             return self.ta_service.assign_ta_to_labs(args[0], args[1], args[2], args[3::])
 
         if command == "assign_ta_course":
-            if not self.is_args_length_correct(command, args):
+            if not len(args) > 2:
                 return "assign_ta_course must have at least 3 arguments. " \
                        "Correct usage: assign_ta <user_name> <course_id> <section_id> [remaining sections]."
-            input = 0
+            remaining_sections = 0
             if len(args) > 3:
-                input = args[3]
+                remaining_sections = args[3]
 
-            return self.ta_service.assign_ta_to_course(args[0], args[1], args[2], input)
+            return self.ta_service.assign_ta_to_course(args[0], args[1], args[2], remaining_sections)
 
         return "There is no service to handle your request."
 

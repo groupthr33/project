@@ -59,12 +59,12 @@ class TestTaService(TestCase):
         self.assertEqual(expected_response, actual_response)
 
     # todo: not correct
-    # def test_assign_ta_to_course_rem_labs_less_than_zero(self):
-    #     expected_response = "Remaining sections must be greater or equal to zero."
-    #     actual_response = self.ta_service.assign_ta_to_course(self.ta_user_name, self.course_id, self.course_section,
-    #                                                       -1)
-    #
-    #     self.assertEqual(expected_response, actual_response)
+    def test_assign_ta_to_course_rem_labs_less_than_zero(self):
+        expected_response = "Remaining sections must be greater or equal to zero."
+        actual_response = self.ta_service.assign_ta_to_course(self.ta_user_name, self.course_id, self.course_section,
+                                                              -1)
+
+        self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_lab_happy_path(self):
         self.ta_course_rel = TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=2)

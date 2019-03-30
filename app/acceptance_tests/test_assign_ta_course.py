@@ -16,7 +16,7 @@ class TestAssignTaCourse(TestCase):
                                               is_logged_in=True, roles=0x8)
         self.ta = Account.objects.create(username="theta", password="p", name="n", is_logged_in=False, roles=0x1)
         self.course = Course.objects.create(course_id="cs417", section="001", name="Theory of Comp",
-                               schedule="MW13001400")
+                                            schedule="MW13001400")
 
         self.auth_service = AuthService()
         self.account_service = AccountService()
@@ -32,7 +32,7 @@ class TestAssignTaCourse(TestCase):
         # put ta with user_name theta in storage
 
         actual_response = self.app.command("assign_ta_course theta cs417 001")
-        expected_response = "theta assigned to cs417"
+        expected_response = "theta assigned to cs417-001."
 
         self.assertEqual(expected_response, actual_response)
 
@@ -47,26 +47,25 @@ class TestAssignTaCourse(TestCase):
         # put course with ID cs417 in storage
         self.ta.delete()
 
-        actual_response = self.app.command("assign_ta_course theta cs417")
-        expected_response = "TA with the_user theta does not exist."
+        expected_response = "theta dne."
+        actual_response = self.app.command("assign_ta_course theta cs417 001")
 
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_course_course_does_not_exist(self):
         # put ta with user_name theta in storage
+        self.course.delete()
 
-        actual_response = self.app.command("assign_ta_course theta cs417")
-        expected_response = "Course with ID cs417 does not exist."
+        expected_response = "Course cs417 dne."
+        actual_response = self.app.command("assign_ta_course theta cs417 001")
 
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_course_ta_is_not_a_ta(self):
         # put admin with user_name justanadmin in storage
-        Account.objects.create(username="justanadmin", password="p", name="n", is_logged_in=False, roles=0x2)
+        Account.objects.create(username="justanadmin", password="p", name="n", is_logged_in=False, roles=0x4)
 
-        actual_response = self.app.command("assign_ta_course justanadmin cs417 001")
         expected_response = "User justanadmin does not have the ta role."
+        actual_response = self.app.command("assign_ta_course justanadmin cs417 001")
 
         self.assertEqual(expected_response, actual_response)
-
-# todo: make sure that the instructor for that course is the one assigning TA's
