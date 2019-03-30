@@ -35,7 +35,7 @@ class TestTaService(TestCase):
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_to_course_ta_is_not_a_ta(self):
-        expected_response = "theu_user does not have the ta role."
+        expected_response = "the_user does not have the ta role."
         actual_response = self.ta_service.assign_ta_to_course(
             self.current_user.username, self.course_id, self.course_section, self.remaining_sections)
         self.assertEqual(expected_response, actual_response)

@@ -27,7 +27,7 @@ class TaService:
         ta = users.first()
 
         if (ta.roles & 0x1) == 0:
-            return f"User {ta.username} does not have the ta role."
+            return f"{ta.username} does not have the ta role."
 
         ta_course = TaCourse.objects.filter(course=course, assigned_ta=ta)
 
