@@ -8,7 +8,8 @@ from app.models.lab import Lab
 
 class TestCourseService(TestCase):
     def setUp(self):
-        self.instructor = Account.objects.create(username="theinstructor", password="p", name="instructor_name", is_logged_in=False, roles=0x2)
+        self.instructor = Account.objects.create(username="theinstructor", password="p", name="instructor_name",
+                                                 is_logged_in=False, roles=0x2)
         self.course = Course.objects.create(course_id="CS535", section="001", name="Software Engineering",
                                             schedule="TH12001315")
 
@@ -121,7 +122,9 @@ class TestCourseService(TestCase):
         TaCourse.objects.create(course=course, assigned_ta=self.ta1)
         TaCourse.objects.create(course=course, assigned_ta=self.ta2)
 
-        expected_response = "CS535-001:\nInstructor: instructor_name\n\nTA(s):\n\tTA1_name\n\tTA2_name\n"
+        expected_response = "CS535-001:\nInstructor: instructor_name\n\n" \
+                            "TA(s):\n\tTA1_name - can be assigned to 0 more sections" \
+                            "\n\tTA2_name - can be assigned to 0 more sections\n"
         actual_response = self.course_service.view_course_assignments(self.course_id, self.lecture_section)
 
         self.assertEqual(actual_response, expected_response)
@@ -161,7 +164,8 @@ class TestCourseService(TestCase):
         self.assertEqual(0, tas.count())
 
     def test_view_course_assignments_happy_path_with_no_instructor_and_no_TAs(self):
-        expected_response = "CS535-001:\nInstructor: no instructor assigned to course\n\nTA(s):\n\tno TAs assigned to course\n"
+        expected_response = "CS535-001:\nInstructor: no instructor assigned to course\n\n" \
+                            "TA(s):\n\tno TAs assigned to course\n"
         actual_response = self.course_service.view_course_assignments(self.course_id, self.lecture_section)
 
         self.assertEqual(actual_response, expected_response)

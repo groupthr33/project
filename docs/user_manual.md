@@ -122,3 +122,17 @@ a number of labs, the TA will be assigned as a grader. Can only be used by the S
 <b>DESCRIPTION</b>
 
 Create a lab section with id <u>lab_id</u> for course <u>course_id</u>-<u>course_section_id</u>.
+
+<br>
+<h5>NAME</h5>
+
+<b>course_assignments</b> - view the instructor and TA(s) assigned to a course
+
+<h5>SYNOPSIS</h5>
+
+<b>course_assignments</b> <u>course_id</u> <u>course_section_id</u>
+
+<b>DESCRIPTION</b>
+
+Display the name of instructor and TA(s) assigned to course  <u>course_id</u>-<u>course_section_id</u>
+and how many more lab sections each TA can be assigned to.

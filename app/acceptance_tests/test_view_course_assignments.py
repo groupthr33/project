@@ -40,7 +40,9 @@ class TestViewCourseAssignments(TestCase):
         TaCourse.objects.create(course=course, assigned_ta=self.ta2)
 
         actual_response = self.app.command("course_assignments CS417 001")
-        expected_response = "CS417-001:\nInstructor: instructor_name\n\nTA(s):\n\tTA1_name\n\tTA2_name\n"
+        expected_response = "CS417-001:\nInstructor: instructor_name\n\n" \
+                            "TA(s):\n\tTA1_name - can be assigned to 0 more sections" \
+                            "\n\tTA2_name - can be assigned to 0 more sections\n"
 
         self.assertEqual(actual_response, expected_response)
 
@@ -58,7 +60,8 @@ class TestViewCourseAssignments(TestCase):
 
     def test_view_course_assignments_happy_path_no_instructor_no_TAs(self):
         actual_response = self.app.command("course_assignments CS417 001")
-        expected_response = "CS417-001:\nInstructor: no instructor assigned to course\n\nTA(s):\n\tno TAs assigned to course\n"
+        expected_response = "CS417-001:\nInstructor: no instructor assigned to course\n\n" \
+                            "TA(s):\n\tno TAs assigned to course\n"
 
         self.assertEqual(actual_response, expected_response)
 
