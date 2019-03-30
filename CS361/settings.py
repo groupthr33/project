@@ -101,3 +101,4 @@ STATICFILES_DIRS = (
 )
 
 django_heroku.settings(locals())
+del DATABASES['default']['OPTIONS']['sslmode']
