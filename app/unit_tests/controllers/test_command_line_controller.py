@@ -7,8 +7,8 @@ from app.controllers.command_line_controller import CommandLineController
 class TestCommandLineController(TestCase):
 
     def setUp(self):
-        account = Account.objects.create(username="theuser", password="thepassword", name="thename", is_logged_in=True,
-                                         roles=0x8)
+        account = Account.objects.create(
+            username="theuser", password="thepassword", name="thename", is_logged_in=True, roles=0x8)
 
         self.auth_service = Mock()
         self.auth_service.login = Mock(return_value="login result")
@@ -24,11 +24,13 @@ class TestCommandLineController(TestCase):
         self.course_service = Mock()
         self.course_service.create_course = Mock(return_value="create course result")
         self.course_service.assign_instructor = Mock(return_value="assign instructor result")
+        self.course_service.create_lab_section = Mock(return_value="create lab section result")
 
         self.ta_service = Mock()
         self.ta_service.assign_ta_to_labs = Mock(return_value="assign ta to labs result")
 
-        self.controller = CommandLineController(self.auth_service, self.account_service, self.course_service, self.ta_service)
+        self.controller = CommandLineController(
+            self.auth_service, self.account_service, self.course_service, self.ta_service)
 
     def test_not_valid_command(self):
         expected_response = "do_something is not a valid command"
@@ -67,15 +69,13 @@ class TestCommandLineController(TestCase):
 
         expected_response = "You don't have privileges."
         actual_response = self.controller.command("cr_account username name role")
-
         self.account_service.create_account.assert_not_called()
         self.assertEqual(expected_response, actual_response)
 
     def test_cr_account_wrong_number_of_arguments(self):
-        expected_response =\
+        expected_response = \
             "cr_account must have at least 3 arguments. Correct usage: cr_account <username> <name> <roles...>"
         actual_response = self.controller.command("cr_account username name")
-
         self.account_service.create_account.assert_not_called()
         self.assertEqual(expected_response, actual_response)
 
@@ -102,7 +102,6 @@ class TestCommandLineController(TestCase):
 
         expected_response = "You need to log in first."
         actual_response = self.controller.command("cr_course CS361 001 'Intro to Software Eng.' MW12301345")
-
         self.course_service.create_course.assert_not_called()
         self.assertEqual(expected_response, actual_response)
 
@@ -111,17 +110,15 @@ class TestCommandLineController(TestCase):
 
         expected_response = "You don't have privileges."
         actual_response = self.controller.command("cr_course CS361 001 'Intro to Software Eng.' MW12301345")
-
         self.course_service.create_course.assert_not_called()
         self.assertEqual(expected_response, actual_response)
 
     def test_cr_course_wrong_number_of_arguments(self):
-        expected_response =\
+        expected_response = \
             "cr_course must have exactly 3 arguments. " \
             "Correct usage: cr_course <course_id> <section> <course_name> <schedule>"
 
         actual_response = self.controller.command("cr_course CS361 'Intro to Software Eng.' MW12301345")
-
         self.course_service.create_course.assert_not_called()
         self.assertEqual(expected_response, actual_response)
 
@@ -136,7 +133,6 @@ class TestCommandLineController(TestCase):
 
         expected_response = "You need to log in first."
         actual_response = self.controller.command("assign_ins theinstructor CS417 001")
-
         self.course_service.assign_instructor.assert_not_called()
         self.assertEqual(expected_response, actual_response)
 
@@ -145,16 +141,13 @@ class TestCommandLineController(TestCase):
 
         expected_response = "You don't have privileges."
         actual_response = self.controller.command("assign_ins theinstructor CS417 001")
-
         self.course_service.assign_instructor.assert_not_called()
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ins_wrong_number_of_arguments(self):
-        expected_response =\
+        expected_response = \
             "assign_ins must have exactly 3 arguments. Correct usage: assign_ins <user_name> <course_id> <section_id>"
-
         actual_response = self.controller.command("assign_ins theinstructor CS417")
-
         self.course_service.assign_instructor.assert_not_called()
         self.assertEqual(expected_response, actual_response)
 
@@ -185,4 +178,33 @@ class TestCommandLineController(TestCase):
                             "<ta_user_name> <course_id> <course_section> <lab_sections...>"
         actual_response = self.controller.command("assign_ta_lab test_ta CS417 001")
         self.ta_service.assign_ta_to_labs.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_create_lab_happy_path(self):
+        expected_response = "create lab section result"
+        actual_response = self.controller.command("cr_lab 801 CS361 001 MW12301345")
+        self.course_service.create_lab_section.assert_called_with("801", "CS361", "001", "MW12301345")
+        self.assertEqual(expected_response, actual_response)
+
+    def test_create_lab_logged_out(self):
+        self.auth_service.is_logged_in = Mock(return_value=False)
+
+        expected_response = "You need to log in first."
+        actual_response = self.controller.command("cr_lab 801 CS361 001 MW12301345")
+        self.course_service.create_lab_section.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_create_lab_unauthorized(self):
+        self.auth_service.is_authorized = Mock(return_value=False)
+
+        expected_response = "You don't have privileges."
+        actual_response = self.controller.command("cr_lab 801 CS361 001 MW12301345")
+        self.course_service.create_lab_section.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_create_lab_wrong_number_of_arguments(self):
+        expected_response = "cr_lab must have exactly 4 arguments. " \
+                            "Correct usage: cr_lab <lab_id> <course_id> <course_section> <lab_schedule>"
+        actual_response = self.controller.command("cr_lab 801 CS361 001")
+        self.course_service.create_lab_section.assert_not_called()
         self.assertEqual(expected_response, actual_response)

@@ -27,7 +27,7 @@ class TestAssignInstructor(TestCase):
         self.assertEqual(expected_response, actual_response)
 
     def test_cr_account_wrong_number_of_args(self):
-        expected_response =\
+        expected_response = \
             'cr_account must have at least 3 arguments. Correct usage: cr_account <username> <name> <roles...>'
 
         actual_response = self.app.command('cr_account mrwatts')
