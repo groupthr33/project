@@ -50,7 +50,7 @@ class TestAssignTaCourse(TestCase):
     def test_assign_ta_course_course_does_not_exist(self):
         self.course.delete()
 
-        expected_response = "Course cs417 dne."
+        expected_response = "Course with ID cs417-001 does not exist."
         actual_response = self.app.command("assign_ta_course theta cs417 001")
 
         self.assertEqual(expected_response, actual_response)

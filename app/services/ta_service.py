@@ -9,16 +9,12 @@ class TaService:
         if remaining_sections < 0:
             return "Remaining sections must be greater or equal to zero."
 
-        courses = Course.objects.filter(course_id=course_id)
+        courses = Course.objects.filter(course_id=course_id, section=section)
 
         if courses.count() == 0:
-            return f"Course {course_id} dne."
+            return f"Course with ID {course_id}-{section} does not exist."
 
         course = courses.first()
-
-        if course.section != section:
-            return f"Section {section} dne."
-
         users = Account.objects.filter(username=account)
 
         if users.count() == 0:
