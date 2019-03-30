@@ -1,6 +1,8 @@
 from app.util.validator_util import ValidatorUtil
 from app.models.account import Account
 from app.models.course import Course
+from app.models.ta_course import TaCourse
+from app.models.lab import Lab
 
 
 class CourseService:
@@ -42,5 +44,44 @@ class CourseService:
 
         return f'{instructor_user_name} has been assigned as the instructor for {course_id}-{section_id}.'
 
-    def create_lab_section_for_course(self):
-        return ""
+    def create_lab_section(self, lab_section_id, course_id, course_section_id, schedule):
+
+        courses = Course.objects.filter(course_id=course_id, section=course_section_id)
+
+        if courses.count() == 0:
+            return f"Course {course_id}-{course_section_id} does not exist."
+
+        existing_labs = Lab.objects.filter(section_id=lab_section_id, course=courses.first())
+
+        if existing_labs.count() != 0:
+            return f"There is already a lab {lab_section_id} for course {course_id}-{course_section_id}."
+
+        Lab.objects.create(section_id=lab_section_id, course=courses.first(), schedule=schedule)
+
+        return f"Lab {lab_section_id} for {course_id}-{course_section_id} created."
+
+    def view_course_assignments(self, course_id, section_id):
+        courses = Course.objects.filter(course_id=course_id, section=section_id)
+
+        if courses.count() == 0:
+            return f'Course {course_id}-{section_id} does not exist.'
+
+        course = courses.first()
+
+        instructor = course.instructor
+
+        instructor_name = "no instructor assigned to course"
+
+        if not instructor is None:
+            instructor_name = instructor.name
+
+        tas = TaCourse.objects.filter(course=course)
+
+        ta_names = "\tno TAs assigned to course\n"
+
+        if tas.count() != 0:
+            ta_names = ""
+            for i in tas:
+                ta_names = ta_names + "\t" + i.assigned_ta.name + "\n"
+
+        return f'{course.course_id}-{course.section}:\nInstructor: {instructor_name}\n\nTA(s):\n{ta_names}'

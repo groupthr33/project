@@ -3,8 +3,7 @@
   <form method="post" action="/">
   {% csrf_token %}
     Command: <input type="text" name="command"><br/>
-    <input class="btn btn-primary" type="submit">
-
+    <input type="submit">
   </form>
   <p>{{message}}</p>
 {% endblock content %}

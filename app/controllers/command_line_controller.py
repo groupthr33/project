@@ -10,23 +10,26 @@ class CommandLineController:
         self.course_service = course_service
         self.ta_service = ta_service
 
-
         self.correct_args_lengths = {
             "login": 2,
             "cr_account": 3,
             "cr_course": 4,
             "assign_ta_course": 3,
+            "cr_lab": 4,
             "assign_ta_lab": 4,
             "logout": 0,
-            "assign_ins": 3
+            "assign_ins": 3,
+            "course_assignments": 2
         }
 
         self.req_permissions = defaultdict(lambda: 0x0, {
             "cr_account": 0xC,
             "logout": 0xF,
             "cr_course": 0xC,
+            "cr_lab": 0xC,
             "assign_ins": 0x8,
             "assign_ta_lab": 0xC,
+            "course_assignments": 0xE,
             "assign_ta_course": 0x8
         })
 
@@ -74,6 +77,13 @@ class CommandLineController:
 
             return self.course_service.create_course(args[0], args[1], args[2], args[3])
 
+        if command == "cr_lab":
+            if not self.is_args_length_correct(command, args):
+                return "cr_lab must have exactly 4 arguments. " \
+                       "Correct usage: cr_lab <lab_id> <course_id> <course_section> <lab_schedule>"
+
+            return self.course_service.create_lab_section(args[0], args[1], args[2], args[3])
+
         if command == "assign_ins":
             if not self.is_args_length_correct(command, args):
                 return "assign_ins must have exactly 3 arguments. " \
@@ -84,7 +94,7 @@ class CommandLineController:
         if command == "assign_ta_lab":
             if len(args) < 4:
                 return "assign_ta_lab must have at least 4 arguments. Correct usage: assign_ta_lab " \
-                            "<ta_user_name> <course_id> <course_section> <lab_sections...>"
+                       "<ta_user_name> <course_id> <course_section> <lab_sections...>"
 
             return self.ta_service.assign_ta_to_labs(args[0], args[1], args[2], args[3::])
 
@@ -97,6 +107,13 @@ class CommandLineController:
                 remaining_sections = args[3]
 
             return self.ta_service.assign_ta_to_course(args[0], args[1], args[2], remaining_sections)
+
+        if command == "course_assignments":
+            if not self.is_args_length_correct(command, args):
+                return "course_assignments must have exactly 2 arguments" \
+                       "Correct usage: course_assignments <course_id> <section_id>"
+
+            return self.course_service.view_course_assignments(args[0], args[1])
 
         return "There is no service to handle your request."
 

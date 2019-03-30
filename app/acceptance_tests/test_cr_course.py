@@ -27,11 +27,6 @@ class TestCreateCourse(TestCase):
         expected_response = "CS361 - 001 'Intro to Software Eng.' created."
         self.assertEqual(expected_response, actual_response)
 
-    def test_cr_course_double_quotes(self):
-        actual_response = self.app.command('cr_course CS361 001 "Intro to Software Eng." MW12301345')
-        expected_response = 'CS361 - 001 "Intro to Software Eng." created.'
-        self.assertEqual(expected_response, actual_response)
-
     def test_cr_course_wrong_number_of_args(self):
         actual_response = self.app.command("cr_course CS361")
         expected_response = \

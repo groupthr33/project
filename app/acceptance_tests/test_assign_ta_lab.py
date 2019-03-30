@@ -11,13 +11,17 @@ from app.models.ta_course import TaCourse
 
 
 class TestAssignTaLab(TestCase):
-    
+
     def setUp(self):
-        self.current_user = Account.objects.create(username="the_user", password="p", name="n", is_logged_in=True,
-                                                   roles=0x8)
-        self.course = Course.objects.create(course_id="CS417", section="001", name="Theory of Comp",
-                                            schedule="MW13001400")
-        self.ta = Account.objects.create(username="test_ta", password="p", name="n", is_logged_in=False, roles=0x1)
+        self.current_user = Account.objects.create(
+            username="the_user", password="p", name="n", is_logged_in=True, roles=0x8)
+
+        self.course = Course.objects.create(
+            course_id="CS417", section="001", name="Theory of Comp", schedule="MW13001400")
+
+        self.ta = Account.objects.create(
+            username="test_ta", password="p", name="n", is_logged_in=False, roles=0x1)
+
         self.lab = Lab.objects.create(section_id="801", schedule="MW09301045", course=self.course)
         self.ta_course_rel = TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=2)
 
@@ -26,18 +30,20 @@ class TestAssignTaLab(TestCase):
         self.course_service = CourseService()
         self.ta_service = TaService()
 
-        self.app = CommandLineController(self.auth_service, self.current_user_service, self.course_service, self.ta_service)
+        self.app = CommandLineController(
+            self.auth_service, self.current_user_service, self.course_service, self.ta_service)
+
         self.app.auth_service.current_account = self.current_user
-        
+
     def test_assign_ta_lab_happy_path(self):
         actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta assigned to CS417-001, lab 801. 1 section remaining for test_ta."
+        expected_response = "test_ta assigned to CS417-001, lab(s) 801. 1 section(s) remaining for test_ta."
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_lab_wrong_number_of_args(self):
         actual_response = self.app.command("assign_ta_lab test_ta CS417 001")
-        expected_response = "assign_ta_lab must have at least 4 arguments. Correct usage: assign_ta_lab " \
-                            "<ta_user_name> <course_id> <course_section> <lab_sections...>"
+        expected_response = "assign_ta_lab must have at least 4 arguments. " \
+                            "Correct usage: assign_ta_lab <ta_user_name> <course_id> <course_section> <lab_sections...>"
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_lab_ta_dne(self):
@@ -80,5 +86,7 @@ class TestAssignTaLab(TestCase):
         self.lab.save()
 
         actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta is already assigned to CS417-001, section 801."
+        expected_response = "test_ta is already assigned to CS417-001, lab 801."
         self.assertEqual(expected_response, actual_response)
+
+# todo: make sure that the instructor for that course is the one assigning TA's - next story
