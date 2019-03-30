@@ -65,7 +65,7 @@ class TestAssignTaCourse(TestCase):
         # put admin with user_name justanadmin in storage
         Account.objects.create(username="justanadmin", password="p", name="n", is_logged_in=False, roles=0x4)
 
-        expected_response = "User justanadmin does not have the ta role."
+        expected_response = "justanadmin does not have the ta role."
         actual_response = self.app.command("assign_ta_course justanadmin cs417 001")
 
         self.assertEqual(expected_response, actual_response)
