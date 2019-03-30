@@ -104,7 +104,7 @@ class CommandLineController:
                        "Correct usage: assign_ta <user_name> <course_id> <section_id> [remaining sections]."
             remaining_sections = 0
             if len(args) > 3:
-                remaining_sections = args[3]
+                remaining_sections = int(args[3])
 
             return self.ta_service.assign_ta_to_course(args[0], args[1], args[2], remaining_sections)
 

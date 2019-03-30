@@ -22,6 +22,7 @@ class Home(View):
         command_input = request.POST["command"]
         if command_input:
             response = controller.command(command_input)
+            print(response)
         else:
             response = ""
         return render(request, 'main/index.html', {"message": response})
