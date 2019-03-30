@@ -14,7 +14,7 @@ class TestAssignTaCourse(TestCase):
     def setUp(self):
         self.account = Account.objects.create(username="theuser", password="thepassword", name="thename",
                                               is_logged_in=True, roles=0x8)
-        Account.objects.create(username="theta", password="p", name="n", is_logged_in=False, roles=0x1)
+        self.ta = Account.objects.create(username="theta", password="p", name="n", is_logged_in=False, roles=0x1)
         self.course = Course.objects.create(course_id="cs417", section="001", name="Theory of Comp",
                                             schedule="MW13001400")
 
@@ -31,38 +31,41 @@ class TestAssignTaCourse(TestCase):
         # put course with ID cs417 in storage
         # put ta with user_name theta in storage
 
-        actual_response = self.app.command("assign_ta theta cs417 001")
-        expected_response = "theta assigned to cs417"
+        actual_response = self.app.command("assign_ta_course theta cs417 001")
+        expected_response = "theta assigned to cs417-001."
 
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_course_wrong_number_of_args(self):
-        actual_response = self.app.command("assign_ins theta")
-        expected_response = "assign_ta_course must have 2 or 3 arguments. Correct usage: " \
-                            "assign_ta_course <user_name> <course_id> <number_of_labs>"
+        actual_response = self.app.command("assign_ta_course theta")
+        expected_response = "assign_ta_course must have at least 3 arguments. " \
+                            "Correct usage: assign_ta <user_name> <course_id> <section_id> [remaining sections]."
 
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_course_ta_does_not_exist(self):
         # put course with ID cs417 in storage
+        self.ta.delete()
 
-        actual_response = self.app.command("assign_ta theta cs417")
-        expected_response = "TA with the_user theta does not exist."
+        expected_response = "theta dne."
+        actual_response = self.app.command("assign_ta_course theta cs417 001")
 
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_course_course_does_not_exist(self):
         # put ta with user_name theta in storage
+        self.course.delete()
 
-        actual_response = self.app.command("assign_ta_course theta cs417")
-        expected_response = "Course with ID cs417 does not exist."
+        expected_response = "Course cs417 dne."
+        actual_response = self.app.command("assign_ta_course theta cs417 001")
 
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_course_ta_is_not_a_ta(self):
         # put admin with user_name justanadmin in storage
+        Account.objects.create(username="justanadmin", password="p", name="n", is_logged_in=False, roles=0x4)
 
-        actual_response = self.app.command("assign_ta_course justanadmin cs417")
         expected_response = "User justanadmin does not have the ta role."
+        actual_response = self.app.command("assign_ta_course justanadmin cs417 001")
 
         self.assertEqual(expected_response, actual_response)

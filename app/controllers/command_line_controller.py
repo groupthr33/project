@@ -14,11 +14,11 @@ class CommandLineController:
             "login": 2,
             "cr_account": 3,
             "cr_course": 4,
+            "assign_ta_course": 3,
             "cr_lab": 4,
             "assign_ta_lab": 4,
             "logout": 0,
             "assign_ins": 3,
-            "assign_ta": 3,
             "course_assignments": 2
         }
 
@@ -29,8 +29,8 @@ class CommandLineController:
             "cr_lab": 0xC,
             "assign_ins": 0x8,
             "assign_ta_lab": 0xC,
-            "assign_ta": 0x8,
-            "course_assignments": 0xE
+            "course_assignments": 0xE,
+            "assign_ta_course": 0x8
         })
 
     def command(self, command_with_args):
@@ -98,11 +98,15 @@ class CommandLineController:
 
             return self.ta_service.assign_ta_to_labs(args[0], args[1], args[2], args[3::])
 
-        if command == "assign_ta":
-            if not self.is_args_length_correct(command, args):
-                return "assign_ta must have at least 3 arguments. " \
-                       "Correct usage: assign_ta <user_name> <course_id> <section_id> [remaining sections]"
-            return self.tacourse_service.assign_ta(args[0], args[1], args[2])
+        if command == "assign_ta_course":
+            if not len(args) > 2:
+                return "assign_ta_course must have at least 3 arguments. " \
+                       "Correct usage: assign_ta <user_name> <course_id> <section_id> [remaining sections]."
+            remaining_sections = 0
+            if len(args) > 3:
+                remaining_sections = args[3]
+
+            return self.ta_service.assign_ta_to_course(args[0], args[1], args[2], remaining_sections)
 
         if command == "course_assignments":
             if not self.is_args_length_correct(command, args):

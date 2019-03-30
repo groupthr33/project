@@ -35,7 +35,7 @@ class TestTaService(TestCase):
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_to_course_ta_is_not_a_ta(self):
-        expected_response = "theu_user does not have the ta role."
+        expected_response = "the_user does not have the ta role."
         actual_response = self.ta_service.assign_ta_to_course(
             self.current_user.username, self.course_id, self.course_section, self.remaining_sections)
         self.assertEqual(expected_response, actual_response)
@@ -64,6 +64,13 @@ class TestTaService(TestCase):
         expected_response = "test_ta already assigned to CS417-001."
         actual_response = self.ta_service.assign_ta_to_course(
             self.ta_user_name, self.course_id, self.course_section, self.remaining_sections)
+        self.assertEqual(expected_response, actual_response)
+
+    # todo: not correct
+    def test_assign_ta_to_course_rem_labs_less_than_zero(self):
+        expected_response = "Remaining sections must be greater or equal to zero."
+        actual_response = self.ta_service.assign_ta_to_course(self.ta_user_name, self.course_id, self.course_section,
+                                                              -1)
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_to_labs_happy_path(self):
