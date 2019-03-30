@@ -82,6 +82,7 @@ class CourseService:
         if tas.count() != 0:
             ta_names = ""
             for i in tas:
-                ta_names = ta_names + "\t" + i.assigned_ta.name + "\n"
+                ta_names = ta_names + "\t" + i.assigned_ta.name + \
+                           " - can be assigned to " + str(i.remaining_sections) + " more sections\n"
 
         return f'{course.course_id}-{course.section}:\nInstructor: {instructor_name}\n\nTA(s):\n{ta_names}'
