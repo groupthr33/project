@@ -20,7 +20,7 @@ class TestViewCourseAssignments(TestCase):
         self.ta2 = Account.objects.create(username="TA2", password="p", name="TA2_name", is_logged_in=False, roles=0x1)
 
         self.course_id = "CS417"
-        self.section_id = "001"
+        self.course_section = "001"
 
         self.auth_service = AuthService()
         self.account_service = AccountService()
@@ -31,7 +31,7 @@ class TestViewCourseAssignments(TestCase):
         self.app.auth_service.current_account = self.instructor
 
     def test_view_course_assignments_happy_path_with_instructor_and_TAs(self):
-        course = Course.objects.filter(course_id=self.course_id, section=self.section_id).first()
+        course = Course.objects.filter(course_id=self.course_id, section=self.course_section).first()
 
         course.instructor = self.instructor
         course.save()
@@ -48,7 +48,7 @@ class TestViewCourseAssignments(TestCase):
 
 
     def test_view_course_assignments_happy_path_with_instructor_no_TAs(self):
-        course = Course.objects.filter(course_id=self.course_id, section=self.section_id).first()
+        course = Course.objects.filter(course_id=self.course_id, section=self.course_section).first()
 
         course.instructor = self.instructor
         course.save()
@@ -67,8 +67,8 @@ class TestViewCourseAssignments(TestCase):
 
     def test_view_course_assignments_wrong_number_of_args(self):
         actual_response = self.app.command("course_assignments CS417")
-        expected_response = "course_assignments must have exactly 2 arguments" \
-                            "Correct usage: course_assignments <course_id> <section_id>"
+        expected_response = "course_assignments must have exactly 2 arguments. " \
+                            "Correct usage: course_assignments <course_id> <course_section_id>"
 
         self.assertEqual(actual_response, expected_response)
 
