@@ -32,6 +32,9 @@ class AuthService:
         return "Incorrect password."
 
     def is_logged_in(self, username):
+        if username is None:
+            return False
+
         accounts = Account.objects.filter(username=username)
 
         if accounts.count() == 0:
@@ -40,6 +43,9 @@ class AuthService:
         return accounts.first().is_logged_in
 
     def is_authorized(self, username, required_permissions):
+        if username is None:
+            return False
+
         accounts = Account.objects.filter(username=username)
 
         if accounts.count() == 0:

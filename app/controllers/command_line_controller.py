@@ -52,8 +52,7 @@ class CommandLineController:
                 return "login must have exactly 2 arguments. Correct usage: logout <username> <password>"
             return self.auth_service.login(args[0], args[1])
 
-        if not (self.auth_service.current_account
-                and self.auth_service.is_logged_in(self.auth_service.get_current_username())):
+        if not (self.auth_service.is_logged_in(self.auth_service.get_current_username())):
             return "You need to log in first."
 
         if not self.auth_service.is_authorized(self.auth_service.get_current_username(),
@@ -70,6 +69,7 @@ class CommandLineController:
         if command == "logout":
             if not self.is_args_length_correct(command, args):
                 return "logout must have exactly 0 arguments. Correct usage: logout"
+
             return self.auth_service.logout(self.auth_service.get_current_username())
 
         if command == "cr_course":
