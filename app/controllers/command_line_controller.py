@@ -19,7 +19,8 @@ class CommandLineController:
             "assign_ta_lab": 4,
             "logout": 0,
             "assign_ins": 3,
-            "course_assignments": 2
+            "course_assignments": 2,
+            "view_lab_details": 2
         }
 
         self.req_permissions = defaultdict(lambda: 0x0, {
@@ -30,7 +31,8 @@ class CommandLineController:
             "assign_ins": 0x8,
             "assign_ta_lab": 0xA,
             "course_assignments": 0xE,
-            "assign_ta_course": 0x8
+            "assign_ta_course": 0x8,
+            "view_lab_details": 0xC
         })
 
     def command(self, command_with_args):
@@ -50,8 +52,7 @@ class CommandLineController:
                 return "login must have exactly 2 arguments. Correct usage: logout <username> <password>"
             return self.auth_service.login(args[0], args[1])
 
-        if not (self.auth_service.current_account
-                and self.auth_service.is_logged_in(self.auth_service.get_current_username())):
+        if not (self.auth_service.is_logged_in(self.auth_service.get_current_username())):
             return "You need to log in first."
 
         if not self.auth_service.is_authorized(self.auth_service.get_current_username(),
@@ -68,6 +69,7 @@ class CommandLineController:
         if command == "logout":
             if not self.is_args_length_correct(command, args):
                 return "logout must have exactly 0 arguments. Correct usage: logout"
+
             return self.auth_service.logout(self.auth_service.get_current_username())
 
         if command == "cr_course":
@@ -110,10 +112,20 @@ class CommandLineController:
 
         if command == "course_assignments":
             if not self.is_args_length_correct(command, args):
-                return "course_assignments must have exactly 2 arguments" \
-                       "Correct usage: course_assignments <course_id> <section_id>"
+                return "course_assignments must have exactly 2 arguments. " \
+                       "Correct usage: course_assignments <course_id> <course_section_id>"
 
             return self.course_service.view_course_assignments(args[0], args[1])
+
+        if command == "view_lab_details":
+            if not len(args) > 1:
+                return "view_lab_details must have at least 2 arguments. " \
+                       "Correct usage: view_lab_details <course_id> <course_section_id> [lab_section_id]"
+
+            if len(args) == 2:
+                return self.course_service.view_lab_details(args[0], args[1])
+
+            return self.course_service.view_lab_details(args[0], args[1], args[2])
 
         return "There is no service to handle your request."
 

@@ -136,3 +136,18 @@ Create a lab section with id <u>lab_id</u> for course <u>course_id</u>-<u>course
 
 Display the name of instructor and TA(s) assigned to course  <u>course_id</u>-<u>course_section_id</u>
 and how many more lab sections each TA can be assigned to.
+
+<br>
+<h5>NAME</h5>
+
+<b>view_lab_details</b> - view the labs of the specified course
+
+<h5>SYNOPSIS</h5>
+
+<b>view_lab_details</b> <u>course_id</u> <u>course_section_id</u> <u>[lab_section]</u>
+
+<b>DESCRIPTION</b>
+
+Display the details of all labs of <u>course_id</u>-<u>course_section_id</u>. Specifying the
+<u>lab_section</u> is optional. If the <u>lab_section</u> is specified then only display the
+details for that section.
