@@ -113,7 +113,7 @@ class TestAuthService(TestCase):
         self.assertEqual(account.is_logged_in, False)
 
     def test_logout_user_does_not_exist(self):
-        expected_response = "You need to log in first."
+        expected_response = "Account for user anotheruser does not exist."
         actual_response = self.auth_service.logout("anotheruser")
         self.assertEqual(expected_response, actual_response)
 
@@ -126,3 +126,21 @@ class TestAuthService(TestCase):
         expected_response = "You need to log in first."
         actual_response = self.auth_service.logout("theuser")
         self.assertEqual(expected_response, actual_response)
+
+    def test_set_password_happy_path(self):
+        self.auth_service.current_account = self.account
+
+        expected_response = "Your password has been updated."
+        actual_response = self.auth_service.set_password(self.account.username, "thepassword", "newpassword")
+        self.assertEqual(expected_response, actual_response)
+
+        account = Account.objects.filter(username__iexact="theuser").first()
+        self.assertEqual("newpassword", account.password)
+
+    def test_set_password_wrong_password(self):
+        expected_response = "Incorrect current password."
+        actual_response = self.auth_service.set_password(self.account.username, "password", "newpassword")
+        self.assertEqual(expected_response, actual_response)
+
+        account = Account.objects.filter(username__iexact="theuser").first()
+        self.assertEqual("thepassword", account.password)

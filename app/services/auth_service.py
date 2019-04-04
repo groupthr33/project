@@ -60,7 +60,7 @@ class AuthService:
         accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
-            return "You need to log in first."
+            return f"Account for user {username} does not exist."
 
         account = accounts.first()
 
@@ -73,3 +73,22 @@ class AuthService:
         self.current_account = None
 
         return "You are now logged out."
+
+    def set_password(self, username, old_password, new_password):
+        if username is None:
+            return "You need to log in first."
+
+        accounts = Account.objects.filter(username__iexact=username)
+
+        if accounts.count() == 0:
+            return f"Account for user {username} does not exist."
+
+        account = accounts.first()
+
+        if not account.password == old_password:
+            return "Incorrect current password."
+
+        account.password = new_password
+        account.save()
+
+        return "Your password has been updated."

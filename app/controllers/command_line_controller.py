@@ -20,7 +20,8 @@ class CommandLineController:
             "logout": 0,
             "assign_ins": 3,
             "course_assignments": 2,
-            "view_lab_details": 2
+            "view_lab_details": 2,
+            "set_password": 2
         }
 
         self.req_permissions = defaultdict(lambda: 0x0, {
@@ -32,7 +33,8 @@ class CommandLineController:
             "assign_ta_lab": 0xA,
             "course_assignments": 0xE,
             "assign_ta_course": 0x8,
-            "view_lab_details": 0xC
+            "view_lab_details": 0xC,
+            "set_password": 0xF
         })
 
     def command(self, command_with_args):
@@ -126,6 +128,13 @@ class CommandLineController:
                 return self.course_service.view_lab_details(args[0], args[1])
 
             return self.course_service.view_lab_details(args[0], args[1], args[2])
+
+        if command == "set_password":
+            if not self.is_args_length_correct(command, args):
+                return "set_password must have exactly 2 arguments. " \
+                       "Correct usage: set_password <old_password> <new_password>"
+
+            return self.auth_service.set_password(self.auth_service.get_current_username(), args[0], args[1])
 
         return "There is no service to handle your request."
 
