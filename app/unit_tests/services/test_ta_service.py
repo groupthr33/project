@@ -195,3 +195,53 @@ class TestTaService(TestCase):
         ta_course_rel = TaCourse.objects.filter(course=self.course, assigned_ta=self.ta).first()
         self.assertEqual(self.ta, lab.ta)
         self.assertEqual(2, ta_course_rel.remaining_sections)
+    def test_view_ta_assign_invalid_course(self):
+        TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=0)
+
+        expected_response = "CS351 does not exist."
+        actual_response = self.ta_service.view_ta_assignment("CS351","801")
+
+        self.assertEqual(expected_response,actual_response)
+
+    def test_view_ta_assign_no_lab(self):
+        TaCourse.objects.create(course=self.course, assigned_ta=self.ta_user_name, remaining_sections=0)
+
+        expected_response = "CS351 has no labs attached to it."
+        actual_response = self.ta_service.view_ta_assignment(self.course, "801")
+
+        self.assertEqual(expected_response,actual_response)
+
+    def test_view_ta_assign_invalid_instructor(self):
+        Course.objects.create(course="CS535", section="001", name="'Intro to Software Engineering'",
+                              schedule="MW12301345", instructor="theinstructor")
+
+        expected_response = "You are not assigned to this course."
+
+    def test_view_ta_assign_invalid_ta(self):
+
+        expected_response = "You are not assigned to this course."
+
+    def test_view_ta_assign_instructor(self):
+        Course.objects.create(course="CS535",section="001",name="'Intro to Software Engineering'",
+                              schedule="MW12301345",instructor="theinstructor")
+
+        expected_response = "You are not assigned to this course."
+        actual_response = self.ta_service.view_ta_assignment(self.course, self.course_section)
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_view_ta_assign_ta(self):
+        TaCourse.objects.create(course=self.course, assigned_ta=self.ta_user_name, remaining_sections=0)
+
+        expected_response = "The following are TAs in CS417 001: test_ta."
+        actual_response = self.ta_service.view_ta_assignment(self.course, self.course_section)
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_view_ta_assign_no_tas(self):
+        TaCourse.objects.create(course=self.course, remaining_sections=0)
+
+        expected_response = "No TAs are assigned to this course."
+        actual_response = self.ta_service.view_ta_assignment(self.course_id, self.course_section)
+
+        self.assertEqual(expected_response, actual_response)

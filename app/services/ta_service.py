@@ -87,3 +87,30 @@ class TaService:
             assigned_labs_string += f"{lab.section_id} "
 
         return f"{ta_user_name} assigned to {course_id}-{course_section}, lab(s) {assigned_labs_string.strip()}. {ta_course_rel.remaining_sections} section(s) remaining for {ta_user_name}."
+
+    def view_ta_assignment(self, course_id, course_section):
+        ta_assign = []
+        ta_course = TaCourse.objects.filter(course=course_id)
+        ta_lab = Lab.objects.filter(course=course_id)
+
+
+        if ta_course.count() == 0:
+            return f"{course_id} does not exist."
+
+        if ta_lab.count == 0:
+            return f"{course_id} has no labs attached to it"
+
+        for course in ta_course:
+            ta = course.assigned_ta
+            ta_assign.extend(ta)
+
+        for lab in ta_lab:
+            ta = lab.ta
+            ta_assign.extend(ta)
+
+        if ta_assign.count == 0:
+            return f"No TAs are assigned to this course."
+
+        names = ' ,'.join(ta_assign)
+
+        return f"The following are TAs in {course_id} {course_section}:{names}."
