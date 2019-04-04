@@ -215,12 +215,12 @@ class TestCourseService(TestCase):
         self.lab2.save()
 
         actual_response = self.course_service.view_lab_details("CS337", "001")
-        expected_response = f'Course CS337-001:'+ \
-                            f'\nLab section {self.lab_id1}:\n'+ \
-                            f'\tSchedule: {self.lab1.schedule}\n'+ \
-                            f'\tTA: {self.ta1.name}\n'+ \
-                            f'\nLab section {self.lab_id2}:\n'+ \
-                            f'\tSchedule: {self.lab2.schedule}\n'+ \
+        expected_response = f'Course CS337-001:' + \
+                            f'\nLab section {self.lab_id1}:\n' + \
+                            f'\tSchedule: {self.lab1.schedule}\n' + \
+                            f'\tTA: {self.ta1.name}\n' + \
+                            f'\nLab section {self.lab_id2}:\n' + \
+                            f'\tSchedule: {self.lab2.schedule}\n' + \
                             f'\tTA: {self.ta2.name}\n'
 
         self.assertEqual(actual_response, expected_response)
