@@ -9,13 +9,13 @@ class TaService:
         if remaining_sections < 0:
             return "Remaining sections must be greater or equal to zero."
 
-        courses = Course.objects.filter(course_id=course_id, section=section)
+        courses = Course.objects.filter(course_id__iexact=course_id, section__iexact=section)
 
         if courses.count() == 0:
             return f"Course with ID {course_id}-{section} does not exist."
 
         course = courses.first()
-        users = Account.objects.filter(username=account)
+        users = Account.objects.filter(username__iexact=account)
 
         if users.count() == 0:
             return f"{account} dne."
@@ -35,7 +35,7 @@ class TaService:
         return f"{account} assigned to {course_id}-{section}."
 
     def assign_ta_to_labs(self, ta_user_name, course_id, course_section, lab_sections):
-        tas = Account.objects.filter(username=ta_user_name)
+        tas = Account.objects.filter(username__iexact=ta_user_name)
 
         if tas.count() == 0:
             return f"TA with user_name {ta_user_name} does not exist."
@@ -45,7 +45,7 @@ class TaService:
         if ta.roles & 0x1 == 0:
             return f"{ta_user_name} does not have the ta role."
 
-        courses = Course.objects.filter(course_id=course_id, section=course_section)
+        courses = Course.objects.filter(course_id__iexact=course_id, section__iexact=course_section)
 
         if courses.count() == 0:
             return f"Course with ID {course_id}-{course_section} does not exist."
@@ -66,7 +66,7 @@ class TaService:
         assigned_labs_string = ""
 
         for lab_section in lab_sections:
-            labs = Lab.objects.filter(course=course, section_id=lab_section)
+            labs = Lab.objects.filter(course=course, section_id__iexact=lab_section)
 
             if labs.count() == 0:
                 return f"Lab {lab_section} for course {course_id}-{course_section} does not exist."

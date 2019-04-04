@@ -16,7 +16,7 @@ class TestAuthService(TestCase):
         self.assertEqual(expected_response, actual_response)
         self.assertEqual(self.auth_service.get_current_username(), "theuser")
 
-        account = Account.objects.filter(username="theuser").first()
+        account = Account.objects.filter(username__iexact="theuser").first()
         self.assertEqual(account.is_logged_in, True)
 
     def test_login_already_logged_in(self):
@@ -28,7 +28,7 @@ class TestAuthService(TestCase):
         actual_response = self.auth_service.login("theuser", "thepassword")
         self.assertEqual(expected_response, actual_response)
 
-        account = Account.objects.filter(username="theuser").first()
+        account = Account.objects.filter(username__iexact="theuser").first()
         self.assertEqual(account.is_logged_in, True)
 
     def test_login_someone_else_already_logged_in(self):
@@ -42,8 +42,8 @@ class TestAuthService(TestCase):
         actual_response = self.auth_service.login("otheruser", "thepassword")
         self.assertEqual(expected_response, actual_response)
 
-        logged_in_account = Account.objects.filter(username="theuser").first()
-        logged_out_account = Account.objects.filter(username="otheruser").first()
+        logged_in_account = Account.objects.filter(username__iexact="theuser").first()
+        logged_out_account = Account.objects.filter(username__iexact="otheruser").first()
         self.assertEqual(logged_in_account.is_logged_in, True)
         self.assertEqual(logged_out_account.is_logged_in, False)
 
@@ -57,7 +57,7 @@ class TestAuthService(TestCase):
         actual_response = self.auth_service.login("theuser", "wrongpassword")
         self.assertEqual(expected_response, actual_response)
 
-        account = Account.objects.filter(username="theuser").first()
+        account = Account.objects.filter(username__iexact="theuser").first()
         self.assertEqual(account.is_logged_in, False)
 
     def test_is_logged_in_true(self):
@@ -109,7 +109,7 @@ class TestAuthService(TestCase):
         self.assertEqual(expected_response, actual_response)
         self.assertEqual(self.auth_service.get_current_username(), None)
 
-        account = Account.objects.filter(username="theuser").first()
+        account = Account.objects.filter(username__iexact="theuser").first()
         self.assertEqual(account.is_logged_in, False)
 
     def test_logout_user_does_not_exist(self):

@@ -16,7 +16,7 @@ class AuthService:
         if self.current_account:
             return f"{self.get_current_username()} is already logged in."
 
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
             return "Incorrect username."
@@ -35,7 +35,7 @@ class AuthService:
         if username is None:
             return False
 
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
             return False
@@ -46,7 +46,7 @@ class AuthService:
         if username is None:
             return False
 
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
             raise Exception("User does not exist.")
@@ -57,7 +57,7 @@ class AuthService:
         if username is None:
             return "You need to log in first."
 
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
             return "You need to log in first."

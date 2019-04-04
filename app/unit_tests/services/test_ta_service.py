@@ -94,7 +94,7 @@ class TestTaService(TestCase):
                 self.ta_user_name, self.course_id, self.course_section, [self.lab_section])
         self.assertEqual(actual_response, expected_response)
 
-        lab = Lab.objects.filter(section_id="801", course=self.course).first()
+        lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
         ta_course_rel = TaCourse.objects.filter(course=self.course, assigned_ta=self.ta).first()
         self.assertEqual(self.ta, lab.ta)
         self.assertEqual(1, ta_course_rel.remaining_sections)
@@ -109,7 +109,7 @@ class TestTaService(TestCase):
                 self.ta_user_name, self.course_id, self.course_section, [self.lab_section, "802"])
         self.assertEqual(actual_response, expected_response)
 
-        lab = Lab.objects.filter(section_id="801", course=self.course).first()
+        lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
         ta_course_rel = TaCourse.objects.filter(course=self.course, assigned_ta=self.ta).first()
         self.assertEqual(self.ta, lab.ta)
         self.assertEqual(0, ta_course_rel.remaining_sections)
@@ -122,7 +122,7 @@ class TestTaService(TestCase):
             self.ta_service.assign_ta_to_labs("other_ta", self.course_id, self.course_section, [self.lab_section])
         self.assertEqual(expected_response, actual_response)
 
-        lab = Lab.objects.filter(section_id="801", course=self.course).first()
+        lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
         ta_course_rel = TaCourse.objects.filter(course=self.course, assigned_ta=self.ta).first()
         self.assertEqual(None, lab.ta)
         self.assertEqual(2, ta_course_rel.remaining_sections)
@@ -153,7 +153,7 @@ class TestTaService(TestCase):
                 self.current_user.username, self.course_id, self.course_section, [self.lab_section])
         self.assertEqual(expected_response, actual_response)
 
-        lab = Lab.objects.filter(section_id="801", course=self.course).first()
+        lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
         self.assertEqual(None, lab.ta)
 
     def test_assign_ta_to_labs_not_assigned_to_course(self):
@@ -163,7 +163,7 @@ class TestTaService(TestCase):
         expected_response = "test_ta is not assigned to course CS417-001."
         self.assertEqual(expected_response, actual_response)
 
-        lab = Lab.objects.filter(section_id="801", course=self.course).first()
+        lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
         self.assertEqual(None, lab.ta)
 
     def test_assign_ta_to_labs_no_sections_remaining(self):
@@ -175,7 +175,7 @@ class TestTaService(TestCase):
         expected_response = "test_ta cannot TA any more lab sections."
         self.assertEqual(expected_response, actual_response)
 
-        lab = Lab.objects.filter(section_id="801", course=self.course).first()
+        lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
         ta_course_rel = TaCourse.objects.filter(course=self.course, assigned_ta=self.ta).first()
         self.assertEqual(None, lab.ta)
         self.assertEqual(0, ta_course_rel.remaining_sections)
@@ -191,7 +191,7 @@ class TestTaService(TestCase):
         expected_response = "test_ta is already assigned to CS417-001, lab 801."
         self.assertEqual(expected_response, actual_response)
 
-        lab = Lab.objects.filter(section_id="801", course=self.course).first()
+        lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
         ta_course_rel = TaCourse.objects.filter(course=self.course, assigned_ta=self.ta).first()
         self.assertEqual(self.ta, lab.ta)
         self.assertEqual(2, ta_course_rel.remaining_sections)

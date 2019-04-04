@@ -44,7 +44,7 @@ class TestCourseService(TestCase):
                                                             self.schedule)
         self.assertEqual(actual_response, expected_response)
 
-        courses = Course.objects.filter(course_id="CS361", section=self.course_section)
+        courses = Course.objects.filter(course_id__iexact="CS361", section__iexact=self.course_section)
         self.assertEqual(1, courses.count())
 
     def test_create_course_already_exists(self):
@@ -53,7 +53,7 @@ class TestCourseService(TestCase):
             self.course_service.create_course(self.course_id, self.course_section, self.course_name, self.schedule)
         self.assertEqual(actual_response, expected_response)
 
-        courses = Course.objects.filter(course_id=self.course_id, section=self.course_section)
+        courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section)
         self.assertEqual(1, courses.count())
 
     def test_assign_instructor_happy_path(self):
@@ -62,7 +62,7 @@ class TestCourseService(TestCase):
             self.course_service.assign_instructor(self.instructor_user_name, self.course_id, self.course_section)
         self.assertEqual(actual_response, expected_response)
 
-        course = Course.objects.filter(course_id=self.course_id, section=self.course_section).first()
+        course = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section).first()
         self.assertEqual(self.instructor, course.instructor)
 
     def test_assign_instructor_instructor_dne(self):
@@ -70,7 +70,7 @@ class TestCourseService(TestCase):
         actual_response = self.course_service.assign_instructor("jdoe", self.course_id, self.course_section)
         self.assertEqual(actual_response, expected_response)
 
-        course = Course.objects.filter(course_id=self.course_id, section=self.course_section).first()
+        course = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section).first()
         self.assertEqual(None, course.instructor)
 
     def test_assign_instructor_course_dne(self):
@@ -89,7 +89,7 @@ class TestCourseService(TestCase):
         actual_response = self.course_service.assign_instructor("an_admin", self.course_id, self.course_section)
         self.assertEqual(actual_response, expected_response)
 
-        course = Course.objects.filter(course_id=self.course_id, section=self.course_section).first()
+        course = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section).first()
         self.assertEqual(None, course.instructor)
 
     # todo: test another inst assigned, remove but notify
@@ -100,7 +100,7 @@ class TestCourseService(TestCase):
                                                                  self.schedule)
         self.assertEqual(actual_response, expected_response)
 
-        lab = Lab.objects.filter(course=self.course1, section_id="801").first()
+        lab = Lab.objects.filter(course=self.course1, section_id__iexact="801").first()
         self.assertEqual(self.course1, lab.course)
 
     def test_create_lab_section_course_dne(self):
@@ -109,7 +109,7 @@ class TestCourseService(TestCase):
                                                                  self.schedule)
         self.assertEqual(actual_response, expected_response)
 
-        labs = Lab.objects.filter(course=self.course1, section_id=801)
+        labs = Lab.objects.filter(course=self.course1, section_id__iexact='801')
         self.assertEqual(0, labs.count())
 
     def test_create_lab_section_lab_exists(self):
@@ -120,11 +120,11 @@ class TestCourseService(TestCase):
                                                                  self.schedule)
         self.assertEqual(actual_response, expected_response)
 
-        lab_found = Lab.objects.filter(course=self.course1, section_id="801").first()
+        lab_found = Lab.objects.filter(course=self.course1, section_id__iexact="801").first()
         self.assertEqual(lab_assigned, lab_found)
 
     def test_view_course_assignments_happy_path_with_instructor_and_TAs(self):
-        course = Course.objects.filter(course_id=self.course_id, section=self.course_section).first()
+        course = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section).first()
 
         course.instructor = self.instructor
         course.save()
@@ -139,7 +139,7 @@ class TestCourseService(TestCase):
 
         self.assertEqual(actual_response, expected_response)
 
-        courses = Course.objects.filter(course_id=self.course_id, section=self.course_section)
+        courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section)
         self.assertEqual(1, courses.count())
 
         course = courses.first()
@@ -154,7 +154,7 @@ class TestCourseService(TestCase):
             self.assertEqual(tas_list[i].assigned_ta, self.ta_list[i])
 
     def test_view_course_assignments_happy_path_with_instructor_no_TAs(self):
-        course = Course.objects.filter(course_id=self.course_id, section=self.course_section).first()
+        course = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section).first()
 
         course.instructor = self.instructor
         course.save()
@@ -164,7 +164,7 @@ class TestCourseService(TestCase):
 
         self.assertEqual(actual_response, expected_response)
 
-        courses = Course.objects.filter(course_id=self.course_id, section=self.course_section)
+        courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section)
         self.assertEqual(1, courses.count())
 
         course = courses.first()
@@ -180,7 +180,7 @@ class TestCourseService(TestCase):
 
         self.assertEqual(actual_response, expected_response)
 
-        courses = Course.objects.filter(course_id=self.course_id, section=self.course_section)
+        courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section)
         self.assertEqual(1, courses.count())
 
         course = courses.first()
@@ -195,7 +195,7 @@ class TestCourseService(TestCase):
 
         self.assertEqual(expected_response, actual_response)
 
-        courses = Course.objects.filter(course_id="CS417", section="001")
+        courses = Course.objects.filter(course_id__iexact="CS417", section__iexact="001")
         self.assertEqual(0, courses.count())
 
     def test_view_course_assignments_section_dne(self):
@@ -204,7 +204,7 @@ class TestCourseService(TestCase):
 
         self.assertEqual(actual_response, expected_response)
 
-        courses = Course.objects.filter(course_id=self.course_id, section="002")
+        courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact="002")
         self.assertEqual(0, courses.count())
 
     def test_view_lab_details_default_happy_path_with_TAs(self):
@@ -277,7 +277,7 @@ class TestCourseService(TestCase):
 
         self.assertEqual(actual_response, expected_response)
 
-        labs = Lab.objects.filter(course=self.course2, section_id=self.lab_id1)
+        labs = Lab.objects.filter(course=self.course2, section_id__iexact=self.lab_id1)
 
         self.assertEqual(1, labs.count())
 
@@ -294,7 +294,7 @@ class TestCourseService(TestCase):
 
         self.assertEqual(actual_response, expected_response)
 
-        labs = Lab.objects.filter(course=self.course2, section_id=self.lab_id1)
+        labs = Lab.objects.filter(course=self.course2, section_id__iexact=self.lab_id1)
 
         self.assertEqual(1, labs.count())
 
@@ -308,7 +308,7 @@ class TestCourseService(TestCase):
 
         self.assertEqual(actual_response, expected_response)
 
-        courses = Course.objects.filter(course_id="CS417", section="001")
+        courses = Course.objects.filter(course_id__iexact="CS417", section__iexact="001")
 
         self.assertEqual(0, courses.count())
 
@@ -328,6 +328,6 @@ class TestCourseService(TestCase):
 
         self.assertEqual(actual_response, expected_response)
 
-        labs = Lab.objects.filter(course=self.course2, section_id="803")
+        labs = Lab.objects.filter(course=self.course2, section_id__iexact="803")
 
         self.assertEqual(0, labs.count())

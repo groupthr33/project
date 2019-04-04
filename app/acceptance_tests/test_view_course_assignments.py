@@ -31,7 +31,7 @@ class TestViewCourseAssignments(TestCase):
         self.app.auth_service.current_account = self.instructor
 
     def test_view_course_assignments_happy_path_with_instructor_and_TAs(self):
-        course = Course.objects.filter(course_id=self.course_id, section=self.course_section).first()
+        course = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section).first()
 
         course.instructor = self.instructor
         course.save()
@@ -48,7 +48,7 @@ class TestViewCourseAssignments(TestCase):
 
 
     def test_view_course_assignments_happy_path_with_instructor_no_TAs(self):
-        course = Course.objects.filter(course_id=self.course_id, section=self.course_section).first()
+        course = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section).first()
 
         course.instructor = self.instructor
         course.save()

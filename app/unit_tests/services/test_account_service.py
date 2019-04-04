@@ -16,7 +16,7 @@ class TestAccountService(TestCase):
         actual_response = self.account_service.create_account(username, name, roles)
         self.assertEqual(expected_response, actual_response)
 
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
         self.assertEqual(1, accounts.count())
         self.assertEqual(name, accounts.first().name)
         self.assertEqual(0x4, accounts.first().roles)
@@ -30,7 +30,7 @@ class TestAccountService(TestCase):
         actual_response = self.account_service.create_account(username, name, roles)
         self.assertEqual(expected_response, actual_response)
 
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
         self.assertEqual(1, accounts.count())
         self.assertEqual(name, accounts.first().name)
         self.assertEqual(0x5, accounts.first().roles)
@@ -48,7 +48,7 @@ class TestAccountService(TestCase):
         actual_response = self.account_service.create_account(username, name, roles)
         self.assertEqual(expected_response, actual_response)
 
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
         self.assertEqual(1, accounts.count())
         self.assertEqual(name, accounts.first().name)
         self.assertEqual(0x8, accounts.first().roles)
@@ -62,5 +62,5 @@ class TestAccountService(TestCase):
         actual_response = self.account_service.create_account(username, name, roles)
         self.assertEqual(expected_response, actual_response)
 
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
         self.assertEqual(0, accounts.count())

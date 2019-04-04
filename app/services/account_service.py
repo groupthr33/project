@@ -5,7 +5,7 @@ from app.models.account import Account
 class AccountService:
 
     def create_account(self, username, name, roles):
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() != 0:
             return f"Account with username {username} already exists."
