@@ -152,3 +152,18 @@ and how many more lab sections each TA can be assigned to.
 
 Set the password of the requesting user to <u>new_password</u> if their current password matches   
 <u>old_password</u>
+
+
+<br>
+<h5>NAME</h5>
+
+<b>update_contact</b> - updates a field of the current user's contact info
+
+<h5>SYNOPSIS</h5>
+
+<b>update_contact</b> <u>field</u> <u>new_value</u>
+
+
+<b>DESCRIPTION</b>
+
+Updates the field <u>field</u> with the value <u>new_value</u> for the currently logged in user.

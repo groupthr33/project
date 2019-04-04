@@ -7,3 +7,5 @@ class Account(models.Model):
     name = models.CharField(max_length=25)
     is_logged_in = models.BooleanField(default=False)
     roles = models.IntegerField(default=0x1)
+    phone_number = models.CharField(max_length=10, blank=True, default="")
+    address = models.CharField(max_length=50, blank=True, default="")

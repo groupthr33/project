@@ -21,6 +21,7 @@ class TestCommandLineController(TestCase):
 
         self.account_service = Mock()
         self.account_service.create_account = Mock(return_value="create account result")
+        self.account_service.update_contact_info = Mock(return_value="update contact info result")
 
         self.course_service = Mock()
         self.course_service.create_course = Mock(return_value="create course result")
@@ -229,7 +230,7 @@ class TestCommandLineController(TestCase):
 
         expected_response = "You don't have privileges."
         actual_response = self.controller.command("set_password thepassword newpassword")
-        self.course_service.create_lab_section.assert_not_called()
+        self.auth_service.set_password.assert_not_called()
         self.assertEqual(expected_response, actual_response)
 
     def test_set_password_wrong_number_of_arguments(self):
@@ -238,3 +239,33 @@ class TestCommandLineController(TestCase):
         actual_response = self.controller.command("set_password thepassword")
         self.auth_service.set_password.assert_not_called()
         self.assertEqual(expected_response, actual_response)
+
+    def test_update_contact_happy_path(self):
+        expected_response = "update contact info result"
+        actual_response = self.controller.command("update_contact phone_number 5551234567")
+        self.account_service.update_contact_info.assert_called_with("theusername", "phone_number", "5551234567")
+        self.assertEqual(expected_response, actual_response)
+
+    def test_update_contact_logged_out(self):
+        self.auth_service.is_logged_in = Mock(return_value=False)
+
+        expected_response = "You need to log in first."
+        actual_response = self.controller.command("update_contact phone_number 5551234567")
+        self.account_service.update_contact_info.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_update_contact_unauthorized(self):
+        self.auth_service.is_authorized = Mock(return_value=False)
+
+        expected_response = "You don't have privileges."
+        actual_response = self.controller.command("update_contact phone_number 5551234567")
+        self.account_service.update_contact_info.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_update_contact_wrong_number_of_arguments(self):
+        expected_response = "update_contact must have exactly 2 arguments. " \
+                            "Correct usage: update_contact <field> <new_value>"
+        actual_response = self.controller.command("update_contact phone_number")
+        self.account_service.update_contact_info.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+

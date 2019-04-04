@@ -7,4 +7,4 @@ class Course(models.Model):
     section = models.CharField(max_length=25)
     name = models.CharField(max_length=50)
     schedule = models.CharField(max_length=25)
-    instructor = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
+    instructor = models.ForeignKey(Account, on_delete=models.CASCADE, blank=True, null=True, default=None)

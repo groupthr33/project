@@ -7,6 +7,9 @@ class TestAccountService(TestCase):
     def setUp(self):
         self.account_service = AccountService()
 
+        self.account = Account.objects.create(username="theuser", password="thepassword", name="thename",
+                                              is_logged_in=True)
+
     def test_create_account_happy_path(self):
         username = "jbarney"
         name = "Joe"
@@ -64,3 +67,36 @@ class TestAccountService(TestCase):
 
         accounts = Account.objects.filter(username__iexact=username)
         self.assertEqual(0, accounts.count())
+
+    def test_update_contact_happy_path(self):
+        username = "theuser"
+        field = "phone_number"
+        new_value = "999876543"
+
+        expected_response = "Your phone_number has been updated to 999876543"
+        actual_response = self.account_service.update_contact_info(username, field, new_value)
+        self.assertEqual(expected_response, actual_response)
+
+        account = Account.objects.filter(username__iexact=username).first()
+        self.assertEqual(new_value, account.phone_number)
+
+    def test_update_contact_invalid_field(self):
+        username = "theuser"
+        field = "fax"
+        new_value = "999876543"
+
+        expected_response = "Invalid field."
+        actual_response = self.account_service.update_contact_info(username, field, new_value)
+        self.assertEqual(expected_response, actual_response)
+
+        account = Account.objects.filter(username__iexact=username).first()
+        self.assertEqual("", account.phone_number)
+
+    def test_update_contact_user_dne(self):
+        username = "nonexistant"
+        field = "fax"
+        new_value = "999876543"
+
+        expected_response = "User does not exist."
+        actual_response = self.account_service.update_contact_info(username, field, new_value)
+        self.assertEqual(expected_response, actual_response)
