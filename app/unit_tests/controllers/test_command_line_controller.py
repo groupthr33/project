@@ -16,6 +16,7 @@ class TestCommandLineController(TestCase):
         self.auth_service.get_current_username = Mock(return_value="theusername")
         self.auth_service.is_logged_in = Mock(return_value=True)
         self.auth_service.is_authenticated = Mock(return_value=True)
+        self.auth_service.set_password = Mock(return_value="set password result")
         self.auth_service.current_account = account
 
         self.account_service = Mock()
@@ -207,4 +208,33 @@ class TestCommandLineController(TestCase):
                             "Correct usage: cr_lab <lab_id> <course_id> <course_section> <lab_schedule>"
         actual_response = self.controller.command("cr_lab 801 CS361 001")
         self.course_service.create_lab_section.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_set_password_happy_path(self):
+        expected_response = "set password result"
+        actual_response = self.controller.command("set_password thepassword newpassword")
+        self.auth_service.set_password.assert_called_with("theusername", "thepassword", "newpassword")
+        self.assertEqual(expected_response, actual_response)
+
+    def test_set_password_logged_out(self):
+        self.auth_service.is_logged_in = Mock(return_value=False)
+
+        expected_response = "You need to log in first."
+        actual_response = self.controller.command("set_password thepassword newpassword")
+        self.auth_service.set_password.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_set_password_unauthorized(self):
+        self.auth_service.is_authorized = Mock(return_value=False)
+
+        expected_response = "You don't have privileges."
+        actual_response = self.controller.command("set_password thepassword newpassword")
+        self.course_service.create_lab_section.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_set_password_wrong_number_of_arguments(self):
+        expected_response = "set_password must have exactly 2 arguments. " \
+                            "Correct usage: set_password <old_password> <new_password>"
+        actual_response = self.controller.command("set_password thepassword")
+        self.auth_service.set_password.assert_not_called()
         self.assertEqual(expected_response, actual_response)
