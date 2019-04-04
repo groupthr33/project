@@ -111,18 +111,18 @@ class CourseService:
             for i in labs_list:
                 ta = i.ta
 
-                if not ta is None:
-                    lab_details = lab_details + f'\nLab section {i.section_id}:\n'+ \
+                if ta is not None:
+                    lab_details = lab_details + f'\nLab section {i.section_id}:\n' + \
                                   f'\tSchedule: {i.schedule}\n'+ \
                                   f'\tTA: {ta.name}\n'
 
                 else:
-                    lab_details = lab_details + f'\nLab section {i.section_id}:\n'+ \
-                                  f'\tSchedule: {i.schedule}\n'+ \
+                    lab_details = lab_details + f'\nLab section {i.section_id}:\n' + \
+                                  f'\tSchedule: {i.schedule}\n' + \
                                   f'\tTA: there is no assigned TA\n'
 
         else:
-            labs = labs = Lab.objects.filter(course=course, section_id__iexact=lab_section_id)
+            labs = Lab.objects.filter(course=course, section_id__iexact=lab_section_id)
 
             if labs.count() == 0:
                 return lab_details
@@ -131,7 +131,7 @@ class CourseService:
 
             ta = lab.ta
 
-            if not ta is None:
+            if ta is not None:
                 lab_details = f'Course {course_id}-{course_section}:'+ \
                               f'\nLab section {lab.section_id}:\n'+ \
                               f'\tSchedule: {lab.schedule}\n'+ \
