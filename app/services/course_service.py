@@ -65,32 +65,57 @@ class CourseService:
 
         return f"Lab {lab_section_id} for {course_id}-{course_section_id} created."
 
-    def view_course_assignments(self, course_id, course_section):
-        courses = Course.objects.filter(course_id__iexact=course_id, section__iexact=course_section)
+    def view_course_assignments(self,  requester, course_id = "all", course_section = "001"):
+        if course_id == "all":
+            courses = Course.objects.filter(instructor__username=requester)
 
-        if courses.count() == 0:
-            return f'Course {course_id}-{course_section} does not exist.'
+            assignments = "You are not assigned to any courses."
 
-        course = courses.first()
+            if not courses.count() == 0:
+                course_list = list(courses)
 
-        instructor = course.instructor
+                assignments = ""
 
-        instructor_name = "no instructor assigned to course"
+                for i in course_list:
+                    assignments = assignments + f'{i.course_id}-{i.section}:\n\tSchedule: {i.schedule}\n'
 
-        if instructor is not None:
-            instructor_name = instructor.name
+                    tas = TaCourse.objects.filter(course=i)
 
-        tas = TaCourse.objects.filter(course=course)
+                    ta_names = "\t\tno TAs assigned to course\n"
 
-        ta_names = "\tno TAs assigned to course\n"
+                    if not tas.count() == 0:
+                        ta_names = ""
 
-        if tas.count() != 0:
-            ta_names = ""
-            for i in tas:
-                ta_names = ta_names + "\t" + i.assigned_ta.name + \
-                           " - can be assigned to " + str(i.remaining_sections) + " more sections\n"
+                        for j in tas:
+                            ta_names = f'{ta_names}\t\t{j.assigned_ta.name}\n'
 
-        return f'{course.course_id}-{course.section}:\nInstructor: {instructor_name}\n\nTA(s):\n{ta_names}'
+                    assignments = assignments + f'\tTA(s):\n{ta_names}\n'
+        else:
+            courses = Course.objects.filter(course_id=course_id, section=course_section)
+
+            assignments = f'Course {course_id}-{course_section} does not exist.'
+
+            if not courses.count() == 0:
+                course = courses.first()
+
+                assignments = f'You are not assigned to Course {course_id}-{course_section}.'
+
+                if course.instructor is not None and course.instructor.username == requester:
+                    assignments = f'{course.course_id}-{course.section}:\n\tSchedule: {course.schedule}\n'
+
+                    tas = TaCourse.objects.filter(course=course)
+
+                    ta_names = "\t\tno TAs assigned to course\n"
+
+                    if tas.count() != 0:
+                        ta_names = ""
+
+                        for i in tas:
+                            ta_names = f'{ta_names}\t\t{i.assigned_ta.name}\n'
+
+                    assignments = assignments + f'\tTA(s):\n{ta_names}'
+
+        return assignments
 
     def view_lab_details(self, course_id, course_section, lab_section_id="all"):
         courses = Course.objects.filter(course_id__iexact=course_id, section__iexact=course_section)

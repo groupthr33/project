@@ -114,3 +114,18 @@ class TestViewLabDetails(TestCase):
         expected_response = "Course CS417-001 Lab section 803 does not exist."
 
         self.assertEqual(actual_response, expected_response)
+
+    def test_view_lab_details_not_supervisor_or_admin(self):
+        self.account.is_logged_in = False
+        self.account.save()
+
+        self.ta1.is_logged_in = True
+        self.ta1.save()
+
+        self.app.auth_service.current_account = self.ta1
+
+
+        actual_response = self.app.command("view_lab_details CS417 001")
+        expected_response = "You don't have privileges."
+
+        self.assertEqual(actual_response, expected_response)
