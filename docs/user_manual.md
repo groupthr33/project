@@ -123,6 +123,7 @@ a number of labs, the TA will be assigned as a grader. Can only be used by the S
 
 Create a lab section with id <u>lab_id</u> for course <u>course_id</u>-<u>course_section_id</u>.
 
+
 <br>
 <h5>NAME</h5>
 
@@ -130,12 +131,29 @@ Create a lab section with id <u>lab_id</u> for course <u>course_id</u>-<u>course
 
 <h5>SYNOPSIS</h5>
 
-<b>course_assignments</b> <u>course_id</u> <u>course_section_id</u>
+<b>course_assignments</b> <u>[course_id]</u> <u>[course_section_id]</u>
 
 <b>DESCRIPTION</b>
 
-Display the name of instructor and TA(s) assigned to course  <u>course_id</u>-<u>course_section_id</u>
-and how many more lab sections each TA can be assigned to.
+Display all courses the instructor is assigned to and the names of the TAs for those courses.
+If only the <u>[course_id]</u> is provided then the course section is defaulted to 001, then 
+display the names of the TAs for that specific course. If the <u>[course_id]</u> and <u>[course_section_id]</u>
+are provided then display the names of the TAs for that specific course.
+
+
+<br>
+<h5>NAME</h5>
+
+<b>view_lab_details</b> - view the lab details of a course
+
+<h5>SYNOPSIS</h5>
+
+<b>view_lab_details</b> <u>course_id</u> <u>course_section_id</u> <u>[lab_section_id]</u>
+
+<b>DESCRIPTION</b>
+
+Display all lab details for <u>course_id</u>-<u>course_section_id</u>. If <u>[lab_section_id]</u>
+is provided, then only display the lab details of that specific lab for <u>course_id</u>-<u>course_section_id</u>.
 
 
 <br>

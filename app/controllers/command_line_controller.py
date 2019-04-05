@@ -19,7 +19,7 @@ class CommandLineController:
             "assign_ta_lab": 4,
             "logout": 0,
             "assign_ins": 3,
-            "course_assignments": 2,
+            "course_assignments": 0,
             "view_lab_details": 2,
             "set_password": 2,
             "update_contact": 2
@@ -32,7 +32,7 @@ class CommandLineController:
             "cr_lab": 0xC,
             "assign_ins": 0x8,
             "assign_ta_lab": 0xA,
-            "course_assignments": 0xE,
+            "course_assignments": 0x2,
             "assign_ta_course": 0x8,
             "view_lab_details": 0xC,
             "set_password": 0xF,
@@ -116,11 +116,19 @@ class CommandLineController:
             return self.ta_service.assign_ta_to_course(args[0], args[1], args[2], remaining_sections)
 
         if command == "course_assignments":
-            if not self.is_args_length_correct(command, args):
-                return "course_assignments must have exactly 2 arguments. " \
-                       "Correct usage: course_assignments <course_id> <course_section_id>"
+            if not len(args) < 3:
+                return "course_assignments can only have 2 optional arguments. " \
+                       "Correct usage: course_assignments [course_id] [course_section_id]"
 
-            return self.course_service.view_course_assignments(args[0], args[1])
+            elif len(args) == 2:
+                return self.course_service.view_course_assignments(self.auth_service.get_current_username(),
+                                                               args[0], args[1])
+
+            elif len(args) == 1:
+                return self.course_service.view_course_assignments(self.auth_service.get_current_username(),
+                                                                   args[0])
+            else:
+                return self.course_service.view_course_assignments(self.auth_service.get_current_username())
 
         if command == "view_lab_details":
             if not len(args) > 1:

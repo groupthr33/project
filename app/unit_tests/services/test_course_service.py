@@ -131,19 +131,97 @@ class TestCourseService(TestCase):
         lab_found = Lab.objects.filter(course=self.course1, section_id__iexact="801").first()
         self.assertEqual(lab_assigned, lab_found)
 
-    def test_view_course_assignments_happy_path_with_instructor_and_TAs(self):
-        course = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section).first()
+    def test_view_course_assignments_happy_path_default_with_TAs(self):
+        self.course1.instructor = self.instructor
+        self.course1.save()
 
-        course.instructor = self.instructor
-        course.save()
+        self.course2.instructor = self.instructor
+        self.course2.save()
 
-        TaCourse.objects.create(course=course, assigned_ta=self.ta1)
-        TaCourse.objects.create(course=course, assigned_ta=self.ta2)
+        TaCourse.objects.create(course=self.course1, assigned_ta=self.ta1)
+        TaCourse.objects.create(course=self.course2, assigned_ta=self.ta2)
 
-        expected_response = "CS535-001:\nInstructor: instructor_name\n\n" \
-                            "TA(s):\n\tTA1_name - can be assigned to 0 more sections" \
-                            "\n\tTA2_name - can be assigned to 0 more sections\n"
-        actual_response = self.course_service.view_course_assignments(self.course_id, self.course_section)
+        expected_response = "CS535-001:\n" \
+                            "\tSchedule: TH12001315\n" \
+                            "\tTA(s):\n" \
+                            "\t\tTA1_name\n\n" \
+                            "CS337-001:\n" \
+                            "\tSchedule: MW12301345\n" \
+                            "\tTA(s):\n" \
+                            "\t\tTA2_name\n\n"
+        actual_response = self.course_service.view_course_assignments("theinstructor")
+        self.assertEqual(actual_response, expected_response)
+
+        courses = Course.objects.filter(instructor=self.instructor)
+        self.assertEqual(2, courses.count())
+
+        course_list = list(courses)
+
+        ta_list = []
+
+        for i in course_list:
+            self.assertEqual(i.instructor, self.instructor)
+
+            tas = TaCourse.objects.filter(course=i)
+
+            self.assertEqual(1, tas.count())
+
+            ta_list.append(tas.first().assigned_ta)
+
+        self.assertEqual(self.ta1, ta_list[0])
+        self.assertEqual(self.ta2, ta_list[1])
+
+    def test_view_course_assignments_happy_path_default_no_TAs(self):
+        self.course1.instructor = self.instructor
+        self.course1.save()
+
+        self.course2.instructor = self.instructor
+        self.course2.save()
+
+        expected_response = "CS535-001:\n" \
+                            "\tSchedule: TH12001315\n" \
+                            "\tTA(s):\n" \
+                            "\t\tno TAs assigned to course\n\n" \
+                            "CS337-001:\n" \
+                            "\tSchedule: MW12301345\n" \
+                            "\tTA(s):\n" \
+                            "\t\tno TAs assigned to course\n\n"
+        actual_response = self.course_service.view_course_assignments("theinstructor")
+        self.assertEqual(actual_response, expected_response)
+
+        courses = Course.objects.filter(instructor=self.instructor)
+        self.assertEqual(2, courses.count())
+
+        course_list = list(courses)
+
+        for i in course_list:
+            self.assertEqual(i.instructor, self.instructor)
+
+            tas = TaCourse.objects.filter(course=i)
+
+            self.assertEqual(0, tas.count())
+
+    def test_view_course_assignments_happy_path_default_no_courses(self):
+        expected_response = "You are not assigned to any courses."
+        actual_response = self.course_service.view_course_assignments("theinstructor")
+        self.assertEqual(actual_response, expected_response)
+
+        courses = Course.objects.filter(instructor=self.instructor)
+        self.assertEqual(0, courses.count())
+
+    def test_view_course_assignments_happy_path_specific_with_TAs(self):
+        self.course1.instructor = self.instructor
+        self.course1.save()
+
+        TaCourse.objects.create(course=self.course1, assigned_ta=self.ta1)
+        TaCourse.objects.create(course=self.course1, assigned_ta=self.ta2)
+
+        expected_response = "CS535-001:\n" \
+                            "\tSchedule: TH12001315\n" \
+                            "\tTA(s):\n" \
+                            "\t\tTA1_name\n" \
+                            "\t\tTA2_name\n"
+        actual_response = self.course_service.view_course_assignments("theinstructor", self.course_id, self.course_section)
         self.assertEqual(actual_response, expected_response)
 
         courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section)
@@ -160,13 +238,12 @@ class TestCourseService(TestCase):
         for i in range(2):
             self.assertEqual(tas_list[i].assigned_ta, self.ta_list[i])
 
-    def test_view_course_assignments_happy_path_with_instructor_no_TAs(self):
-        course = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section).first()
-        course.instructor = self.instructor
-        course.save()
+    def test_view_course_assignments_happy_path_specific_no_TAs(self):
+        self.course1.instructor = self.instructor
+        self.course1.save()
 
-        expected_response = "CS535-001:\nInstructor: instructor_name\n\nTA(s):\n\tno TAs assigned to course\n"
-        actual_response = self.course_service.view_course_assignments(self.course_id, self.course_section)
+        expected_response = "CS535-001:\n\tSchedule: TH12001315\n\tTA(s):\n\t\tno TAs assigned to course\n"
+        actual_response = self.course_service.view_course_assignments("theinstructor", self.course_id, self.course_section)
         self.assertEqual(actual_response, expected_response)
 
         courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section)
@@ -178,24 +255,24 @@ class TestCourseService(TestCase):
         tas = TaCourse.objects.filter(course=course)
         self.assertEqual(0, tas.count())
 
-    def test_view_course_assignments_happy_path_with_no_instructor_and_no_TAs(self):
-        expected_response = "CS535-001:\nInstructor: no instructor assigned to course\n\n" \
-                            "TA(s):\n\tno TAs assigned to course\n"
-        actual_response = self.course_service.view_course_assignments(self.course_id, self.course_section)
+    def test_view_course_assignments_instructor_not_assigned_to_course(self):
+        unassigned_instructor = Account.objects.create(username='unassigned_instructor', password='thepassword',
+                                                       name='instructor_name', is_logged_in=False, roles=0x2)
+
+        unassigned_instructor.save()
+
+        actual_response = self.course_service.view_course_assignments("unassigned_instructor", "CS535", "001")
+        expected_response = "You are not assigned to Course CS535-001."
+
         self.assertEqual(actual_response, expected_response)
 
-        courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section)
-        self.assertEqual(1, courses.count())
+        courses = Course.objects.filter(instructor=unassigned_instructor)
 
-        course = courses.first()
-        self.assertEqual(course.instructor, None)
-
-        tas = TaCourse.objects.filter(course=course)
-        self.assertEqual(0, tas.count())
+        self.assertEqual(0, courses.count())
 
     def test_view_course_assignments_course_dne(self):
         expected_response = "Course CS417-001 does not exist."
-        actual_response = self.course_service.view_course_assignments("CS417", "001")
+        actual_response = self.course_service.view_course_assignments("theinstructor", "CS417", "001")
         self.assertEqual(expected_response, actual_response)
 
         courses = Course.objects.filter(course_id__iexact="CS417", section__iexact="001")
@@ -203,7 +280,7 @@ class TestCourseService(TestCase):
 
     def test_view_course_assignments_section_dne(self):
         expected_response = "Course CS535-002 does not exist."
-        actual_response = self.course_service.view_course_assignments(self.course_id, "002")
+        actual_response = self.course_service.view_course_assignments("theinstructor", self.course_id, "002")
         self.assertEqual(actual_response, expected_response)
 
         courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact="002")
