@@ -22,7 +22,8 @@ class CommandLineController:
             "course_assignments": 0,
             "view_lab_details": 2,
             "set_password": 2,
-            "update_contact": 2
+            "update_contact": 2,
+            "view_account_details": 1
         }
 
         self.req_permissions = defaultdict(lambda: 0x0, {
@@ -36,7 +37,8 @@ class CommandLineController:
             "assign_ta_course": 0x8,
             "view_lab_details": 0xC,
             "set_password": 0xF,
-            "update_contact": 0xF
+            "update_contact": 0xF,
+            "view_account_details": 0xC
         })
 
     def command(self, command_with_args):
@@ -152,6 +154,16 @@ class CommandLineController:
                 return "update_contact must have exactly 2 arguments. Correct usage: update_contact <field> <new_value>"
 
             return self.account_service.update_contact_info(self.auth_service.get_current_username(), args[0], args[1])
+
+        if command == "view_account_details":
+            if not len(args) < 2:
+                return "view_account_details must have at most 1 argument> Correct usage: " \
+                       "view_account_details <username>"
+
+            if len(args) == 1:
+                return self.account_service.view_account_details(args[0])
+            else:
+                return self.account_service.view_accounts()
 
         return "There is no service to handle your request."
 

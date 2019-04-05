@@ -124,7 +124,6 @@ class TestViewLabDetails(TestCase):
 
         self.app.auth_service.current_account = self.ta1
 
-
         actual_response = self.app.command("view_lab_details CS417 001")
         expected_response = "You don't have privileges."
 

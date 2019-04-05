@@ -33,3 +33,25 @@ class AccountService:
         account.save()
 
         return f"Your {field} has been updated to {new_value}"
+
+    def view_account_details(self, username):
+        accounts = Account.objects.filter(username__iexact=username)
+        if accounts.count() == 0:
+            return f"User does not exist."
+        account = accounts.first()
+
+        return self.create_acc_string(account)
+
+    def create_acc_string(self, account):
+        return f"Account username: {account.username}\nName: {account.name}\n" \
+            f"Roles: {AccountUtil.decode_roles(account.roles)}\nPhone Number: {account.phone_number}\n" \
+            f"Address: {account.address}"
+
+    def view_accounts(self):
+        accounts = Account.objects.all()
+
+        info = ""
+        for account in accounts:
+            info += self.create_acc_string(account) + "\n\n"
+
+        return info
