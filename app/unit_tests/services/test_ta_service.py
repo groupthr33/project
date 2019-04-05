@@ -89,9 +89,8 @@ class TestTaService(TestCase):
         TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=2)
 
         expected_response = "test_ta assigned to CS417-001, lab(s) 801. 1 section(s) remaining for test_ta."
-        actual_response = \
-            self.ta_service.assign_ta_to_labs(
-                self.ta_user_name, self.course_id, self.course_section, [self.lab_section])
+        actual_response = self.ta_service.assign_ta_to_labs(
+                self.ta_user_name, self.course_id, self.course_section, [self.lab_section], "the_user")
         self.assertEqual(actual_response, expected_response)
 
         lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
@@ -104,9 +103,8 @@ class TestTaService(TestCase):
         Lab.objects.create(section_id="802", schedule="TR09301045", course=self.course)
 
         expected_response = "test_ta assigned to CS417-001, lab(s) 801 802. 0 section(s) remaining for test_ta."
-        actual_response = \
-            self.ta_service.assign_ta_to_labs(
-                self.ta_user_name, self.course_id, self.course_section, [self.lab_section, "802"])
+        actual_response = self.ta_service.assign_ta_to_labs(
+                self.ta_user_name, self.course_id, self.course_section, [self.lab_section, "802"], "the_user")
         self.assertEqual(actual_response, expected_response)
 
         lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
@@ -119,7 +117,8 @@ class TestTaService(TestCase):
 
         expected_response = "TA with user_name other_ta does not exist."
         actual_response = \
-            self.ta_service.assign_ta_to_labs("other_ta", self.course_id, self.course_section, [self.lab_section])
+            self.ta_service.assign_ta_to_labs("other_ta", self.course_id, self.course_section, [self.lab_section],
+                                              "the_user")
         self.assertEqual(expected_response, actual_response)
 
         lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
@@ -130,7 +129,8 @@ class TestTaService(TestCase):
     def test_assign_ta_to_labs_course_dne(self):
         expected_response = "Course with ID CS337-001 does not exist."
         actual_response = \
-            self.ta_service.assign_ta_to_labs(self.ta_user_name, "CS337", self.course_section, [self.lab_section])
+            self.ta_service.assign_ta_to_labs(self.ta_user_name, "CS337", self.course_section, [self.lab_section],
+                                              "the_user")
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_to_labs_lab_dne(self):
@@ -138,7 +138,8 @@ class TestTaService(TestCase):
 
         expected_response = "Lab 811 for course CS417-001 does not exist."
         actual_response = \
-            self.ta_service.assign_ta_to_labs(self.ta_user_name, self.course_id, self.course_section, ["811"])
+            self.ta_service.assign_ta_to_labs(self.ta_user_name, self.course_id, self.course_section, ["811"],
+                                              "the_user")
         self.assertEqual(expected_response, actual_response)
 
         ta_course_rel = TaCourse.objects.filter(course=self.course, assigned_ta=self.ta).first()
@@ -148,18 +149,16 @@ class TestTaService(TestCase):
         TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=2)
 
         expected_response = "the_user does not have the ta role."
-        actual_response = \
-            self.ta_service.assign_ta_to_labs(
-                self.current_user.username, self.course_id, self.course_section, [self.lab_section])
+        actual_response = self.ta_service.assign_ta_to_labs(
+                self.current_user.username, self.course_id, self.course_section, [self.lab_section], "the_user")
         self.assertEqual(expected_response, actual_response)
 
         lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
         self.assertEqual(None, lab.ta)
 
     def test_assign_ta_to_labs_not_assigned_to_course(self):
-        actual_response = \
-            self.ta_service.assign_ta_to_labs(
-                self.ta_user_name, self.course_id, self.course_section, [self.lab_section])
+        actual_response = self.ta_service.assign_ta_to_labs(
+                self.ta_user_name, self.course_id, self.course_section, [self.lab_section], "the_user")
         expected_response = "test_ta is not assigned to course CS417-001."
         self.assertEqual(expected_response, actual_response)
 
@@ -169,9 +168,8 @@ class TestTaService(TestCase):
     def test_assign_ta_to_labs_no_sections_remaining(self):
         TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=0)
 
-        actual_response = \
-            self.ta_service.assign_ta_to_labs(
-                self.ta_user_name, self.course_id, self.course_section, [self.lab_section])
+        actual_response = self.ta_service.assign_ta_to_labs(
+                self.ta_user_name, self.course_id, self.course_section, [self.lab_section], "the_user")
         expected_response = "test_ta cannot TA any more lab sections."
         self.assertEqual(expected_response, actual_response)
 
@@ -185,13 +183,27 @@ class TestTaService(TestCase):
         self.lab.ta = self.ta
         self.lab.save()
 
-        actual_response = \
-            self.ta_service.assign_ta_to_labs(
-                self.ta_user_name, self.course_id, self.course_section, [self.lab_section])
+        actual_response = self.ta_service.assign_ta_to_labs(
+                self.ta_user_name, self.course_id, self.course_section, [self.lab_section], "the_user")
         expected_response = "test_ta is already assigned to CS417-001, lab 801."
         self.assertEqual(expected_response, actual_response)
 
         lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
         ta_course_rel = TaCourse.objects.filter(course=self.course, assigned_ta=self.ta).first()
         self.assertEqual(self.ta, lab.ta)
+        self.assertEqual(2, ta_course_rel.remaining_sections)
+
+    def test_assign_ta_to_labs_not_instructor_for_course(self):
+        Account.objects.create(username='anotherinst', password='p', name='n', is_logged_in=True, roles=0x2)
+
+        TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=2)
+
+        expected_response = "anotherinst is not the instructor for CS417-001."
+        actual_response = self.ta_service.assign_ta_to_labs(
+                self.ta_user_name, self.course_id, self.course_section, [self.lab_section], "anotherinst")
+        self.assertEqual(actual_response, expected_response)
+
+        lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
+        ta_course_rel = TaCourse.objects.filter(course=self.course, assigned_ta=self.ta).first()
+        self.assertEqual(None, lab.ta)
         self.assertEqual(2, ta_course_rel.remaining_sections)

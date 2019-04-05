@@ -156,7 +156,7 @@ class TestCommandLineController(TestCase):
     def test_assign_ta_lab_happy_path(self):
         expected_response = "assign ta to labs result"
         actual_response = self.controller.command("assign_ta_lab test_ta CS417 001 801")
-        self.ta_service.assign_ta_to_labs.assert_called_with("test_ta", "CS417", "001", ["801"])
+        self.ta_service.assign_ta_to_labs.assert_called_with("test_ta", "CS417", "001", ["801"], "theusername")
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_lab_logged_out(self):

@@ -38,8 +38,6 @@ class TestAccountService(TestCase):
         self.assertEqual(name, accounts.first().name)
         self.assertEqual(0x5, accounts.first().roles)
 
-    # todo : test multiroles one invalid
-
     def test_cr_account_already_exists(self):
         username = "jbarney"
         name = "Joe"
@@ -60,6 +58,18 @@ class TestAccountService(TestCase):
         username = "jbarney"
         name = "Joe"
         roles = ["superman"]
+
+        expected_response = "superman is not a valid role. Valid roles are: supervisor, admin, instructor, and ta."
+        actual_response = self.account_service.create_account(username, name, roles)
+        self.assertEqual(expected_response, actual_response)
+
+        accounts = Account.objects.filter(username__iexact=username)
+        self.assertEqual(0, accounts.count())
+
+    def test_cr_account_multi_role_invalid_role(self):
+        username = "jbarney"
+        name = "Joe"
+        roles = ["superman", "ta"]
 
         expected_response = "superman is not a valid role. Valid roles are: supervisor, admin, instructor, and ta."
         actual_response = self.account_service.create_account(username, name, roles)

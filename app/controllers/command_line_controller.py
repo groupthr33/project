@@ -102,7 +102,8 @@ class CommandLineController:
                 return "assign_ta_lab must have at least 4 arguments. Correct usage: assign_ta_lab " \
                        "<ta_user_name> <course_id> <course_section> <lab_sections...>"
 
-            return self.ta_service.assign_ta_to_labs(args[0], args[1], args[2], args[3::])
+            return self.ta_service.assign_ta_to_labs(args[0], args[1], args[2], args[3::],
+                                                     self.auth_service.get_current_username())
 
         if command == "assign_ta_course":
             if not len(args) > 2:

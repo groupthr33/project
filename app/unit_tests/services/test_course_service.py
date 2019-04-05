@@ -17,7 +17,6 @@ class TestCourseService(TestCase):
 
         self.lab1 = Lab.objects.create(section_id='801', schedule='W12001315', course=self.course2)
         self.lab2 = Lab.objects.create(section_id='802', schedule='M12001315', course=self.course2)
-
         self.lab_id1 = "801"
         self.lab_id2 = "802"
 
@@ -25,10 +24,7 @@ class TestCourseService(TestCase):
 
         self.ta1 = Account.objects.create(username="TA1", password="p", name="TA1_name", is_logged_in=False, roles=0x1)
         self.ta2 = Account.objects.create(username="TA2", password="p", name="TA2_name", is_logged_in=False, roles=0x1)
-
-        self.ta_list = []
-        self.ta_list.append(self.ta1)
-        self.ta_list.append(self.ta2)
+        self.ta_list = [self.ta1, self.ta2]
 
         self.course_id = "CS535"
         self.course_section = "001"
@@ -92,7 +88,20 @@ class TestCourseService(TestCase):
         course = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section).first()
         self.assertEqual(None, course.instructor)
 
-    # todo: test another inst assigned, remove but notify
+    def test_assign_instructor_already_assigned(self):
+        instructor = Account.objects.create(username='anotherinst', password='p', name='n', is_logged_in=False,
+                                            roles=0x2)
+        self.course1.instructor = instructor
+        self.course1.save()
+
+        expected_response = "theinstructor has been assigned as the instructor for CS535-001. anotherinst was " \
+                            "removed as instructor."
+        actual_response = \
+            self.course_service.assign_instructor(self.instructor_user_name, self.course_id, self.course_section)
+        self.assertEqual(expected_response, actual_response)
+
+        course = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section).first()
+        self.assertEqual(self.instructor, course.instructor)
 
     def test_create_lab_section_happy_path(self):
         expected_response = "Lab 801 for CS535-001 created."
@@ -105,8 +114,7 @@ class TestCourseService(TestCase):
 
     def test_create_lab_section_course_dne(self):
         expected_response = "Course CS417-001 does not exist."
-        actual_response = self.course_service.create_lab_section("801", "CS417", self.course_section,
-                                                                 self.schedule)
+        actual_response = self.course_service.create_lab_section("801", "CS417", self.course_section, self.schedule)
         self.assertEqual(actual_response, expected_response)
 
         labs = Lab.objects.filter(course=self.course1, section_id__iexact='801')
@@ -136,7 +144,6 @@ class TestCourseService(TestCase):
                             "TA(s):\n\tTA1_name - can be assigned to 0 more sections" \
                             "\n\tTA2_name - can be assigned to 0 more sections\n"
         actual_response = self.course_service.view_course_assignments(self.course_id, self.course_section)
-
         self.assertEqual(actual_response, expected_response)
 
         courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section)
@@ -155,13 +162,11 @@ class TestCourseService(TestCase):
 
     def test_view_course_assignments_happy_path_with_instructor_no_TAs(self):
         course = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section).first()
-
         course.instructor = self.instructor
         course.save()
 
         expected_response = "CS535-001:\nInstructor: instructor_name\n\nTA(s):\n\tno TAs assigned to course\n"
         actual_response = self.course_service.view_course_assignments(self.course_id, self.course_section)
-
         self.assertEqual(actual_response, expected_response)
 
         courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section)
@@ -177,7 +182,6 @@ class TestCourseService(TestCase):
         expected_response = "CS535-001:\nInstructor: no instructor assigned to course\n\n" \
                             "TA(s):\n\tno TAs assigned to course\n"
         actual_response = self.course_service.view_course_assignments(self.course_id, self.course_section)
-
         self.assertEqual(actual_response, expected_response)
 
         courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section)
@@ -192,7 +196,6 @@ class TestCourseService(TestCase):
     def test_view_course_assignments_course_dne(self):
         expected_response = "Course CS417-001 does not exist."
         actual_response = self.course_service.view_course_assignments("CS417", "001")
-
         self.assertEqual(expected_response, actual_response)
 
         courses = Course.objects.filter(course_id__iexact="CS417", section__iexact="001")
@@ -201,7 +204,6 @@ class TestCourseService(TestCase):
     def test_view_course_assignments_section_dne(self):
         expected_response = "Course CS535-002 does not exist."
         actual_response = self.course_service.view_course_assignments(self.course_id, "002")
-
         self.assertEqual(actual_response, expected_response)
 
         courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact="002")
@@ -210,7 +212,6 @@ class TestCourseService(TestCase):
     def test_view_lab_details_default_happy_path_with_TAs(self):
         self.lab1.ta = self.ta1
         self.lab2.ta = self.ta2
-
         self.lab1.save()
         self.lab2.save()
 
@@ -226,18 +227,11 @@ class TestCourseService(TestCase):
         self.assertEqual(actual_response, expected_response)
 
         labs = Lab.objects.filter(course=self.course2)
-
         self.assertEqual(2, labs.count())
 
         labs_list = list(labs)
-
-        expected_list = []
-        expected_list.append(self.lab1)
-        expected_list.append(self.lab2)
-
-        for i in range(2):
-            self.assertEqual(expected_list[i], labs_list[i])
-
+        expected_list = [self.lab1, self.lab2]
+        self.assertEqual(expected_list, labs_list)
 
     def test_view_lab_details_default_happy_path_no_TAs(self):
         actual_response = self.course_service.view_lab_details("CS337", "001")
@@ -252,21 +246,14 @@ class TestCourseService(TestCase):
         self.assertEqual(actual_response, expected_response)
 
         labs = Lab.objects.filter(course=self.course2)
-
         self.assertEqual(2, labs.count())
 
         labs_list = list(labs)
-
-        expected_list = []
-        expected_list.append(self.lab1)
-        expected_list.append(self.lab2)
-
-        for i in range(2):
-            self.assertEqual(expected_list[i], labs_list[i])
+        expected_list = [self.lab1, self.lab2]
+        self.assertEqual(expected_list, labs_list)
 
     def test_view_lab_details_specific_happy_path_with_TA(self):
         self.lab1.ta = self.ta1
-
         self.lab1.save()
 
         actual_response = self.course_service.view_lab_details("CS337", "001", self.lab_id1)
@@ -278,11 +265,9 @@ class TestCourseService(TestCase):
         self.assertEqual(actual_response, expected_response)
 
         labs = Lab.objects.filter(course=self.course2, section_id__iexact=self.lab_id1)
-
         self.assertEqual(1, labs.count())
 
         lab = labs.first()
-
         self.assertEqual(self.lab1, lab)
 
     def test_view_lab_details_specific_happy_path_no_TA(self):
@@ -295,39 +280,31 @@ class TestCourseService(TestCase):
         self.assertEqual(actual_response, expected_response)
 
         labs = Lab.objects.filter(course=self.course2, section_id__iexact=self.lab_id1)
-
         self.assertEqual(1, labs.count())
 
         lab = labs.first()
-
         self.assertEqual(self.lab1, lab)
 
     def test_view_lab_details_course_dne(self):
         actual_response = self.course_service.view_lab_details("CS417", "001")
         expected_response = "Course CS417-001 does not exist."
-
         self.assertEqual(actual_response, expected_response)
 
         courses = Course.objects.filter(course_id__iexact="CS417", section__iexact="001")
-
         self.assertEqual(0, courses.count())
 
     def test_view_lab_details_course_no_labs(self):
         actual_response = self.course_service.view_lab_details(self.course_id, self.course_section)
         expected_response = "Course CS535-001 does not have any lab sections."
-
         self.assertEqual(actual_response, expected_response)
 
         labs = Lab.objects.filter(course=self.course1)
-
         self.assertEqual(0, labs.count())
 
     def test_view_lab_details_lab_dne(self):
         actual_response = self.course_service.view_lab_details("CS337", "001", "803")
         expected_response = "Course CS337-001 Lab section 803 does not exist."
-
         self.assertEqual(actual_response, expected_response)
 
         labs = Lab.objects.filter(course=self.course2, section_id__iexact="803")
-
         self.assertEqual(0, labs.count())
