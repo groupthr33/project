@@ -144,3 +144,37 @@ class CourseService:
                               f'\tTA: there is no assigned TA\n'
 
         return lab_details
+
+    def view_courses(self):
+        courses = ""
+        instructor = "No instructor assigned"
+        allcourses = Course.objects.all()
+        for i in allcourses:
+            if i.instructor is not None:
+                instructor = i.instructor
+            courses += courses + 'Course ID#: ' + i.course_id \
+                + " Course Name: " + i.name + " Instructor: " + instructor + "\n"
+        return courses
+
+    def view_specified_courses(self, courseid):
+        courses = Course.objects.filter(course_id=courseid)
+
+        if courses.count() == 0:
+            return f'Course {courseid} does not exist.'
+
+        course = courses.first()
+
+        tas = TaCourse.objects.filter(course=course)
+
+        ta_names = "No TAs are assigned"
+
+        if tas.count() != 0:
+            ta_names = ""
+            for i in tas:
+                ta_names = ta_names + " "
+
+        info = 'Course ID#: ' + course.course_id + "Course Name: " + course.name + " Section: " + \
+               course.section + " Schedule: " + course.schedule + " Instructor: " + course.instructor + \
+        "Assigned TAs: " + ta_names
+
+        return info
