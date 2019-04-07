@@ -23,7 +23,11 @@ class TestTaService(TestCase):
         self.ta = Account.objects.create(
             username=self.ta_user_name, password="p", name="n", is_logged_in=False, roles=0x1)
 
-        self.lab = Lab.objects.create(section_id=self.lab_section, schedule="MW09301045", course=self.course)
+        self.instructor = Account.objects.create(username="theinstructor", password="p", name="n", is_logged_in=False
+                                                 , roles=0x2)
+
+        self.lab = Lab.objects.create(section_id=self.lab_section, schedule="MW09301045", course=self.course,
+                                      ta=self.ta)
 
         self.ta_service = TaService()
 
@@ -195,53 +199,82 @@ class TestTaService(TestCase):
         ta_course_rel = TaCourse.objects.filter(course=self.course, assigned_ta=self.ta).first()
         self.assertEqual(self.ta, lab.ta)
         self.assertEqual(2, ta_course_rel.remaining_sections)
+
     def test_view_ta_assign_invalid_course(self):
-        TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=0)
-
         expected_response = "CS351 does not exist."
-        actual_response = self.ta_service.view_ta_assignment("CS351","801")
+        actual_response = self.ta_service.view_ta_assignment(self.current_user.username, "CS351")
 
-        self.assertEqual(expected_response,actual_response)
-
-    def test_view_ta_assign_no_lab(self):
-        TaCourse.objects.create(course=self.course, assigned_ta=self.ta_user_name, remaining_sections=0)
-
-        expected_response = "CS351 has no labs attached to it."
-        actual_response = self.ta_service.view_ta_assignment(self.course, "801")
-
-        self.assertEqual(expected_response,actual_response)
+        self.assertEqual(expected_response, actual_response)
 
     def test_view_ta_assign_invalid_instructor(self):
         Course.objects.create(course="CS535", section="001", name="'Intro to Software Engineering'",
                               schedule="MW12301345", instructor="theinstructor")
+        Account.objects.create(
+            username="ins_user", password="p", name="n", is_logged_in=False, roles=0x2)
 
         expected_response = "You are not assigned to this course."
+        actual_response = self.ta_service.view_ta_assignment("ins_user", "CS535")
+
+        self.assertEqual(expected_response, actual_response)
 
     def test_view_ta_assign_invalid_ta(self):
+        Account.objects.create(
+            username="ta_user", password="p", name="n", is_logged_in=False, roles=0x1)
 
         expected_response = "You are not assigned to this course."
+        actual_response = self.ta_service.view_ta_assignment("ta_user", self.course_id)
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_view_ta_assign_admin(self):
+        TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=0)
+
+        expected_response = "The following are TAs in CS535:[test_ta - 801]."
+        actual_response = self.ta_service.view_ta_assignment(self.current_user.username, self.course)
+
+        self.assertEqual(expected_response, actual_response)
 
     def test_view_ta_assign_instructor(self):
-        Course.objects.create(course="CS535",section="001",name="'Intro to Software Engineering'",
-                              schedule="MW12301345",instructor="theinstructor")
+        Course.objects.create(course="CS535", section="001", name="'Intro to Software Engineering'",
+                              schedule="MW12301345", instructor="theinstructor")
 
-        expected_response = "You are not assigned to this course."
-        actual_response = self.ta_service.view_ta_assignment(self.course, self.course_section)
+        TaCourse.objects.create(remaining_sections=0, course=self.course, assigned_ta=self.ta)
+
+        expected_response = "The following are TAs in CS535:[test_ta - 801]."
+        actual_response = self.ta_service.view_ta_assignment("theinstructor", "CS535")
 
         self.assertEqual(expected_response, actual_response)
 
     def test_view_ta_assign_ta(self):
-        TaCourse.objects.create(course=self.course, assigned_ta=self.ta_user_name, remaining_sections=0)
+        TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=0)
 
-        expected_response = "The following are TAs in CS417 001: test_ta."
-        actual_response = self.ta_service.view_ta_assignment(self.course, self.course_section)
+        expected_response = "The following are TAs in CS535:[test_ta - 801]."
+        actual_response = self.ta_service.view_ta_assignment(self.ta_user_name, self.course)
 
         self.assertEqual(expected_response, actual_response)
 
     def test_view_ta_assign_no_tas(self):
-        TaCourse.objects.create(course=self.course, remaining_sections=0)
 
         expected_response = "No TAs are assigned to this course."
-        actual_response = self.ta_service.view_ta_assignment(self.course_id, self.course_section)
+        actual_response = self.ta_service.view_ta_assignment(self.current_user.username, self.course_id)
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_view_ta_assign_multiple_labs_same_ta(self):
+        TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=0)
+        Lab.objects.create(section_id="802", schedule="MW09301045", course=self.course, ta=self.ta)
+
+        expected_response = "The following are TAs in CS535:[test_ta - 801, 802]."
+        actual_response = self.ta_service.view_ta_assignment(self.ta_user_name, self.course)
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_view_ta_assign_ta_grader(self):
+        self.grader = Account.objects.create(
+            username="the_grader", password="p", name="n", is_logged_in=False, roles=0x1)
+        TaCourse.objects.create(course=self.course, assigned_ta=self.grader, remaining_sections=0)
+
+        expected_response = "The following are TAs in CS535:[the_grader - grader]"
+        actual_response = self.ta_service.view_ta_assignment(self.current_user, self.course)
 
         self.assertEqual(expected_response, actual_response)

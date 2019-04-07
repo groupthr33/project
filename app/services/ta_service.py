@@ -88,29 +88,40 @@ class TaService:
 
         return f"{ta_user_name} assigned to {course_id}-{course_section}, lab(s) {assigned_labs_string.strip()}. {ta_course_rel.remaining_sections} section(s) remaining for {ta_user_name}."
 
-    def view_ta_assignment(self, course_id, course_section):
-        ta_assign = []
+    def view_ta_assignment(self, curr_user, course_id):
+        user = Account.objects.filter(username=curr_user)
+        prof = Course.objects.filter(course_id=course_id, instructor=curr_user)
+        course = Course.objects.filter(course_id=course_id)
         ta_course = TaCourse.objects.filter(course=course_id)
-        ta_lab = Lab.objects.filter(course=course_id)
+        is_ta = ta_course.objects.filter(ta=curr_user)
 
+        if not user.roles < 0x4:
+            if prof.count == 0 and is_ta == 0:
+                return f"You do not have permissions to view the TA assignments for {course_id}"
 
-        if ta_course.count() == 0:
+        if course.count() == 0:
             return f"{course_id} does not exist."
 
-        if ta_lab.count == 0:
-            return f"{course_id} has no labs attached to it"
+        ta_assign = []
+        ta_lab = Lab.objects.filter(course=course_id)
 
-        for course in ta_course:
-            ta = course.assigned_ta
-            ta_assign.extend(ta)
+        for lecture in ta_course:
+            ta = lecture.assigned_ta
+            lab = ta_lab.objects.filter(ta=ta)
+            if lab.count == 0:
+                labs = "grader"
+            else:
+                labs = []
+                for lb in lab:
+                    labs.extend(lb.section_id)
+                labs = ' ,'.join(lab)
 
-        for lab in ta_lab:
-            ta = lab.ta
-            ta_assign.extend(ta)
+            pair = "["+str(ta)+" - "+str(labs)+"]"
+            ta_assign.extend(pair)
 
         if ta_assign.count == 0:
             return f"No TAs are assigned to this course."
 
         names = ' ,'.join(ta_assign)
 
-        return f"The following are TAs in {course_id} {course_section}:{names}."
+        return f"The following are TAs in {course_id}:{names}."
