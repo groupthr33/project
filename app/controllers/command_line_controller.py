@@ -37,6 +37,7 @@ class CommandLineController:
             "assign_ta_course": 0x8,
             "view_lab_details": 0xC,
             "set_password": 0xF,
+            "view_courses": 0xC,
             "update_contact": 0xF,
             "view_account_details": 0xC
         })
@@ -148,6 +149,14 @@ class CommandLineController:
                        "Correct usage: set_password <old_password> <new_password>"
 
             return self.auth_service.set_password(self.auth_service.get_current_username(), args[0], args[1])
+
+        if command == "view_courses":
+            if len(args) == 0:
+                return self.course_service.view_courses()
+            if len(args) == 1:
+                return self.course_service.view_specified_courses(args)
+            else:
+                return "view_courses must have one or zero arguments."
 
         if command == "update_contact":
             if not self.is_args_length_correct(command, args):
