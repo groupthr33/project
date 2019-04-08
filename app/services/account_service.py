@@ -19,11 +19,14 @@ class AccountService:
 
     def update_contact_info(self, username, field, new_value):
         accounts = Account.objects.filter(username__iexact=username)
+
+        valid_fields=["phone_number", "address", "name"]
+
         if accounts.count() == 0:
             return f"User does not exist."
         account = accounts.first()
 
-        if not hasattr(account, field):
+        if not field in valid_fields:
             return "Invalid field."
 
         setattr(account, field, new_value)
