@@ -6,7 +6,6 @@ class AccountService:
 
     def create_account(self, username, name, roles):
         accounts = Account.objects.filter(username__iexact=username)
-
         if accounts.count() != 0:
             return f"Account with username {username} already exists."
 
@@ -20,10 +19,8 @@ class AccountService:
 
     def update_contact_info(self, username, field, new_value):
         accounts = Account.objects.filter(username__iexact=username)
-
         if accounts.count() == 0:
             return f"User does not exist."
-
         account = accounts.first()
 
         if not hasattr(account, field):

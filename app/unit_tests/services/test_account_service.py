@@ -110,3 +110,5 @@ class TestAccountService(TestCase):
         expected_response = "User does not exist."
         actual_response = self.account_service.update_contact_info(username, field, new_value)
         self.assertEqual(expected_response, actual_response)
+
+    # todo: write view account detail test

@@ -157,8 +157,8 @@ class CommandLineController:
 
         if command == "view_account_details":
             if not len(args) < 2:
-                return "view_account_details must have at most 1 argument> Correct usage: " \
-                       "view_account_details <username>"
+                return "view_account_details must have at most 1 argument. Correct usage: " \
+                       "view_account_details [username]"
 
             if len(args) == 1:
                 return self.account_service.view_account_details(args[0])

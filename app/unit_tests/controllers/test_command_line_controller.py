@@ -22,11 +22,13 @@ class TestCommandLineController(TestCase):
         self.account_service = Mock()
         self.account_service.create_account = Mock(return_value="create account result")
         self.account_service.update_contact_info = Mock(return_value="update contact info result")
+        self.account_service.view_account_details = Mock(return_value="view_account_details result")
 
         self.course_service = Mock()
         self.course_service.create_course = Mock(return_value="create course result")
         self.course_service.assign_instructor = Mock(return_value="assign instructor result")
         self.course_service.create_lab_section = Mock(return_value="create lab section result")
+        self.course_service.view_lab_details = Mock(return_value="view lab details result")
 
         self.ta_service = Mock()
         self.ta_service.assign_ta_to_labs = Mock(return_value="assign ta to labs result")
@@ -269,3 +271,72 @@ class TestCommandLineController(TestCase):
         self.account_service.update_contact_info.assert_not_called()
         self.assertEqual(expected_response, actual_response)
 
+    def test_view_labs_details_happy_path(self):
+        expected_response = "view lab details result"
+        actual_response = self.controller.command("view_lab_details CS417 001")
+        self.course_service.view_lab_details.assert_called_with("CS417", "001")
+        self.assertEqual(expected_response, actual_response)
+
+    def test_view_labs_details_with_lab_section(self):
+        expected_response = "view lab details result"
+        actual_response = self.controller.command("view_lab_details CS417 001 801")
+        self.course_service.view_lab_details.assert_called_with("CS417", "001", "801")
+        self.assertEqual(expected_response, actual_response)
+
+    def test_view_lab_details_logged_out(self):
+        self.auth_service.is_logged_in = Mock(return_value=False)
+
+        expected_response = "You need to log in first."
+        actual_response = self.controller.command("view_lab_details CS417 001")
+        self.course_service.view_lab_details.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_view_lab_details_unauthorized(self):
+        self.auth_service.is_authorized = Mock(return_value=False)
+
+        expected_response = "You don't have privileges."
+        actual_response = self.controller.command("view_lab_details CS417 001")
+        self.course_service.view_lab_details.assert_not_called()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_view_lab_details_wrong_number_of_arguments(self):
+        expected_response = "view_lab_details must have at least 2 arguments. " \
+                            "Correct usage: view_lab_details <course_id> <course_section_id> [lab_section_id]"
+        actual_response = self.controller.command("view_lab_details CS417")
+        self.course_service.view_lab_details.assert_not_called()
+    #     self.assertEqual(expected_response, actual_response)
+    #
+    # def test_view_account_details_happy_path(self):
+    #     expected_response = "view account details result"
+    #     actual_response = self.controller.command("view_lab_details CS417 001")
+    #     self.course_service.view_lab_details.assert_called_with("CS417", "001")
+    #     self.assertEqual(expected_response, actual_response)
+    #
+    # def test_view_account_details_with_username(self):
+    #     expected_response = "view account details result"
+    #     actual_response = self.controller.command("view_lab_details CS417 001 801")
+    #     self.course_service.view_lab_details.assert_called_with("CS417", "001", "801")
+    #     self.assertEqual(expected_response, actual_response)
+    #
+    # def test_view_account_details_logged_out(self):
+    #     self.auth_service.is_logged_in = Mock(return_value=False)
+    #
+    #     expected_response = "You need to log in first."
+    #     actual_response = self.controller.command("view_lab_details CS417 001")
+    #     self.course_service.view_lab_details.assert_not_called()
+    #     self.assertEqual(expected_response, actual_response)
+    #
+    # def test_view_account_details_unauthorized(self):
+    #     self.auth_service.is_authorized = Mock(return_value=False)
+    #
+    #     expected_response = "You don't have privileges."
+    #     actual_response = self.controller.command("view_lab_details CS417 001")
+    #     self.course_service.view_lab_details.assert_not_called()
+    #     self.assertEqual(expected_response, actual_response)
+    #
+    # def test_view_account_details_wrong_number_of_arguments(self):
+    #     expected_response = "view_lab_details must have at least 2 arguments. " \
+    #                         "Correct usage: view_lab_details <course_id> <course_section_id> [lab_section_id]"
+    #     actual_response = self.controller.command("view_lab_details CS417")
+    #     self.course_service.view_lab_details.assert_not_called()
+    #     self.assertEqual(expected_response, actual_response)

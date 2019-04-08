@@ -9,7 +9,6 @@ from app.models.account import Account
 
 
 class TestPermissions(TestCase):
-
     def setUp(self):
         self.has_privileges = True
         self.account = Account.objects.create(username='theuser', password='thepassword', name='thename',
@@ -29,8 +28,8 @@ class TestPermissions(TestCase):
 
         commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
                     "assign_ins theinstructor CS417 001", "assign_ta_course theta cs417 001",
-                    "assign_ta_lab test_ta CS417 001 801", "cr_lab 801 CS361 001 MW12301345", "logout",
-                    "course_assignments CS417 001"]
+                    "assign_ta_lab test_ta CS417 001 801", "cr_lab 801 CS361 001 MW12301345",
+                    "view_lab_details CS417 001"]
 
         self.assert_privileges(commands, self.has_privileges)
 
@@ -39,7 +38,7 @@ class TestPermissions(TestCase):
         self.account.save()
 
         commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
-                    "cr_lab 801 CS361 001 MW12301345", "logout", "course_assignments CS417 001"]
+                    "cr_lab 801 CS361 001 MW12301345", "view_lab_details CS417 001"]
 
         self.assert_privileges(commands, self.has_privileges)
 
@@ -47,7 +46,7 @@ class TestPermissions(TestCase):
         self.account.roles = 0x2
         self.account.save()
 
-        commands = ["assign_ta_lab test_ta CS417 001 801", "logout", "course_assignments CS417 001"]
+        commands = ["assign_ta_lab test_ta CS417 001 801", "course_assignments CS417 001"]
 
         self.assert_privileges(commands, self.has_privileges)
 
@@ -55,15 +54,16 @@ class TestPermissions(TestCase):
         self.account.roles = 0x1
         self.account.save()
 
-        commands = ["logout", "course_assignments CS417 001"]
+        commands = []
 
         self.assert_privileges(commands, self.has_privileges)
 
     def test_supervisor_no_permission(self):
+        self.has_privileges = False
         self.account.roles = 0x8
         self.account.save()
 
-        commands = []
+        commands = ["course_assignments CS417 001"]
 
         self.assert_privileges(commands, self.has_privileges)
 
@@ -84,7 +84,7 @@ class TestPermissions(TestCase):
 
         commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
                     "assign_ins theinstructor CS417 001", "assign_ta_course theta cs417 001",
-                    "cr_lab 801 CS361 001 MW12301345"]
+                    "cr_lab 801 CS361 001 MW12301345", "view_lab_details CS417 001"]
 
         self.assert_privileges(commands, self.has_privileges)
 
@@ -95,7 +95,8 @@ class TestPermissions(TestCase):
 
         commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
                     "assign_ins theinstructor CS417 001", "assign_ta_course theta cs417 001",
-                    "assign_ta_lab test_ta CS417 001 801", "cr_lab 801 CS361 001 MW12301345"]
+                    "assign_ta_lab test_ta CS417 001 801", "cr_lab 801 CS361 001 MW12301345",
+                    "view_lab_details CS417 001", "course_assignments CS417 001"]
 
         self.assert_privileges(commands, self.has_privileges)
 
@@ -104,7 +105,7 @@ class TestPermissions(TestCase):
         self.account.save()
 
         commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
-                    "cr_lab 801 CS361 001 MW12301345", "logout", "course_assignments CS417 001"]
+                    "cr_lab 801 CS361 001 MW12301345"]
 
         self.assert_privileges(commands, self.has_privileges)
 
@@ -113,7 +114,7 @@ class TestPermissions(TestCase):
         self.account.save()
 
         commands = ["cr_account username name admin", "cr_course CS361 001 'Intro to Software Eng.' MW12301345",
-                    "cr_lab 801 CS361 001 MW12301345", "logout", "course_assignments CS417 001"]
+                    "cr_lab 801 CS361 001 MW12301345", "view_lab_details CS417 001"]
 
         self.assert_privileges(commands, self.has_privileges)
 

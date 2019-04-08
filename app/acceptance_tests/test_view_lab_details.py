@@ -13,7 +13,7 @@ class TestViewLabDetails(TestCase):
 
     def setUp(self):
         self.account = Account.objects.create(username='supervisor', password='thepassword', name='supervisor_name',
-                                                 is_logged_in=True, roles=0x8)
+                                              is_logged_in=True, roles=0x8)
 
         self.course = Course.objects.create(course_id='CS417', section='001', name='Theory of Computation',
                                             schedule='TH12001315')
@@ -41,51 +41,49 @@ class TestViewLabDetails(TestCase):
     def test_view_lab_details_default_happy_path_with_TAs(self):
         self.lab1.ta = self.ta1
         self.lab2.ta = self.ta2
-
         self.lab1.save()
         self.lab2.save()
 
         actual_response = self.app.command("view_lab_details CS417 001")
-        expected_response = f'Course {self.course_id}-{self.course_section}:'+ \
-                            f'\nLab section {self.lab_id1}:\n'+ \
-                            f'\tSchedule: {self.lab1.schedule}\n'+ \
-                            f'\tTA: {self.ta1.name}\n'+ \
-                            f'\nLab section {self.lab_id2}:\n'+ \
-                            f'\tSchedule: {self.lab2.schedule}\n'+ \
+        expected_response = f'Course {self.course_id}-{self.course_section}:' + \
+                            f'\nLab section {self.lab_id1}:\n' + \
+                            f'\tSchedule: {self.lab1.schedule}\n' + \
+                            f'\tTA: {self.ta1.name}\n' + \
+                            f'\nLab section {self.lab_id2}:\n' + \
+                            f'\tSchedule: {self.lab2.schedule}\n' + \
                             f'\tTA: {self.ta2.name}\n'
 
         self.assertEqual(actual_response, expected_response)
 
     def test_view_lab_details_default_happy_path_no_TAs(self):
         actual_response = self.app.command("view_lab_details CS417 001")
-        expected_response = f'Course {self.course_id}-{self.course_section}:'+ \
-                            f'\nLab section {self.lab_id1}:\n'+ \
-                            f'\tSchedule: {self.lab1.schedule}\n'+ \
-                            f'\tTA: there is no assigned TA\n'+ \
-                            f'\nLab section {self.lab_id2}:\n'+ \
-                            f'\tSchedule: {self.lab2.schedule}\n'+ \
+        expected_response = f'Course {self.course_id}-{self.course_section}:' + \
+                            f'\nLab section {self.lab_id1}:\n' + \
+                            f'\tSchedule: {self.lab1.schedule}\n' + \
+                            f'\tTA: there is no assigned TA\n' + \
+                            f'\nLab section {self.lab_id2}:\n' + \
+                            f'\tSchedule: {self.lab2.schedule}\n' + \
                             f'\tTA: there is no assigned TA\n'
 
         self.assertEqual(actual_response, expected_response)
 
     def test_view_lab_details_specific_happy_path_with_TA(self):
         self.lab1.ta = self.ta1
-
         self.lab1.save()
 
         actual_response = self.app.command("view_lab_details CS417 001 801")
-        expected_response = f'Course {self.course_id}-{self.course_section}:'+ \
-                            f'\nLab section {self.lab_id1}:\n'+ \
-                            f'\tSchedule: {self.lab1.schedule}\n'+ \
+        expected_response = f'Course {self.course_id}-{self.course_section}:' + \
+                            f'\nLab section {self.lab_id1}:\n' + \
+                            f'\tSchedule: {self.lab1.schedule}\n' + \
                             f'\tTA: {self.ta1.name}\n'
 
         self.assertEqual(actual_response, expected_response)
 
     def test_view_lab_details_specific_happy_path_no_TA(self):
         actual_response = self.app.command("view_lab_details CS417 001 801")
-        expected_response = f'Course {self.course_id}-{self.course_section}:'+ \
-                            f'\nLab section {self.lab_id1}:\n'+ \
-                            f'\tSchedule: {self.lab1.schedule}\n'+ \
+        expected_response = f'Course {self.course_id}-{self.course_section}:' + \
+                            f'\nLab section {self.lab_id1}:\n' + \
+                            f'\tSchedule: {self.lab1.schedule}\n' + \
                             f'\tTA: there is no assigned TA\n'
 
         self.assertEqual(actual_response, expected_response)
@@ -106,25 +104,9 @@ class TestViewLabDetails(TestCase):
     def test_view_lab_details_course_no_labs(self):
         actual_response = self.app.command("view_lab_details CS361 001")
         expected_response = "Course CS361-001 does not have any lab sections."
-
         self.assertEqual(actual_response, expected_response)
 
     def test_view_lab_details_lab_dne(self):
         actual_response = self.app.command("view_lab_details CS417 001 803")
         expected_response = "Course CS417-001 Lab section 803 does not exist."
-
-        self.assertEqual(actual_response, expected_response)
-
-    def test_view_lab_details_not_supervisor_or_admin(self):
-        self.account.is_logged_in = False
-        self.account.save()
-
-        self.ta1.is_logged_in = True
-        self.ta1.save()
-
-        self.app.auth_service.current_account = self.ta1
-
-        actual_response = self.app.command("view_lab_details CS417 001")
-        expected_response = "You don't have privileges."
-
         self.assertEqual(actual_response, expected_response)
