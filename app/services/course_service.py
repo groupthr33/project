@@ -72,11 +72,9 @@ class CourseService:
             assignments = "You are not assigned to any courses."
 
             if not courses.count() == 0:
-                course_list = list(courses)
-
                 assignments = ""
 
-                for i in course_list:
+                for i in courses:
                     assignments = assignments + f'{i.course_id}-{i.section}:\n\tSchedule: {i.schedule}\n'
 
                     tas = TaCourse.objects.filter(course=i)
@@ -130,26 +128,21 @@ class CourseService:
         if labs.count() == 0:
             return f'Course {course_id}-{course_section} does not have any lab sections.'
 
-        labs_list = list(labs)
-
         lab_details = f'Course {course_id}-{course_section} Lab section {lab_section_id} does not exist.'
 
         if lab_section_id == "all":
             lab_details = f'Course {course_id}-{course_section}:'
 
-            for i in labs_list:
+            for i in labs:
                 ta = i.ta
 
+                lab_details = lab_details + f'\nLab section {i.section_id}:\n' + \
+                              f'\tSchedule: {i.schedule}\n'
+
                 if ta is not None:
-                    lab_details = lab_details + f'\nLab section {i.section_id}:\n' + \
-                                  f'\tSchedule: {i.schedule}\n' + \
-                                  f'\tTA: {ta.name}\n'
-
+                    lab_details = lab_details + f'\tTA: {ta.name}\n'
                 else:
-                    lab_details = lab_details + f'\nLab section {i.section_id}:\n' + \
-                                  f'\tSchedule: {i.schedule}\n' + \
-                                  f'\tTA: there is no assigned TA\n'
-
+                    lab_details = lab_details + f'\tTA: there is no assigned TA\n'
         else:
             labs = Lab.objects.filter(course=course, section_id__iexact=lab_section_id)
 
@@ -159,16 +152,13 @@ class CourseService:
             lab = labs.first()
             ta = lab.ta
 
-            if ta is not None:
-                lab_details = f'Course {course_id}-{course_section}:' + \
-                              f'\nLab section {lab.section_id}:\n' + \
-                              f'\tSchedule: {lab.schedule}\n' + \
-                              f'\tTA: {lab.ta.name}\n'
+            lab_details = f'Course {course_id}-{course_section}:' + \
+                          f'\nLab section {lab.section_id}:\n' + \
+                          f'\tSchedule: {lab.schedule}\n'
 
+            if ta is not None:
+                lab_details = lab_details + f'\tTA: {lab.ta.name}\n'
             else:
-                lab_details = f'Course {course_id}-{course_section}:' + \
-                              f'\nLab section {lab.section_id}:\n' + \
-                              f'\tSchedule: {lab.schedule}\n' + \
-                              f'\tTA: there is no assigned TA\n'
+                lab_details = lab_details + f'\tTA: there is no assigned TA\n'
 
         return lab_details
