@@ -155,15 +155,12 @@ class TestCourseService(TestCase):
         courses = Course.objects.filter(instructor=self.instructor)
         self.assertEqual(2, courses.count())
 
-        course_list = list(courses)
-
         ta_list = []
 
-        for i in course_list:
+        for i in courses:
             self.assertEqual(i.instructor, self.instructor)
 
             tas = TaCourse.objects.filter(course=i)
-
             self.assertEqual(1, tas.count())
 
             ta_list.append(tas.first().assigned_ta)
@@ -192,13 +189,10 @@ class TestCourseService(TestCase):
         courses = Course.objects.filter(instructor=self.instructor)
         self.assertEqual(2, courses.count())
 
-        course_list = list(courses)
-
-        for i in course_list:
+        for i in courses:
             self.assertEqual(i.instructor, self.instructor)
 
             tas = TaCourse.objects.filter(course=i)
-
             self.assertEqual(0, tas.count())
 
     def test_view_course_assignments_happy_path_default_no_courses(self):
@@ -210,21 +204,21 @@ class TestCourseService(TestCase):
         self.assertEqual(0, courses.count())
 
     def test_view_course_assignments_happy_path_specific_with_TAs(self):
-        self.course1.instructor = self.instructor
-        self.course1.save()
+        self.course2.instructor = self.instructor
+        self.course2.save()
 
-        TaCourse.objects.create(course=self.course1, assigned_ta=self.ta1)
-        TaCourse.objects.create(course=self.course1, assigned_ta=self.ta2)
+        TaCourse.objects.create(course=self.course2, assigned_ta=self.ta1)
+        TaCourse.objects.create(course=self.course2, assigned_ta=self.ta2)
 
-        expected_response = "CS535-001:\n" \
-                            "\tSchedule: TH12001315\n" \
+        expected_response = "CS337-001:\n" \
+                            "\tSchedule: MW12301345\n" \
                             "\tTA(s):\n" \
                             "\t\tTA1_name\n" \
                             "\t\tTA2_name\n"
-        actual_response = self.course_service.view_course_assignments("theinstructor", self.course_id, self.course_section)
+        actual_response = self.course_service.view_course_assignments("theinstructor", "CS337", self.course_section)
         self.assertEqual(actual_response, expected_response)
 
-        courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section)
+        courses = Course.objects.filter(course_id__iexact="CS337", section__iexact=self.course_section)
         self.assertEqual(1, courses.count())
 
         course = courses.first()
@@ -263,11 +257,9 @@ class TestCourseService(TestCase):
 
         actual_response = self.course_service.view_course_assignments("unassigned_instructor", "CS535", "001")
         expected_response = "You are not assigned to Course CS535-001."
-
         self.assertEqual(actual_response, expected_response)
 
         courses = Course.objects.filter(instructor=unassigned_instructor)
-
         self.assertEqual(0, courses.count())
 
     def test_view_course_assignments_course_dne(self):
@@ -300,7 +292,6 @@ class TestCourseService(TestCase):
                             f'\nLab section {self.lab_id2}:\n' + \
                             f'\tSchedule: {self.lab2.schedule}\n' + \
                             f'\tTA: {self.ta2.name}\n'
-
         self.assertEqual(actual_response, expected_response)
 
         labs = Lab.objects.filter(course=self.course2)
@@ -319,7 +310,6 @@ class TestCourseService(TestCase):
                             f'\nLab section {self.lab_id2}:\n'+ \
                             f'\tSchedule: {self.lab2.schedule}\n'+ \
                             f'\tTA: there is no assigned TA\n'
-
         self.assertEqual(actual_response, expected_response)
 
         labs = Lab.objects.filter(course=self.course2)
@@ -338,7 +328,6 @@ class TestCourseService(TestCase):
                             f'\nLab section {self.lab_id1}:\n'+ \
                             f'\tSchedule: {self.lab1.schedule}\n'+ \
                             f'\tTA: {self.ta1.name}\n'
-
         self.assertEqual(actual_response, expected_response)
 
         labs = Lab.objects.filter(course=self.course2, section_id__iexact=self.lab_id1)
@@ -353,7 +342,6 @@ class TestCourseService(TestCase):
                             f'\nLab section {self.lab_id1}:\n'+ \
                             f'\tSchedule: {self.lab1.schedule}\n'+ \
                             f'\tTA: there is no assigned TA\n'
-
         self.assertEqual(actual_response, expected_response)
 
         labs = Lab.objects.filter(course=self.course2, section_id__iexact=self.lab_id1)

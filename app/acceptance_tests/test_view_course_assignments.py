@@ -50,7 +50,6 @@ class TestViewCourseAssignments(TestCase):
                             "\tSchedule: MW12301345\n" \
                             "\tTA(s):\n" \
                             "\t\tTA2_name\n\n"
-
         self.assertEqual(actual_response, expected_response)
 
     def test_view_course_assignments_happy_path_defualt_no_TAs(self):
@@ -68,8 +67,7 @@ class TestViewCourseAssignments(TestCase):
                             "CS337-001:\n" \
                             "\tSchedule: MW12301345\n" \
                             "\tTA(s):\n" \
-                            "\t\tno TAs assigned to course\n\n" \
-
+                            "\t\tno TAs assigned to course\n\n"
         self.assertEqual(actual_response, expected_response)
 
     def test_view_course_assignments_happy_path_default_no_courses(self):
@@ -79,19 +77,18 @@ class TestViewCourseAssignments(TestCase):
         self.assertEqual(actual_response, expected_response)
 
     def test_view_course_assignments_happy_path_specific_with_TAs(self):
-        self.course1.instructor = self.instructor
-        self.course1.save()
+        self.course2.instructor = self.instructor
+        self.course2.save()
 
-        TaCourse.objects.create(course=self.course1, assigned_ta=self.ta1)
-        TaCourse.objects.create(course=self.course1, assigned_ta=self.ta2)
+        TaCourse.objects.create(course=self.course2, assigned_ta=self.ta1)
+        TaCourse.objects.create(course=self.course2, assigned_ta=self.ta2)
 
-        actual_response = self.app.command("course_assignments CS417 001")
-        expected_response = "CS417-001:\n" \
-                            "\tSchedule: TH12001315\n" \
+        actual_response = self.app.command("course_assignments CS337 001")
+        expected_response = "CS337-001:\n" \
+                            "\tSchedule: MW12301345\n" \
                             "\tTA(s):\n" \
                             "\t\tTA1_name\n" \
                             "\t\tTA2_name\n"
-
         self.assertEqual(actual_response, expected_response)
 
     def test_view_course_assignments_happy_path_specific_no_TAs(self):
