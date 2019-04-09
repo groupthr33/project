@@ -20,7 +20,7 @@ class AccountService:
     def update_contact_info(self, username, field, new_value):
         accounts = Account.objects.filter(username__iexact=username)
 
-        valid_fields=["phone_number", "address", "name"]
+        valid_fields = ["phone_number", "address", "name"]
 
         if accounts.count() == 0:
             return f"User does not exist."

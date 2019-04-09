@@ -49,7 +49,8 @@ class TaService:
             return "Requester does not exist."
         requester = requesters.first()
 
-        if requester.roles & 0x8 == 0 and (course.instructor is None or course.instructor.username != requester):
+        if requester.roles & 0x8 == 0 \
+                and (course.instructor is None or course.instructor.username != requester.username):
             return f"{requester.username} is not the instructor for {course_id}-{course_section}."
 
         ta_course_rels = TaCourse.objects.filter(course=course, assigned_ta=ta)

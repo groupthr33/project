@@ -22,6 +22,7 @@ class CommandLineController:
             "course_assignments": 0,
             "view_lab_details": 2,
             "set_password": 2,
+            "view_courses": 0,
             "update_contact": 2,
             "view_account_details": 1
         }
@@ -125,7 +126,7 @@ class CommandLineController:
 
             elif len(args) == 2:
                 return self.course_service.view_course_assignments(self.auth_service.get_current_username(),
-                                                               args[0], args[1])
+                                                                   args[0], args[1])
 
             elif len(args) == 1:
                 return self.course_service.view_course_assignments(self.auth_service.get_current_username(),
@@ -153,10 +154,10 @@ class CommandLineController:
         if command == "view_courses":
             if len(args) == 0:
                 return self.course_service.view_courses()
-            if len(args) == 1:
-                return self.course_service.view_specified_courses(args)
+            if len(args) == 2:
+                return self.course_service.view_specified_courses(args[0], args[1])
             else:
-                return "view_courses must have one or zero arguments."
+                return "view_courses must have 1 or 2 arguments."
 
         if command == "update_contact":
             if not self.is_args_length_correct(command, args):

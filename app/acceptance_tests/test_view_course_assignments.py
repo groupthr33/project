@@ -8,14 +8,17 @@ from app.models.account import Account
 from app.models.course import Course
 from app.models.ta_course import TaCourse
 
+
 class TestViewCourseAssignments(TestCase):
 
     def setUp(self):
         self.instructor = Account.objects.create(username='instructor', password='thepassword', name='instructor_name',
                                                  is_logged_in=True, roles=0x2)
 
-        self.course1 = Course.objects.create(course_id='CS417', section='001', name='Theory of Computation', schedule='TH12001315')
-        self.course2 = Course.objects.create(course_id='CS337', section='001', name='test course', schedule='MW12301345')
+        self.course1 = Course.objects.create(course_id='CS417', section='001', name='Theory of Computation',
+                                             schedule='TH12001315')
+        self.course2 = Course.objects.create(course_id='CS337', section='001', name='test course',
+                                             schedule='MW12301345')
 
         self.ta1 = Account.objects.create(username="TA1", password="p", name="TA1_name", is_logged_in=False, roles=0x1)
         self.ta2 = Account.objects.create(username="TA2", password="p", name="TA2_name", is_logged_in=False, roles=0x1)
@@ -103,7 +106,7 @@ class TestViewCourseAssignments(TestCase):
         self.assertEqual(actual_response, expected_response)
 
     def test_view_course_assignments_instructor_not_assigned_to_course(self):
-        self.instructor.is_logged_in=False
+        self.instructor.is_logged_in = False
         self.instructor.save()
 
         unassigned_instructor = Account.objects.create(username='unassigned_instructor', password='thepassword',

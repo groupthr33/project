@@ -237,7 +237,8 @@ class TestCourseService(TestCase):
         self.course1.save()
 
         expected_response = "CS535-001:\n\tSchedule: TH12001315\n\tTA(s):\n\t\tno TAs assigned to course\n"
-        actual_response = self.course_service.view_course_assignments("theinstructor", self.course_id, self.course_section)
+        actual_response = self.course_service.view_course_assignments("theinstructor", self.course_id,
+                                                                      self.course_section)
         self.assertEqual(actual_response, expected_response)
 
         courses = Course.objects.filter(course_id__iexact=self.course_id, section__iexact=self.course_section)
@@ -303,12 +304,12 @@ class TestCourseService(TestCase):
 
     def test_view_lab_details_default_happy_path_no_TAs(self):
         actual_response = self.course_service.view_lab_details("CS337", "001")
-        expected_response = f'Course CS337-001:'+ \
-                            f'\nLab section {self.lab_id1}:\n'+ \
-                            f'\tSchedule: {self.lab1.schedule}\n'+ \
-                            f'\tTA: there is no assigned TA\n'+ \
-                            f'\nLab section {self.lab_id2}:\n'+ \
-                            f'\tSchedule: {self.lab2.schedule}\n'+ \
+        expected_response = f'Course CS337-001:' + \
+                            f'\nLab section {self.lab_id1}:\n' + \
+                            f'\tSchedule: {self.lab1.schedule}\n' + \
+                            f'\tTA: there is no assigned TA\n' + \
+                            f'\nLab section {self.lab_id2}:\n' + \
+                            f'\tSchedule: {self.lab2.schedule}\n' + \
                             f'\tTA: there is no assigned TA\n'
         self.assertEqual(actual_response, expected_response)
 
@@ -324,9 +325,9 @@ class TestCourseService(TestCase):
         self.lab1.save()
 
         actual_response = self.course_service.view_lab_details("CS337", "001", self.lab_id1)
-        expected_response = f'Course CS337-001:'+ \
-                            f'\nLab section {self.lab_id1}:\n'+ \
-                            f'\tSchedule: {self.lab1.schedule}\n'+ \
+        expected_response = f'Course CS337-001:' + \
+                            f'\nLab section {self.lab_id1}:\n' + \
+                            f'\tSchedule: {self.lab1.schedule}\n' + \
                             f'\tTA: {self.ta1.name}\n'
         self.assertEqual(actual_response, expected_response)
 
@@ -338,9 +339,9 @@ class TestCourseService(TestCase):
 
     def test_view_lab_details_specific_happy_path_no_TA(self):
         actual_response = self.course_service.view_lab_details("CS337", "001", self.lab_id1)
-        expected_response = f'Course CS337-001:'+ \
-                            f'\nLab section {self.lab_id1}:\n'+ \
-                            f'\tSchedule: {self.lab1.schedule}\n'+ \
+        expected_response = f'Course CS337-001:' + \
+                            f'\nLab section {self.lab_id1}:\n' + \
+                            f'\tSchedule: {self.lab1.schedule}\n' + \
                             f'\tTA: there is no assigned TA\n'
         self.assertEqual(actual_response, expected_response)
 

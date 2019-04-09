@@ -40,6 +40,16 @@ class TestAssignTaLab(TestCase):
         expected_response = "test_ta assigned to CS417-001, lab(s) 801. 1 section(s) remaining for test_ta."
         self.assertEqual(expected_response, actual_response)
 
+    def test_assign_ta_lab_ins_role_only(self):
+        self.current_user.roles = 0x2
+        self.current_user.save()
+        self.course.instructor = self.current_user
+        self.course.save()
+
+        actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
+        expected_response = "test_ta assigned to CS417-001, lab(s) 801. 1 section(s) remaining for test_ta."
+        self.assertEqual(expected_response, actual_response)
+
     def test_assign_ta_lab_wrong_number_of_args(self):
         actual_response = self.app.command("assign_ta_lab test_ta CS417 001")
         expected_response = "assign_ta_lab must have at least 4 arguments. " \
