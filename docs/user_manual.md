@@ -27,7 +27,8 @@ cr_account <u>username</u> <u>name</u> <u>roles...</u>
 <h5>DESCRIPTION</h5> 
 
 Create a new account with the assigned </u>roles...</u> and <u>username</u> for   
-user with name <u>name</u>. This command is for administrators or supervisors only.
+user with name <u>name</u>. This command is for administrators or supervisors only.   
+Valid roles are ta, instructor, admin, and supervisor.
 
 <br>
 <h5>NAME</h5> 
@@ -81,7 +82,7 @@ Assign <u>instructor</u> to section with <u>section_id</u> for course with
 <h5>SYNOPSIS</h5>
 
 <b>assign_ta_course</b> <u>ta_user_name</u> <u>course_id</u>   
-<u>course_section_id</u> [-l <u>num_labs</u>]
+<u>course_section_id</u>  [<u>num_labs</u>]
 
 <b>DESCRIPTION</b>
 
@@ -121,7 +122,8 @@ a number of labs, the TA will be assigned as a grader. Can only be used by the S
 
 <b>DESCRIPTION</b>
 
-Create a lab section with id <u>lab_id</u> for course <u>course_id</u>-<u>course_section_id</u>.
+Create a lab section with id <u>lab_id</u> for course <u>course_id</u>-<u>course_section_id</u>.   
+Can only be used by administrators and supervisors.
 
 
 <br>
@@ -138,7 +140,8 @@ Create a lab section with id <u>lab_id</u> for course <u>course_id</u>-<u>course
 Display all courses the instructor is assigned to and the names of the TAs for those courses.
 If only the <u>[course_id]</u> is provided then the course section is defaulted to 001, then 
 display the names of the TAs for that specific course. If the <u>[course_id]</u> and <u>[course_section_id]</u>
-are provided then display the names of the TAs for that specific course.
+are provided then display the names of the TAs for that specific course. Can only be used by   
+instructors.
 
 
 <br>
@@ -153,7 +156,8 @@ are provided then display the names of the TAs for that specific course.
 <b>DESCRIPTION</b>
 
 Display all lab details for <u>course_id</u>-<u>course_section_id</u>. If <u>[lab_section_id]</u>
-is provided, then only display the lab details of that specific lab for <u>course_id</u>-<u>course_section_id</u>.
+is provided, then only display the lab details of that specific lab for <u>course_id</u>-<u>course_section_id</u>.   
+Can only be used by administrators and supervisors.
 
 
 <br>
@@ -185,3 +189,35 @@ Set the password of the requesting user to <u>new_password</u> if their current 
 <b>DESCRIPTION</b>
 
 Updates the field <u>field</u> with the value <u>new_value</u> for the currently logged in user.
+
+<br>
+<h5>NAME</h5>
+
+<b>view_account_details</b> - displays the details for all accounts, or optionally a specified account.
+
+<h5>SYNOPSIS</h5>
+
+<b>view_account_details</b> [<u>username</u>]
+
+
+<b>DESCRIPTION</b>
+
+Displays the account details for all registered users of the application if no <u>username</u> is   
+specified. If one is specified, only that user's information will be displayed. Can only be used   
+administrators and supervisors.
+
+<br>
+<h5>NAME</h5>
+
+<b>view_course_details</b> - displays the details for all courses, or optionally a specified course.
+
+<h5>SYNOPSIS</h5>
+
+<b>view_course_details</b> [<u>course_id</u> <u>section_id</u>]
+
+
+<b>DESCRIPTION</b>
+
+Displays the course details for all courses within the application if no arguments are   
+specified. If they are specified, only that courses's information will be displayed.
+Can only be used by administrators and supervisors.
