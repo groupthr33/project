@@ -11,7 +11,6 @@ account_service = AccountService()
 course_service = CourseService()
 ta_service = TaService()
 
-
 class Home(View):
     def get(self, request):
         return render(request, 'main/index.html')
@@ -28,3 +27,14 @@ class Home(View):
         else:
             response = ""
         return render(request, 'main/index.html', {"message": response})
+
+
+class Dashboard(View):
+    def get(self, request):
+        return render(request, 'main/dashboard.html')
+
+
+class SampleRoute(View):
+    def get(self, request):
+        some_data = {"my_text": "hello world"}
+        return render(request, 'main/sample-page.html', some_data)

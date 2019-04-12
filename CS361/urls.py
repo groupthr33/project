@@ -4,5 +4,8 @@ from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", views.Home.as_view()),
+    path("", views.Dashboard.as_view()),
+    path("cmd/", views.Home.as_view()),
+    path("dashboard/", views.Dashboard.as_view()),
+    path("sample_command/", views.SampleRoute.as_view())
 ]

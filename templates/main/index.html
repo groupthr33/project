@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-  <form method="post" action="/">
+  <form method="post" action="/cmd/">
   {% csrf_token %}
     Command: <input type="text" name="command" autofocus><br/>
     <input type="submit">

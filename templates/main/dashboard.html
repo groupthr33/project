@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="dashboard">
+        {% for cmd in commands %}
+            <div>
+                <a href="/{{ cmd.name }}">{{ cmd.friendly_name }}</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

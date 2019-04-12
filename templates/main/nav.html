@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="nav">
+
+        <a href="/dashboard">Dashboard</a>
+        {% for cmd in commands %}
+            <div>
+                {% if cmd.active %}
+                    <a href="/{{ cmd.name }}">{{ cmd.friendly_name }}</a>
+                {% endif %}
+                {% if not cmd.active %}
+                    <a class="disabled" href="/{{ cmd.name }}">{{ cmd.friendly_name }}</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="command-content">
+        {% block command-content %}
+        {% endblock command-content %}
+    </div>
+{% endblock content %}
