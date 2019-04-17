@@ -7,8 +7,6 @@ def commands(request):
 
     cmds = [
         Command("sample_command", "Sample Command", 0xF, True),  # todo: remove this line
-        Command("login", "Login", 0xF, True),
-        Command("logout", "Logout", 0xF, True),
         Command("cr_account", "Create Account", 0xC, True),
         Command("set_password", "Set Password", 0xF, True),
         Command("update_contact", "Update Contact Info", 0xF, True),
@@ -23,12 +21,7 @@ def commands(request):
         Command("view_courses", "View Courses", 0xC),
     ]
 
-    # todo: get rid next 2 lines
-    auth_service.login('mrwatts', 'password')
-
     allowed_commands = [command for command in cmds
-                        if auth_service.is_authorized(request.session['username'], command.req_permissions)]
+                        if auth_service.is_authorized(request.session.get('username', None), command.req_permissions)]
 
-    # todo: switch these lines back
-    # return {'commands': allowed_commands}
-    return {'commands': cmds}
+    return {'commands': allowed_commands}

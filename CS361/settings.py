@@ -24,6 +24,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'app.middleware.verify_logged_in.VerifyLoggedIn',
 ]
 
 ROOT_URLCONF = 'CS361.urls'

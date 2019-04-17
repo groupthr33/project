@@ -2,6 +2,7 @@ import app.context_processors as ctxp
 from django.test import TestCase
 from app.models.account import Account
 from app.classes.command import Command
+from django.http import HttpRequest
 
 # This is an integration test using the AuthService, I cannot inject the AuthService into the context processor,
 # and think patching is outside the scope of this class
@@ -13,10 +14,11 @@ class TestContextProcessor(TestCase):
                                               is_logged_in=True, roles=0xF)
 
     def test_allowed_commands_god_account(self):
-        request = {'session': {'username': 'theuser'}}
+        request = HttpRequest()
+        request.session = {'username': 'theuser'}
+
         expected_response = {'commands': [
-            Command("login", "Login", 0xF, True),
-            Command("logout", "Logout", 0xF, True),
+            Command("sample_command", "Sample Command", 0xF, True),  # todo: remove this line
             Command("cr_account", "Create Account", 0xC, True),
             Command("set_password", "Set Password", 0xF, True),
             Command("update_contact", "Update Contact Info", 0xF, True),
@@ -29,7 +31,7 @@ class TestContextProcessor(TestCase):
             Command("course_assignments", "View Course Assignments", 0x2),
             Command("view_lab_details", "View Lab Details", 0xC),
             Command("view_courses", "View Courses", 0xC),
-        ]}
+            ]}
 
         actual_response = ctxp.commands(request)
         self.assertEqual(expected_response, actual_response)
@@ -38,10 +40,11 @@ class TestContextProcessor(TestCase):
         self.account.roles = 0x1
         self.account.save()
 
-        request = {'session': {'username': 'theuser'}}
+        request = HttpRequest()
+        request.session = {'username': 'theuser'}
+
         expected_response = {'commands': [
-            Command("login", "Login", 0xF, True),
-            Command("logout", "Logout", 0xF, True),
+            Command("sample_command", "Sample Command", 0xF, True),  # todo: remove this line
             Command("set_password", "Set Password", 0xF, True),
             Command("update_contact", "Update Contact Info", 0xF, True),
         ]}

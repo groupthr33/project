@@ -13,9 +13,6 @@ class AuthService:
         return self.current_account.username
 
     def login(self, username, password):
-        if self.current_account:
-            return f"{self.get_current_username()} is already logged in."
-
         accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
@@ -26,7 +23,6 @@ class AuthService:
         if account.password == password:
             account.is_logged_in = True
             account.save()
-            self.current_account = account
             return f"Welcome, {account.name}."
 
         return "Incorrect password."
@@ -49,7 +45,7 @@ class AuthService:
         accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
-            raise Exception("User does not exist.")
+            return False
 
         return accounts.first().roles & required_permissions != 0
 

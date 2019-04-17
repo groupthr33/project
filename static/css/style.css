@@ -38,6 +38,10 @@ body {
     color: black;
 }
 
+.logout-button-form {
+    padding: 10px !important;
+}
+
 .nav a:visited {
     color: black;
 }
