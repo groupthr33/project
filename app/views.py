@@ -59,7 +59,7 @@ class Login(View):
 
 
 class Logout(View):
-    def get(self, request):
+    def post(self, request):
         logged_in_user = request.session.get('username', None)
         auth_service.logout(logged_in_user)
         del request.session['username']
