@@ -7,6 +7,8 @@ def commands(request):
 
     cmds = [
         Command("sample_command", "Sample Command", 0xF, True),  # todo: remove this line
+        Command("login", "Login", 0xF, True),
+        Command("logout", "Logout", 0xF, True),
         Command("cr_account", "Create Account", 0xC, True),
         Command("set_password", "Set Password", 0xF, True),
         Command("update_contact", "Update Contact Info", 0xF, True),
