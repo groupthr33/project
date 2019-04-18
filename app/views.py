@@ -76,6 +76,18 @@ class ViewContactInfo(View):
                        'contact_infos': contact_infos})
 
 
+class ViewAccounts(View):
+    def get(self, request):
+        username = request.GET.get('username', "")
+
+        if username == "":
+            accounts = account_service.view_accounts()
+        else:
+            accounts = account_service.view_account_details(username)
+
+        return render(request, 'main/view_accounts.html', {'message': accounts})
+
+
 class CreateAccount(View):
     def get(self, request):
         return render(request, 'main/cr_account.html')

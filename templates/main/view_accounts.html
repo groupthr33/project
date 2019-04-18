@@ -1,0 +1,12 @@
+{%extends "main/nav.html" %}
+{% block command-content %}
+<div style="text-align: center" >
+    <form action="/view_accounts/" method="get">
+        <input id="view-contact-username-input" type="search" name="username" autofocus placeholder="Filter by username..."/>
+        <input type="submit" value="Search"/>
+    </form>
+    <div style="text-align: left">
+    <pre>{{ message }}</pre>
+    </div>
+</div>
+{% endblock command-content %}

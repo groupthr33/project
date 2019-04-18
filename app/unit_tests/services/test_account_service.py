@@ -1,4 +1,5 @@
 from django.test import TestCase
+from app.util.account_util import AccountUtil
 from app.services.account_service import AccountService
 from app.models.account import Account
 
@@ -121,5 +122,16 @@ class TestAccountService(TestCase):
 
         actual_response = self.account_service.view_contact_info()
         self.assertEqual(expected_response, actual_response)
+
+    def test_view_accounts(self):
+        expected_response = f"Account username: {self.account.username}\nName: {self.account.name}\n" \
+            f"Roles: {AccountUtil.decode_roles(self.account.roles)}\nPhone Number: {self.account.phone_number}\n" \
+            f"Address: {self.account.address}\n\nAccount username: {self.user.username}\nName: {self.user.name}\n" \
+            f"Roles: {AccountUtil.decode_roles(self.user.roles)}\nPhone Number: {self.user.phone_number}\n" \
+            f"Address: {self.user.address}\n\n"
+
+        actual_response = self.account_service.view_accounts()
+        self.assertEqual(expected_response, actual_response)
+
 
     # todo: write view account detail test
