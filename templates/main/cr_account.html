@@ -1,0 +1,37 @@
+{%extends "main/nav.html" %}
+{% block command-content %}
+    <div style="text-align: center" >
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <form method="post" action="/cr_account/">
+            {% csrf_token %}
+            <input required type="text" name="username" autofocus placeholder="type username"/><br/>
+            <input required type="text" name="name" autofocus placeholder="type name"/><br/>
+            <label name="rolelabel" for="roles[]">Roles: </label><br/>
+            <input required type="checkbox" name="roles[]" value="supervisor" />
+            <label for="roles[]">Supervisor</label><br/>
+            <input required type="checkbox" name="roles[]" value="admin" />
+            <label for="roles[]">Admin</label><br/>
+            <input required type="checkbox" name="roles[]" value="instructor" />
+            <label for="roles[]">Instructor</label><br/>
+            <input required type="checkbox" name="roles[]" value="ta" />
+            <label for="roles[]">TA</label><br/>
+            <input type="submit" value="Create" id="crBtn"/>
+        </form>
+        <div>{{ message }}</div>
+    </div>
+    <script>
+    $(function(){
+        var requiredCheckboxes = $(':checkbox[required]');
+
+        requiredCheckboxes.change(function(){
+
+            if(requiredCheckboxes.is(':checked')) {
+                requiredCheckboxes.removeAttr('required');
+            }
+            else {
+                requiredCheckboxes.attr('required', 'required');
+            }
+        });
+    });
+    </script>
+{% endblock command-content %}

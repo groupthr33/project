@@ -70,3 +70,19 @@ class SampleRoute(View):
     def get(self, request):
         some_data = {"my_text": "hello world"}
         return render(request, 'main/sample-page.html', some_data)
+
+
+class CreateAccount(View):
+    def get(self, request):
+        return render(request, 'main/cr_account.html')
+
+    def post(self, request):
+        username = request.POST['username']
+        name = request.POST['name']
+        roles = request.POST.getlist('roles[]')
+
+        cr_account_response = account_service.create_account(username, name, roles)
+
+        context = {'message': cr_account_response}
+
+        return render(request, 'main/cr_account.html', context)

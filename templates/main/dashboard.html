@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="dashboard">
+        <form class="logout-button-form" action="/logout/" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Logout">
+        </form>
         {% for cmd in commands %}
             <div>
                 <a href="/{{ cmd.name }}">{{ cmd.friendly_name }}</a>
