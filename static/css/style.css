@@ -14,8 +14,23 @@ body {
 
 .dashboard {
     margin: auto;
+    width: 50%;
+    display: grid;
+    grid-template-columns:33% 34% 33%;
+    padding-top: 50px;
+}
+
+.dashboard-item {
+    background-color: cadetblue;
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
     text-align: center;
-    padding: 25px;
+    margin: 5px;
+    padding: 5px;
+    text-decoration: none;
+    color: black;
+    padding-top: 30px;
+    height: 80px;
 }
 
 .nav {
@@ -39,9 +54,26 @@ body {
 }
 
 .logout-button-form {
-    padding: 10px !important;
+    position: absolute;
+    top: 35px;
+    right: 10px;
 }
 
+.logout-button {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+    font-style: italic;
+}
+
+.welcome-name {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
 .nav a:visited {
     color: black;
 }

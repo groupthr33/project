@@ -6,8 +6,6 @@ def commands(request):
     auth_service = AuthService()
 
     cmds = [
-        Command("sample_command", "Sample Command", 0xF, True),  # todo: remove this line
-        Command("login", "Login", 0xF, True),
         Command("cr_account", "Create Account", 0xC, True),
         Command("set_password", "Set Password", 0xF, True),
         Command("update_contact", "Update Contact Info", 0xF, True),
@@ -25,4 +23,4 @@ def commands(request):
     allowed_commands = [command for command in cmds
                         if auth_service.is_authorized(request.session.get('username', None), command.req_permissions)]
 
-    return {'commands': allowed_commands}
+    return {'commands': allowed_commands, 'username': request.session.get('username', '')}

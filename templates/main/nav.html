@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+    <div class="welcome-name">Hello, {{ username }}</div>
+    <form class="logout-button-form" action="/logout/" method="post">
+        {% csrf_token %}
+        <input class="logout-button" type="submit" value="Logout">
+    </form>
     <div class="nav">
-        <form class="logout-button-form" action="/logout/" method="post">
-            {% csrf_token %}
-            <input type="submit" value="Logout">
-        </form>
         <a href="/dashboard">Dashboard</a>
         {% for cmd in commands %}
             <div>

@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="dashboard">
+        <div class="welcome-name">Hello, {{ username }}</div>
         <form class="logout-button-form" action="/logout/" method="post">
             {% csrf_token %}
-            <input type="submit" value="Logout">
+            <input class="logout-button" type="submit" value="Logout">
         </form>
         {% for cmd in commands %}
-            <div>
-                <a href="/{{ cmd.name }}">{{ cmd.friendly_name }}</a>
-            </div>
+                <a class="dashboard-item" href="/{{ cmd.name }}">{{ cmd.friendly_name }}</a>
         {% endfor %}
     </div>
 {% endblock content %}

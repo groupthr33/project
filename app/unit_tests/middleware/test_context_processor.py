@@ -18,7 +18,6 @@ class TestContextProcessor(TestCase):
         request.session = {'username': 'theuser'}
 
         expected_response = {'commands': [
-            Command("sample_command", "Sample Command", 0xF, True),  # todo: remove this line
             Command("cr_account", "Create Account", 0xC, True),
             Command("set_password", "Set Password", 0xF, True),
             Command("update_contact", "Update Contact Info", 0xF, True),
@@ -31,7 +30,7 @@ class TestContextProcessor(TestCase):
             Command("course_assignments", "View Course Assignments", 0x2),
             Command("view_lab_details", "View Lab Details", 0xC),
             Command("view_courses", "View Courses", 0xC),
-            ]}
+            ], 'username': 'theuser'}
 
         actual_response = ctxp.commands(request)
         self.assertEqual(expected_response, actual_response)
@@ -44,10 +43,9 @@ class TestContextProcessor(TestCase):
         request.session = {'username': 'theuser'}
 
         expected_response = {'commands': [
-            Command("sample_command", "Sample Command", 0xF, True),  # todo: remove this line
             Command("set_password", "Set Password", 0xF, True),
             Command("update_contact", "Update Contact Info", 0xF, True),
-        ]}
+        ], 'username': 'theuser'}
 
         actual_response = ctxp.commands(request)
         self.assertEqual(expected_response, actual_response)
