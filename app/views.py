@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+import json
 from django.views import View
 from app.controllers.command_line_controller import CommandLineController
 from app.services.auth_service import AuthService
@@ -66,10 +67,13 @@ class Logout(View):
         return redirect('/login')
 
 
-class SampleRoute(View):
+class ViewContactInfo(View):
     def get(self, request):
-        some_data = {"my_text": "hello world"}
-        return render(request, 'main/sample-page.html', some_data)
+        contact_infos = account_service.view_contact_info()
+
+        return render(request, 'main/view_contact_info.html',
+                      {'contact_infos_json': json.dumps(contact_infos),
+                       'contact_infos': contact_infos})
 
 
 class CreateAccount(View):

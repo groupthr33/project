@@ -10,6 +10,7 @@ html {
 body {
     padding: 0;
     margin: 0;
+    background: #EEEEEE;
 }
 
 .dashboard {
@@ -23,9 +24,9 @@ body {
 .dashboard-item {
     background-color: cadetblue;
     border: 1px solid rgba(0, 0, 0, 0.8);
-    border-radius: 5px;
+    border-radius: 3px;
     text-align: center;
-    margin: 5px;
+    margin: 2px;
     padding: 5px;
     text-decoration: none;
     color: black;
@@ -43,6 +44,7 @@ body {
     overflow-x: hidden;
     background: cadetblue;
     padding: 60px 0px 0px 0px;
+    box-shadow: 0px 0px 15px 0px;
 }
 
 .nav a {
@@ -67,6 +69,19 @@ body {
     overflow: hidden;
     outline:none;
     font-style: italic;
+}
+
+#contact-info-container {
+    width: 100%;
+    margin-top: 25px;
+}
+
+#contact-info-container tr{
+    background: #d3d3d3;
+}
+
+#contact-info-container td {
+    min-width: 100px;
 }
 
 .welcome-name {

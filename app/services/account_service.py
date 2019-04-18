@@ -34,6 +34,16 @@ class AccountService:
 
         return f"Your {field} has been updated to {new_value}"
 
+    def view_contact_info(self):
+        accounts = Account.objects.all()
+        contact_info = []
+
+        for account in accounts:
+            contact_info.append({'username': account.username, 'name': account.name,
+                                 'phoneNumber': account.phone_number, 'address': account.address})
+
+        return contact_info
+
     def view_account_details(self, username):
         accounts = Account.objects.filter(username__iexact=username)
         if accounts.count() == 0:

@@ -1,8 +1,5 @@
 from django.test import TestCase
-from app.services.auth_service import AuthService
-from app.services.account_service import AccountService
-from app.services.course_service import CourseService
-from app.services.ta_service import TaService
+from django.test import Client
 from app.models.account import Account
 from app.util.account_util import AccountUtil
 
@@ -13,20 +10,23 @@ class TestViewAccountDetails(TestCase):
         self.user = Account.objects.create(username='super_visor', password='p', name='n', is_logged_in=True, roles=0x8)
         self.account = Account.objects.create(username='acc', password='p', name='n', is_logged_in=False, roles=0x1)
 
-        self.auth_service = AuthService()
-        self.account_service = AccountService()
-        self.course_service = CourseService()
-        self.ta_service = TaService()
+        self.client = Client()
 
     def test_view_account_details_default_happy(self):
-        actual_response = self.app.command("view_account_details")
+        data = {
+                'username': 'theuser',
+                'password': 'thepassword'
+            }
         expected_response = f"Account username: {self.user.username}\nName: {self.user.name}\n" \
             f"Roles: {AccountUtil.decode_roles(self.user.roles)}\nPhone Number: {self.user.phone_number}\n" \
             f"Address: {self.user.address}\n\nAccount username: {self.account.username}\nName: {self.account.name}\n" \
             f"Roles: {AccountUtil.decode_roles(self.account.roles)}\nPhone Number: {self.account.phone_number}\n" \
             f"Address: {self.account.address}\n\n"
 
-        self.assertEqual(actual_response, expected_response)
+        actual_response = self.client.post('/login/', data)
+        self.assertEqual('/dashboard', actual_response['Location'])
+
+
 
     def test_view_account_details_specific_account(self):
         actual_response = self.app.command("view_account_details acc")

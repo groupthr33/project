@@ -9,6 +9,7 @@ class TestAccountService(TestCase):
 
         self.account = Account.objects.create(username="theuser", password="thepassword", name="thename",
                                               is_logged_in=True)
+        self.user = Account.objects.create(username='super_visor', password='p', name='n', is_logged_in=True, roles=0x8)
 
     def test_create_account_happy_path(self):
         username = "jbarney"
@@ -109,6 +110,16 @@ class TestAccountService(TestCase):
 
         expected_response = "User does not exist."
         actual_response = self.account_service.update_contact_info(username, field, new_value)
+        self.assertEqual(expected_response, actual_response)
+
+    def test_view_contact_info(self):
+        expected_response = [{'username': self.account.username, 'name': self.account.name,
+                              'phoneNumber': self.account.phone_number, 'address': self.account.address},
+                             {'username': self.user.username, 'name': self.user.name,
+                              'phoneNumber': self.user.phone_number, 'address': self.user.address},
+                             ]
+
+        actual_response = self.account_service.view_contact_info()
         self.assertEqual(expected_response, actual_response)
 
     # todo: write view account detail test
