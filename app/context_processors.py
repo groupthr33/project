@@ -17,7 +17,7 @@ def commands(request):
         Command("assign_ins", "Assign Instructor", 0x8),
         Command("course_assignments", "View Course Assignments", 0x2),
         Command("view_lab_details", "View Lab Details", 0xC),
-        Command("view_courses", "View Courses", 0xC),
+        Command("view_courses", "View Courses", 0xC, True),
     ]
 
     allowed_commands = [command for command in cmds

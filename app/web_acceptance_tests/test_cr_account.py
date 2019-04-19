@@ -26,7 +26,10 @@ class TestCreateAccount(TestCase):
             'roles[]': ['admin']
         }
         expected_response = 'Account for user mrwatts successfully created with roles admin.'
-        actual_response = self.client.post('/cr_account/', data)
+
+        with self.assertTemplateUsed('main/cr_account.html'):
+            actual_response = self.client.post('/cr_account/', data)
+
         self.assertEqual(expected_response, actual_response.context['message'])
 
     def test_cr_account_already_exists(self):
@@ -36,7 +39,10 @@ class TestCreateAccount(TestCase):
             'roles[]': ['admin']
         }
         expected_response = 'Account with username theuser already exists.'
-        actual_response = self.client.post('/cr_account/', data)
+
+        with self.assertTemplateUsed('main/cr_account.html'):
+            actual_response = self.client.post('/cr_account/', data)
+
         self.assertEqual(expected_response, actual_response.context['message'])
 
     def test_cr_account_multiple_roles(self):
@@ -46,5 +52,8 @@ class TestCreateAccount(TestCase):
             'roles[]': ['admin', 'ta']
         }
         expected_response = 'Account for user mrwatts successfully created with roles admin, ta.'
-        actual_response = self.client.post('/cr_account/', data)
+        
+        with self.assertTemplateUsed('main/cr_account.html'):
+            actual_response = self.client.post('/cr_account/', data)
+
         self.assertEqual(expected_response, actual_response.context['message'])

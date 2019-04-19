@@ -88,6 +88,19 @@ body {
     /*min-width: 100px;*/
 }
 
+#course-container {
+    width: 100%;
+    margin-top: 25px;
+}
+
+#course-container tr{
+    background: #d3d3d3;
+}
+
+#course-container td {
+    /*min-width: 100px;*/
+}
+
 .welcome-name {
     position: absolute;
     top: 10px;

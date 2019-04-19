@@ -143,16 +143,14 @@ class CourseService:
         return lab_details
 
     def view_courses(self):
-        course_string = ""
+        courses_info = []
         courses = Course.objects.all()
         for course in courses:
-            instructor = "No instructor assigned"
-            if course.instructor is not None:
-                instructor = course.instructor.username
-            course_string = course_string + 'Course ID#: ' + course.course_id \
-                            + "\nCourse Name: " + course.name + "\nInstructor: " + instructor + "\n\n"
+            courses_info.append({'course_id': course.course_id, 'section': course.section,
+                           'name': course.name, 'schedule': course.schedule,
+                           'instructor': course.instructor})
 
-        return course_string
+        return courses_info
 
     def view_specified_courses(self, course_id, section_id):
         courses = Course.objects.filter(course_id__iexact=course_id, section=section_id)
