@@ -164,3 +164,12 @@ class EditAccount(View):
         })
 
         return redirect('/edit_account?update=true&username=' + username)
+
+
+class ViewCourses(View):
+    def get(self, request):
+        courses = course_service.view_courses()
+
+        return render(request, 'main/view_courses.html',
+                      {'courses_json': json.dumps(courses),
+                       'courses': courses})
