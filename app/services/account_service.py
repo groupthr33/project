@@ -34,15 +34,57 @@ class AccountService:
 
         return f"Your {field} has been updated to {new_value}"
 
+    def update_account_info(self, username, values):
+        accounts = Account.objects.filter(username__iexact=username)
+
+        if accounts.count() == 0:
+            return f"User does not exist."
+        account = accounts.first()
+
+        for field in values:
+            setattr(account, field, values[field])
+            account.save()
+
+        return self.get_account_details(username)
+
     def view_contact_info(self):
         accounts = Account.objects.all()
         contact_info = []
 
         for account in accounts:
             contact_info.append({'username': account.username, 'name': account.name,
-                                 'phoneNumber': account.phone_number, 'address': account.address})
+                                 'phoneNumber': account.phone_number, 'address': account.address,
+                                 'email': account.email})
 
         return contact_info
+
+    def get_accounts(self):
+        accounts = Account.objects.all()
+        account_objects = []
+
+        for account in accounts:
+            role_string = AccountUtil.decode_roles(account.roles)
+            account_objects.append({'username': account.username, 'name': account.name,
+                                    'phoneNumber': account.phone_number, 'address': account.address,
+                                    'email': account.email,
+                                    'roles': role_string})
+
+        return account_objects
+
+    def get_account_details(self, username):
+        accounts = Account.objects.filter(username__iexact=username)
+        if accounts.count() == 0:
+            return None
+
+        account = accounts.first()
+
+        role_string = AccountUtil.decode_roles(account.roles)
+        return {'username': account.username, 'name': account.name,
+                                    'phoneNumber': account.phone_number, 'address': account.address,
+                                    'email': account.email,
+                                    'roles': role_string}
+
+
 
     def view_account_details(self, username):
         accounts = Account.objects.filter(username__iexact=username)

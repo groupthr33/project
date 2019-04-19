@@ -7,9 +7,10 @@ urlpatterns = [
     path("", views.Dashboard.as_view()),
     path("cmd/", views.Home.as_view()),
     path("dashboard/", views.Dashboard.as_view()),
-    path("view_contact_info/", views.ViewContactInfo.as_view()),
-    path("view_accounts/", views.ViewAccounts.as_view()),
+    path("view_contact_info/", views.ViewAccounts.as_view()),
     path("login/", views.Login.as_view()),
     path("logout/", views.Logout.as_view()),
-    path("cr_account/", views.CreateAccount.as_view())
+    path("cr_account/", views.CreateAccount.as_view()),
+    path("edit_account/", views.EditAccount.as_view()),
+    path("update_contact/", views.EditContactInfo.as_view()),
 ]

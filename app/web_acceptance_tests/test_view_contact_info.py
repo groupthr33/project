@@ -19,9 +19,9 @@ class TestViewContactInfo(TestCase):
         s.save()
 
         expected_response = [{'username': self.user.username, 'name': self.user.name,
-                              'phoneNumber': self.user.phone_number, 'address': self.user.address},
+                              'phoneNumber': self.user.phone_number, 'address': self.user.address, 'email': ''},
                              {'username': self.account.username, 'name': self.account.name,
-                              'phoneNumber': self.account.phone_number, 'address': self.account.address},
+                              'phoneNumber': self.account.phone_number, 'address': self.account.address, 'email': ''},
                              ]
 
         with self.assertTemplateUsed('main/view_contact_info.html'):

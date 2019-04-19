@@ -1,12 +1,81 @@
 {%extends "main/nav.html" %}
 {% block command-content %}
-<div style="text-align: center" >
-    <form action="/view_accounts/" method="get">
-        <input id="view-contact-username-input" type="search" name="username" autofocus placeholder="Filter by username..."/>
-        <input type="submit" value="Search"/>
-    </form>
-    <div style="text-align: left">
-    <pre>{{ message }}</pre>
+    <div style="text-align: center" >
+        <input id="view-contact-username-input" type="search" name="username" autocomplete="off" autofocus placeholder="Filter by username..."/>
+        <table id="contact-info-container">
+            <tr>
+                <th>Name</th>
+                <th>Username</th>
+                <th></th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Email</th>
+            </tr>
+            {% for c in contact_infos %}
+                <tr>
+                    <td>{{ c.name }}</td>
+                    <td>{{ c.username }}</td>
+                    <td>{{ c.phoneNumber }}</td>
+                    <td>{{ c.address }}</td>
+                    <td>{{ c.email }}</td>
+                </tr>
+            {%  endfor %}
+        </table>
     </div>
-</div>
+    <script>
+        let el = document.getElementById('view-contact-username-input');
+        let container = document.getElementById('contact-info-container');
+
+        el.oninput = function (e) {
+            let contactInfos = JSON.parse('{{ contact_infos_json | escapejs }}');
+            contactInfos = contactInfos.filter(el => el.name.toLowerCase()
+                .includes(e.target.value.toLowerCase()));
+            container.innerHTML = '';
+
+            const trHeader = document.createElement("TR");
+            const thName = document.createElement("TH");
+            const thUsername = document.createElement("TH");
+            const thPhoneNumber = document.createElement("TH");
+            const thAddress = document.createElement("TH");
+            const thEmail = document.createElement("TH");
+
+            thName.innerText = 'Name';
+            thUsername.innerText = 'Username';
+            thPhoneNumber.innerText = 'Phone';
+            thAddress.innerText = 'Address';
+            thEmail.innerText = 'Email';
+
+            trHeader.appendChild(thName);
+            trHeader.appendChild(thUsername);
+            trHeader.appendChild(thPhoneNumber);
+            trHeader.appendChild(thAddress);
+            trHeader.appendChild(thEmail);
+
+            container.appendChild(trHeader);
+
+            for(let c of contactInfos) {
+                const tr = document.createElement("TR");
+
+                const tdName = document.createElement("TD");
+                const tdUsername = document.createElement("TD");
+                const tdPhoneNumber = document.createElement("TD");
+                const tdAddress = document.createElement("TD");
+                const tdEmail = document.createElement("TD");
+
+                tdName.innerText = c.name;
+                tdUsername.innerText = c.username;
+                tdPhoneNumber.innerText = c.phoneNumber;
+                tdAddress.innerText = c.address;
+                tdEmail.innerText = c.email;
+
+                tr.appendChild(tdName);
+                tr.appendChild(tdUsername);
+                tr.appendChild(tdPhoneNumber);
+                tr.appendChild(tdAddress);
+                tr.appendChild(tdEmail);
+
+                container.appendChild(tr);
+            }
+        }
+    </script>
 {% endblock command-content %}

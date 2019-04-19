@@ -9,3 +9,4 @@ class Account(models.Model):
     roles = models.IntegerField(default=0x1)
     phone_number = models.CharField(max_length=10, blank=True, default="")
     address = models.CharField(max_length=50, blank=True, default="")
+    email = models.CharField(max_length=50, blank=True, default="")

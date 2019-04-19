@@ -115,9 +115,9 @@ class TestAccountService(TestCase):
 
     def test_view_contact_info(self):
         expected_response = [{'username': self.account.username, 'name': self.account.name,
-                              'phoneNumber': self.account.phone_number, 'address': self.account.address},
+                              'phoneNumber': self.account.phone_number, 'address': self.account.address, 'email': ''},
                              {'username': self.user.username, 'name': self.user.name,
-                              'phoneNumber': self.user.phone_number, 'address': self.user.address},
+                              'phoneNumber': self.user.phone_number, 'address': self.user.address, 'email': ''},
                              ]
 
         actual_response = self.account_service.view_contact_info()

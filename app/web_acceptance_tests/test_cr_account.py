@@ -5,7 +5,7 @@ from app.models.account import Account
 from django.test import Client
 
 
-class TestAssignInstructor(TestCase):
+class TestCreateAccount(TestCase):
 
     def setUp(self):
         self.account = Account.objects.create(username='theuser', password='thepassword', name='thename',

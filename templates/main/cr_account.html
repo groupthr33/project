@@ -1,7 +1,6 @@
 {%extends "main/nav.html" %}
 {% block command-content %}
     <div style="text-align: center" >
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <form method="post" action="/cr_account/">
             {% csrf_token %}
             <input required type="text" name="username" autofocus placeholder="type username"/><br/>

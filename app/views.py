@@ -5,6 +5,7 @@ from app.controllers.command_line_controller import CommandLineController
 from app.services.auth_service import AuthService
 from app.services.account_service import AccountService
 from app.services.course_service import CourseService
+from app.util.account_util import AccountUtil
 from app.services.ta_service import TaService
 
 auth_service = AuthService()
@@ -67,25 +68,51 @@ class Logout(View):
         return redirect('/login')
 
 
-class ViewContactInfo(View):
+class ViewAccounts(View):
     def get(self, request):
-        contact_infos = account_service.view_contact_info()
+        username = request.session.get('username')
+
+        authorized = auth_service.is_authorized(username, 0xC)
+        if authorized:
+            contact_infos = account_service.get_accounts()
+        else:
+            contact_infos = account_service.view_contact_info()
 
         return render(request, 'main/view_contact_info.html',
                       {'contact_infos_json': json.dumps(contact_infos),
-                       'contact_infos': contact_infos})
+                       'contact_infos': contact_infos, 'is_account_info': authorized})
 
 
-class ViewAccounts(View):
+class EditContactInfo(View):
     def get(self, request):
-        username = request.GET.get('username', "")
+        username = request.session.get('username')
+        account = account_service.get_account_details(username)
 
-        if username == "":
-            accounts = account_service.view_accounts()
-        else:
-            accounts = account_service.view_account_details(username)
+        if not account:
+            return redirect('/')
 
-        return render(request, 'main/view_accounts.html', {'message': accounts})
+        message = request.GET.get('update', 'false')
+
+        return render(request, 'main/edit_account.html',
+                      {'account': account,
+                       'is_account_info': False,
+                       'message': 'Account updated.' if message == 'true' else ''})
+
+    def post(self, request):
+        username = request.POST.get('username', '')
+        name = request.POST.get('name', '')
+        phoneNumber = request.POST.get('phonenumber', '')
+        address = request.POST.get('address', '')
+        email = request.POST.get('email', '')
+
+        account_service.update_account_info(username, {
+            'name': name,
+            'phone_number': phoneNumber,
+            'address': address,
+            'email': email,
+        })
+
+        return redirect('/update_contact/?update=true')
 
 
 class CreateAccount(View):
@@ -102,3 +129,38 @@ class CreateAccount(View):
         context = {'message': cr_account_response}
 
         return render(request, 'main/cr_account.html', context)
+
+
+class EditAccount(View):
+    def get(self, request):
+        username = request.GET.get('username', None)
+        account = account_service.get_account_details(username)
+
+        if not account:
+            return redirect('/')
+
+        message = request.GET.get('update', 'false')
+
+        return render(request, 'main/edit_account.html',
+                      {'account': account,
+                       'is_account_info': True,
+                       'message': 'Account updated.' if message == 'true' else ''})
+
+    def post(self, request):
+        username = request.POST.get('username', '')
+        name = request.POST.get('name', '')
+        phoneNumber = request.POST.get('phonenumber', '')
+        address = request.POST.get('address', '')
+        email = request.POST.get('email', '')
+        roles = request.POST.getlist('roles[]')
+        roles = AccountUtil.generate_role_string(roles)
+
+        account_service.update_account_info(username, {
+            'name': name,
+            'phone_number': phoneNumber,
+            'address': address,
+            'email': email,
+            'roles': roles
+        })
+
+        return redirect('/edit_account?update=true&username=' + username)
