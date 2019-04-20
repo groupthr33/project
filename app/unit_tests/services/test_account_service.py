@@ -113,14 +113,39 @@ class TestAccountService(TestCase):
         actual_response = self.account_service.update_contact_info(username, field, new_value)
         self.assertEqual(expected_response, actual_response)
 
-    def test_view_contact_info(self):
+    def test_get_contact_info(self):
         expected_response = [{'username': self.account.username, 'name': self.account.name,
                               'phoneNumber': self.account.phone_number, 'address': self.account.address, 'email': ''},
                              {'username': self.user.username, 'name': self.user.name,
                               'phoneNumber': self.user.phone_number, 'address': self.user.address, 'email': ''},
                              ]
 
-        actual_response = self.account_service.view_contact_info()
+        actual_response = self.account_service.get_contact_info()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_get_accounts(self):
+        expected_response = [{'username': self.account.username, 'name': self.account.name,
+                              'phoneNumber': self.account.phone_number, 'address': self.account.address, 'email': '',
+                              'roles': 'ta'},
+                             {'username': self.user.username, 'name': self.user.name,
+                              'phoneNumber': self.user.phone_number, 'address': self.user.address, 'email': '',
+                              'roles': 'supervisor '},
+                             ]
+
+        actual_response = self.account_service.get_accounts()
+        self.assertEqual(expected_response, actual_response)
+
+    def test_get_account_details(self):
+        expected_response = {'username': self.account.username, 'name': self.account.name,
+                             'phoneNumber': self.account.phone_number, 'address': self.account.address, 'email': '',
+                             'roles': 'ta'}
+
+        actual_response = self.account_service.get_account_details(self.account.username)
+        self.assertEqual(expected_response, actual_response)
+
+    def test_get_account_details_user_dne(self):
+        expected_response = None
+        actual_response = self.account_service.get_account_details('eric')
         self.assertEqual(expected_response, actual_response)
 
     def test_view_accounts(self):
@@ -133,5 +158,22 @@ class TestAccountService(TestCase):
         actual_response = self.account_service.view_accounts()
         self.assertEqual(expected_response, actual_response)
 
+    def test_update_account_info_happy_path(self):
+        data = {'username': self.user.username, 'name': self.user.name,
+                'phoneNumber': self.user.phone_number, 'address': self.user.address,
+                'email': self.user.email, 'roles': 0x1}
 
-    # todo: write view account detail test
+        expected_response = {'username': self.user.username, 'name': self.user.name,
+                             'phoneNumber': self.user.phone_number, 'address': self.user.address,
+                             'email': self.user.email, 'roles': 'ta'}
+
+        actual_response = self.account_service.update_account_info(self.user.username, data)
+        self.assertEqual(expected_response, actual_response)
+
+    def test_update_account_info_account_dne(self):
+        data = {'username': self.user.username, 'name': self.user.name,
+                'phoneNumber': self.user.phone_number, 'address': self.user.address,
+                'email': self.user.email, 'roles': 'ta'}
+
+        actual_response = self.account_service.update_account_info('Eric', data)
+        self.assertEqual(None, actual_response)

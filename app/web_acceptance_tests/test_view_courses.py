@@ -3,6 +3,7 @@ from django.test import Client
 from app.models.account import Account
 from app.models.course import Course
 
+
 class TestViewCourses(TestCase):
     def setUp(self):
         self.user = Account.objects.create(username='super_visor', password='p', name='n', is_logged_in=True, roles=0x8)

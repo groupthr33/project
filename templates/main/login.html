@@ -4,7 +4,7 @@
         <form method="post" action="/login/">
             {% csrf_token %}
             <input required type="text" name="username" autofocus placeholder="username"/><br>
-            <input required type="text" name="password" placeholder="password"/><br>
+            <input required type="password" name="password" placeholder="password"/><br>
             <input type="submit" value="Login">
         </form>
         <div>{{ message }}</div>

@@ -146,9 +146,13 @@ class CourseService:
         courses_info = []
         courses = Course.objects.all()
         for course in courses:
+            instructor = ''
+            if course.instructor is not None:
+                instructor = course.instructor.username
+
             courses_info.append({'course_id': course.course_id, 'section': course.section,
                            'name': course.name, 'schedule': course.schedule,
-                           'instructor': course.instructor})
+                           'instructor': instructor})
 
         return courses_info
 

@@ -71,19 +71,19 @@ class Logout(View):
 class ViewAccounts(View):
     def get(self, request):
         username = request.session.get('username')
+        privileged = auth_service.is_authorized(username, 0xC)
 
-        authorized = auth_service.is_authorized(username, 0xC)
-        if authorized:
+        if privileged:
             contact_infos = account_service.get_accounts()
         else:
-            contact_infos = account_service.view_contact_info()
+            contact_infos = account_service.get_contact_info()
 
         return render(request, 'main/view_contact_info.html',
                       {'contact_infos_json': json.dumps(contact_infos),
-                       'contact_infos': contact_infos, 'is_account_info': authorized})
+                       'contact_infos': contact_infos, 'is_account_info': privileged})
 
 
-class EditContactInfo(View):
+class UpdateContactInfo(View):
     def get(self, request):
         username = request.session.get('username')
         account = account_service.get_account_details(username)
@@ -169,6 +169,7 @@ class EditAccount(View):
 class ViewCourses(View):
     def get(self, request):
         courses = course_service.view_courses()
+        print(courses)
 
         return render(request, 'main/view_courses.html',
                       {'courses_json': json.dumps(courses),

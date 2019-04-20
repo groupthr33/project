@@ -12,6 +12,6 @@ urlpatterns = [
     path("logout/", views.Logout.as_view()),
     path("cr_account/", views.CreateAccount.as_view()),
     path("edit_account/", views.EditAccount.as_view()),
-    path("update_contact/", views.EditContactInfo.as_view()),
+    path("update_contact/", views.UpdateContactInfo.as_view()),
     path("view_courses/", views.ViewCourses.as_view())
 ]

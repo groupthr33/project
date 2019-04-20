@@ -29,7 +29,7 @@ class TestContextProcessor(TestCase):
             Command("assign_ins", "Assign Instructor", 0x8),
             Command("course_assignments", "View Course Assignments", 0x2),
             Command("view_lab_details", "View Lab Details", 0xC),
-            Command("view_courses", "View Courses", 0xC),
+            Command("view_courses", "View Courses", 0xC, True),
             ], 'username': 'theuser'}
 
         actual_response = ctxp.commands(request)

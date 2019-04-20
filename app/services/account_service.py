@@ -38,7 +38,7 @@ class AccountService:
         accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
-            return f"User does not exist."
+            return None
         account = accounts.first()
 
         for field in values:
@@ -47,7 +47,7 @@ class AccountService:
 
         return self.get_account_details(username)
 
-    def view_contact_info(self):
+    def get_contact_info(self):
         accounts = Account.objects.all()
         contact_info = []
 
@@ -75,16 +75,14 @@ class AccountService:
         accounts = Account.objects.filter(username__iexact=username)
         if accounts.count() == 0:
             return None
-
         account = accounts.first()
 
         role_string = AccountUtil.decode_roles(account.roles)
+
         return {'username': account.username, 'name': account.name,
-                                    'phoneNumber': account.phone_number, 'address': account.address,
-                                    'email': account.email,
-                                    'roles': role_string}
-
-
+                'phoneNumber': account.phone_number, 'address': account.address,
+                'email': account.email,
+                'roles': role_string}
 
     def view_account_details(self, username):
         accounts = Account.objects.filter(username__iexact=username)

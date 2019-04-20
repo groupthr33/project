@@ -2,13 +2,13 @@ from django.test import TestCase
 from app.models.account import Account
 
 
-class TestUpdateContact(TestCase):
+class TestEditAccount(TestCase):
 
     def setUp(self):
         self.user = Account.objects.create(username='theuser', password='thepassword', name='thename',
                                            is_logged_in=True)
 
-    def test_update_contact_happy_path_get(self):
+    def test_edit_account_happy_path_get(self):
         s = self.client.session
         s.update({
             "username": self.user.username,
@@ -16,10 +16,10 @@ class TestUpdateContact(TestCase):
         s.save()
 
         with self.assertTemplateUsed('main/edit_account.html'):
-            actual_response = self.client.get('/update_contact/')
+            actual_response = self.client.get('/edit_account/?username=theuser')
 
         self.assertEqual('', actual_response.context['message'])
-        self.assertEqual(False, actual_response.context['is_account_info'])
+        self.assertEqual(True, actual_response.context['is_account_info'])
         self.assertEqual({'username': self.user.username, 'name': self.user.name,
                           'phoneNumber': self.user.phone_number, 'address': self.user.address,
                           'email': self.user.email, 'roles': 'ta'},
@@ -33,10 +33,10 @@ class TestUpdateContact(TestCase):
         s.save()
 
         with self.assertTemplateUsed('main/edit_account.html'):
-            actual_response = self.client.get('/update_contact/?update=true')
+            actual_response = self.client.get('/edit_account/?update=true&username=theuser')
 
         self.assertEqual('Account updated.', actual_response.context['message'])
-        self.assertEqual(False, actual_response.context['is_account_info'])
+        self.assertEqual(True, actual_response.context['is_account_info'])
         self.assertEqual({'username': self.user.username, 'name': self.user.name,
                           'phoneNumber': self.user.phone_number, 'address': self.user.address,
                           'email': self.user.email, 'roles': 'ta'},
@@ -49,10 +49,10 @@ class TestUpdateContact(TestCase):
         })
         s.save()
 
-        actual_response = self.client.get('/update_contact/')
+        actual_response = self.client.get('/edit_account/?username=mike')
         self.assertEqual('/', actual_response['Location'])
 
-    def test_update_contact_happy_path_post(self):
+    def test_edit_account_happy_path_post(self):
         s = self.client.session
         s.update({
             "username": self.user.username,
@@ -63,5 +63,5 @@ class TestUpdateContact(TestCase):
                 'phoneNumber': self.user.phone_number, 'address': self.user.address,
                 'email': self.user.email, 'roles': 'ta'}
 
-        actual_response = self.client.post('/update_contact/', data)
-        self.assertEqual('/update_contact/?update=true', actual_response['Location'])
+        actual_response = self.client.post('/edit_account/', data)
+        self.assertEqual('/edit_account?update=true&username=theuser', actual_response['Location'])

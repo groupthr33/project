@@ -2,12 +2,12 @@
 {% block command-content %}
     <div style="text-align: center" >
         <input id="view-course-input" type="search" name="courseid" autofocus placeholder="Filter by course id..."/>
-        <table id="course-container">
+        <table id="contact-info-container">
         </table>
     </div>
     <script>
         let el = document.getElementById('view-course-input');
-        let container = document.getElementById('course-container');
+        let container = document.getElementById('contact-info-container');
 
         function filter(e) {
             let courses = JSON.parse('{{ courses_json | escapejs }}');

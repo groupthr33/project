@@ -25,7 +25,7 @@ class VerifyPermissions(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        # if request.path.strip('/') in paths:
-        #     if not auth_service.is_authorized(request.session.get('username'), paths[request.path.strip('/')]):
-        #         return redirect('/')
+        if request.path.strip('/') in paths:
+            if not auth_service.is_authorized(request.session.get('username'), paths[request.path.strip('/')]):
+                return redirect('/')
         return self.get_response(request)
