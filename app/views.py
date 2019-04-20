@@ -153,6 +153,8 @@ class EditAccount(View):
         address = request.POST.get('address', '')
         email = request.POST.get('email', '')
         roles = request.POST.getlist('roles[]')
+        if len(roles) == 0:
+            roles = ['ta']
         roles = AccountUtil.generate_role_string(roles)
 
         account_service.update_account_info(username, {

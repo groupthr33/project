@@ -7,13 +7,7 @@
             <input class="logout-button" type="submit" value="Logout">
         </form>
         {% for cmd in commands %}
-
-            {% if cmd.active %}
-                <a class="dashboard-item" href="/{{ cmd.name }}">{{ cmd.friendly_name }}</a>
-            {% endif %}
-            {% if not cmd.active %}
-                <a class="dashboard-item disabled" href="/{{ cmd.name }}">{{ cmd.friendly_name }}</a>
-            {% endif %}
+            <a class="dashboard-item {% if not cmd.active %}disabled{% endif %}" href="/{{ cmd.name }}">{{ cmd.friendly_name }}</a>
         {% endfor %}
     </div>
 {% endblock content %}

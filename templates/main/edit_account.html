@@ -1,7 +1,8 @@
-{%extends "main/nav.html" %}
+{% extends "main/nav.html" %}
 {% block command-content %}
-    <div style="margin: auto; width: 25%" >
-        <form method="post" action="{% if is_account_info %}/edit_account/{% else %}/update_contact/{% endif %}">
+    <div style="margin: auto; width: 25%">
+        <form method="post"
+              action="{% if is_account_info %}/edit_account/{% else %}/update_contact/{% endif %}">
             {% csrf_token %}
             <input required readonly type="text" name="username" value="{{ account.username }}"><br/>
             <input required type="text" name="name" placeholder="name" value="{{ account.name }}"><br/>
@@ -11,32 +12,21 @@
 
             {% if is_account_info %}
                 <label name="rolelabel" for="roles[]">Roles: </label><br/>
-                <input required type="checkbox" name="roles[]" value="supervisor" {% if "supervisor" in account.roles %}checked{% endif %}>
+                <input  type="checkbox" name="roles[]" value="supervisor"
+                       {% if "supervisor" in account.roles %}checked{% endif %}>
                 <label for="roles[]">Supervisor</label><br/>
-                <input required type="checkbox" name="roles[]" value="admin" {% if "admin" in account.roles %}checked{% endif %}/>
+                <input  type="checkbox" name="roles[]" value="admin"
+                       {% if "admin" in account.roles %}checked{% endif %}/>
                 <label for="roles[]">Admin</label><br/>
-                <input required type="checkbox" name="roles[]" value="instructor" {% if "instructor" in account.roles %}checked{% endif %}/>
+                <input  type="checkbox" name="roles[]" value="instructor"
+                       {% if "instructor" in account.roles %}checked{% endif %}/>
                 <label for="roles[]">Instructor</label><br/>
-                <input required type="checkbox" name="roles[]" value="ta" {% if "ta" in account.roles %}checked{% endif %}/>
+                <input  type="checkbox" name="roles[]" value="ta"
+                       {% if "ta" in account.roles %}checked{% endif %}/>
                 <label for="roles[]">TA</label><br/>
             {% endif %}
             <input type="submit" value="Update" id="update-btn"/>
         </form>
         <div>{{ message }}</div>
     </div>
-    <script>
-    $(function(){
-        var requiredCheckboxes = $(':checkbox[required]');
-
-        requiredCheckboxes.change(function(){
-
-            if(requiredCheckboxes.is(':checked')) {
-                requiredCheckboxes.removeAttr('required');
-            }
-            else {
-                requiredCheckboxes.attr('required', 'required');
-            }
-        });
-    });
-    </script>
 {% endblock command-content %}
