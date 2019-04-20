@@ -19,7 +19,7 @@ class TestUpdateContact(TestCase):
             actual_response = self.client.get('/update_contact/')
 
         self.assertEqual('', actual_response.context['message'])
-        self.assertEqual(False, actual_response.context['is_account_info'])
+        self.assertEqual(False, actual_response.context['is_privileged'])
         self.assertEqual({'username': self.user.username, 'name': self.user.name,
                           'phoneNumber': self.user.phone_number, 'address': self.user.address,
                           'email': self.user.email, 'roles': 'ta'},
@@ -36,7 +36,7 @@ class TestUpdateContact(TestCase):
             actual_response = self.client.get('/update_contact/?update=true')
 
         self.assertEqual('Account updated.', actual_response.context['message'])
-        self.assertEqual(False, actual_response.context['is_account_info'])
+        self.assertEqual(False, actual_response.context['is_privileged'])
         self.assertEqual({'username': self.user.username, 'name': self.user.name,
                           'phoneNumber': self.user.phone_number, 'address': self.user.address,
                           'email': self.user.email, 'roles': 'ta'},

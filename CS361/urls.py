@@ -1,17 +1,17 @@
 from django.contrib import admin
 from django.urls import path
-from app import views
+import app.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", views.Dashboard.as_view()),
-    path("cmd/", views.Home.as_view()),
-    path("dashboard/", views.Dashboard.as_view()),
-    path("view_contact_info/", views.ViewAccounts.as_view()),
-    path("login/", views.Login.as_view()),
-    path("logout/", views.Logout.as_view()),
-    path("cr_account/", views.CreateAccount.as_view()),
-    path("edit_account/", views.EditAccount.as_view()),
-    path("update_contact/", views.UpdateContactInfo.as_view()),
-    path("view_courses/", views.ViewCourses.as_view())
+    path("", app.views.Dashboard.as_view()),
+    path("dashboard/", app.views.Dashboard.as_view()),
+    path("view_contact_info/", app.views.ViewAccounts.as_view()),
+    path("login/", app.views.Login.as_view()),
+    path("logout/", app.views.Logout.as_view()),
+    path("cr_account/", app.views.CreateAccount.as_view()),
+    path("edit_account/", app.views.EditAccount.as_view()),
+    path("update_contact/", app.views.UpdateContactInfo.as_view()),
+    path("view_courses/", app.views.ViewCourses.as_view()),
+    path("assign_ta_course/", app.views.AssignTaCourse.as_view())
 ]

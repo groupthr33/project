@@ -1,93 +1,124 @@
-{%extends "main/nav.html" %}
+{% extends "main/nav.html" %}
 {% block command-content %}
-    <div style="text-align: center" >
-        <input id="view-contact-username-input" type="search" name="username" autofocus placeholder="Filter by username..."/>
-        <table id="contact-info-container">
-        </table>
+    <div style="text-align: center">
+        <input id="view-contact-username-input" type="search" name="username" autofocus
+               placeholder="Filter by username..."/>
+        <form method="post" action="{{ post_route }}">
+            {% csrf_token %}
+            <table id="contact-info-container">
+            </table>
+            {% if is_assigning %}
+                <input type="hidden" name="course_id" value="{{ course_id }}">
+                <input type="hidden" name="course_section" value="{{ course_section }}">
+                <input type="submit">
+                <pre>{{ message }}</pre>
+            {% endif %}
+        </form>
     </div>
     <script>
-        function redirect(e){
+        function redirect(e) {
             window.location = `/edit_account?username=${e.id}`
+        }
+
+        function filter(e) {
+            const rows = document.querySelectorAll('.row');
+            rows.forEach(el => el.style.display = el.id.toLowerCase()
+                .includes(e.target.value.toLowerCase()) ? 'table-row' : 'none');
         }
 
         let el = document.getElementById('view-contact-username-input');
         let container = document.getElementById('contact-info-container');
+        let contactInfos = JSON.parse('{{ contact_infos_json | escapejs }}');
+        container.innerHTML = '';
 
-        function filter(e) {
-            let contactInfos = JSON.parse('{{ contact_infos_json | escapejs }}');
-            contactInfos = contactInfos.filter(el => el.name.toLowerCase()
-                .includes(e.target.value.toLowerCase()));
-            container.innerHTML = '';
+        const trHeader = document.createElement("TR");
+        const thEdit = document.createElement("TH");
+        const thAssign = document.createElement("TH");
+        const thName = document.createElement("TH");
+        const thUsername = document.createElement("TH");
+        const thRoles = document.createElement("TH");
+        const thPhoneNumber = document.createElement("TH");
+        const thAddress = document.createElement("TH");
+        const thEmail = document.createElement("TH");
 
-            const trHeader = document.createElement("TR");
-            const thEdit = document.createElement("TH");
-            const thName = document.createElement("TH");
-            const thUsername = document.createElement("TH");
-            const thRoles = document.createElement("TH");
-            const thPhoneNumber = document.createElement("TH");
-            const thAddress = document.createElement("TH");
-            const thEmail = document.createElement("TH");
-
-            thName.innerText = 'Name';
-            thUsername.innerText = 'Username';
-            thRoles.innerText = 'Roles';
-            thPhoneNumber.innerText = 'Phone';
-            thAddress.innerText = 'Address';
-            thEmail.innerText = 'Email';
+        thName.innerText = 'Name';
+        thUsername.innerText = 'Username';
+        thRoles.innerText = 'Roles';
+        thPhoneNumber.innerText = 'Phone';
+        thAddress.innerText = 'Address';
+        thEmail.innerText = 'Email';
 
 
-            {% if is_account_info %}
-                trHeader.appendChild(thEdit);
+        {% if is_privileged %}
+            trHeader.appendChild(thEdit);
+        {% endif %}
+
+        {% if is_assigning %}
+            trHeader.appendChild(thAssign);
+        {% endif %}
+
+        trHeader.appendChild(thName);
+        trHeader.appendChild(thUsername);
+
+        {% if is_privileged %}
+            trHeader.appendChild(thRoles);
+        {% endif %}
+
+        trHeader.appendChild(thPhoneNumber);
+        trHeader.appendChild(thAddress);
+        trHeader.appendChild(thEmail);
+
+        container.appendChild(trHeader);
+
+        for (let c of contactInfos) {
+            const tr = document.createElement("TR");
+            tr.className = "row";
+            tr.id = c.name;
+            const tdEdit = document.createElement("TD");
+            const tdAssign = document.createElement("TD");
+            const tdName = document.createElement("TD");
+            const tdUsername = document.createElement("TD");
+            const tdRoles = document.createElement("TD");
+            const tdPhoneNumber = document.createElement("TD");
+            const tdAddress = document.createElement("TD");
+            const tdEmail = document.createElement("TD");
+
+            tdName.innerText = c.name;
+            tdUsername.innerText = c.username;
+            tdRoles.innerText = c.roles;
+            tdPhoneNumber.innerText = c.phoneNumber;
+            tdAddress.innerText = c.address;
+            tdEmail.innerText = c.email;
+
+            {% if is_privileged %}
+                tdEdit.innerHTML = '<span class="fas fa-edit"/>';
+                tdEdit.id = c.username;
+                tdEdit.onclick = () => redirect(tdEdit);
+                tr.append(tdEdit);
             {% endif %}
-            trHeader.appendChild(thName);
-            trHeader.appendChild(thUsername);
-            {% if is_account_info %}
-                trHeader.appendChild(thRoles);
+
+            {% if is_assigning %}
+                const checkbox = document.createElement("input");
+                checkbox.setAttribute("type", "checkbox");
+                checkbox.setAttribute("name", "assignees");
+                checkbox.setAttribute("value", c.username);
+
+                tdAssign.appendChild(checkbox);
+                tr.appendChild(tdAssign);
             {% endif %}
-            trHeader.appendChild(thPhoneNumber);
-            trHeader.appendChild(thAddress);
-            trHeader.appendChild(thEmail);
 
-            container.appendChild(trHeader);
+            tr.appendChild(tdName);
+            tr.appendChild(tdUsername);
+            {% if is_privileged %}
+                tr.appendChild(tdRoles);
+            {% endif %}
+            tr.appendChild(tdPhoneNumber);
+            tr.appendChild(tdAddress);
+            tr.appendChild(tdEmail);
 
-            for(let c of contactInfos) {
-                const tr = document.createElement("TR");
-
-                const tdEdit = document.createElement("TD");
-                const tdName = document.createElement("TD");
-                const tdUsername = document.createElement("TD");
-                const tdRoles = document.createElement("TD");
-                const tdPhoneNumber = document.createElement("TD");
-                const tdAddress = document.createElement("TD");
-                const tdEmail = document.createElement("TD");
-
-                tdName.innerText = c.name;
-                tdUsername.innerText = c.username;
-                tdRoles.innerText = c.roles;
-                tdPhoneNumber.innerText = c.phoneNumber;
-                tdAddress.innerText = c.address;
-                tdEmail.innerText = c.email;
-
-                {% if is_account_info %}
-                    tdEdit.innerHTML = '<span class="fas fa-edit"/>';
-                    tdEdit.id = c.username;
-                    tdEdit.onclick = () => redirect(tdEdit);
-                    tr.append(tdEdit);
-                {% endif %}
-                tr.appendChild(tdName);
-                tr.appendChild(tdUsername);
-                {% if is_account_info %}
-                    tr.appendChild(tdRoles);
-                {% endif %}
-                tr.appendChild(tdPhoneNumber);
-                tr.appendChild(tdAddress);
-                tr.appendChild(tdEmail);
-
-                container.appendChild(tr);
-            }
+            container.appendChild(tr);
         }
 
-        el.oninput = filter
-        filter({target:{value:''}})
+        el.oninput = filter;
     </script>
 {% endblock command-content %}

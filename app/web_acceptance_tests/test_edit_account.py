@@ -19,7 +19,7 @@ class TestEditAccount(TestCase):
             actual_response = self.client.get('/edit_account/?username=theuser')
 
         self.assertEqual('', actual_response.context['message'])
-        self.assertEqual(True, actual_response.context['is_account_info'])
+        self.assertEqual(True, actual_response.context['is_privileged'])
         self.assertEqual({'username': self.user.username, 'name': self.user.name,
                           'phoneNumber': self.user.phone_number, 'address': self.user.address,
                           'email': self.user.email, 'roles': 'ta'},
@@ -36,7 +36,7 @@ class TestEditAccount(TestCase):
             actual_response = self.client.get('/edit_account/?update=true&username=theuser')
 
         self.assertEqual('Account updated.', actual_response.context['message'])
-        self.assertEqual(True, actual_response.context['is_account_info'])
+        self.assertEqual(True, actual_response.context['is_privileged'])
         self.assertEqual({'username': self.user.username, 'name': self.user.name,
                           'phoneNumber': self.user.phone_number, 'address': self.user.address,
                           'email': self.user.email, 'roles': 'ta'},

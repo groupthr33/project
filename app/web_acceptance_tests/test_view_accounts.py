@@ -29,7 +29,7 @@ class TestViewAccounts(TestCase):
                               , 'roles': 'ta'},
                           ], actual_response.context['contact_infos'])
 
-        self.assertEqual(True, actual_response.context['is_account_info'])
+        self.assertEqual(True, actual_response.context['is_privileged'])
 
     def test_view_accounts_not_privileged(self):
         s = self.client.session
@@ -48,4 +48,4 @@ class TestViewAccounts(TestCase):
             actual_response = self.client.get('/view_contact_info/')
 
         self.assertEqual(expected_response, actual_response.context['contact_infos'])
-        self.assertEqual(False, actual_response.context['is_account_info'])
+        self.assertEqual(False, actual_response.context['is_privileged'])

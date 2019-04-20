@@ -2,7 +2,7 @@
 {% block command-content %}
     <div style="margin: auto; width: 25%">
         <form method="post"
-              action="{% if is_account_info %}/edit_account/{% else %}/update_contact/{% endif %}">
+              action="{% if is_privileged %}/edit_account/{% else %}/update_contact/{% endif %}">
             {% csrf_token %}
             <input required readonly type="text" name="username" value="{{ account.username }}"><br/>
             <input required type="text" name="name" placeholder="name" value="{{ account.name }}"><br/>
@@ -10,7 +10,7 @@
             <input type="text" name="address" placeholder="address" value="{{ account.address }}"><br/>
             <input type="text" name="email" placeholder="email" value="{{ account.email }}"><br/>
 
-            {% if is_account_info %}
+            {% if is_privileged %}
                 <label name="rolelabel" for="roles[]">Roles: </label><br/>
                 <input  type="checkbox" name="roles[]" value="supervisor"
                        {% if "supervisor" in account.roles %}checked{% endif %}>
