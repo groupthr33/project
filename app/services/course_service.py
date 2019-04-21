@@ -148,11 +148,24 @@ class CourseService:
         for course in courses:
             instructor = ''
             if course.instructor is not None:
-                instructor = course.instructor.username
+                instructor = course.instructor.name
+
+            tas_list = TaCourse.objects.filter(course=course)
+
+            tas = ''
+
+            if tas_list.count() > 0:
+                for i, ta in enumerate(tas_list):
+                    ta_name = ta.assigned_ta.name
+                    if i == tas_list.count()-1:
+                        tas += ta_name
+                    else:
+                        tas += ta_name+', '
+
 
             courses_info.append({'course_id': course.course_id, 'section': course.section,
                            'name': course.name, 'schedule': course.schedule,
-                           'instructor': instructor})
+                           'instructor': instructor, 'tas': tas})
 
         return courses_info
 

@@ -3,7 +3,7 @@
     <div style="text-align: center">
         <input id="view-contact-username-input" type="search" name="username" autofocus
                placeholder="Filter by username..."/>
-        <form method="post" action="{{ post_route }}">
+        <form name="input" method="post" action="{{ post_route }}">
             {% csrf_token %}
             <table id="contact-info-container">
             </table>
@@ -98,12 +98,24 @@
             {% endif %}
 
             {% if is_assigning %}
-                const checkbox = document.createElement("input");
-                checkbox.setAttribute("type", "checkbox");
-                checkbox.setAttribute("name", "assignees");
-                checkbox.setAttribute("value", c.username);
+                {% if post_route == '/assign_ta_course/' %}
+                    const checkbox = document.createElement("input");
+                    checkbox.setAttribute("type", "checkbox");
+                    checkbox.setAttribute("name", "assignees");
+                    checkbox.setAttribute("value", c.username);
 
-                tdAssign.appendChild(checkbox);
+                    tdAssign.appendChild(checkbox);
+                {% endif %}
+                {% if post_route == '/assign_ins/' %}
+                    const radio = document.createElement("input");
+                    radio.setAttribute("type", "radio");
+                    radio.setAttribute("name", "assignee");
+                    radio.setAttribute("value", c.username);
+                    radio.setAttribute("required", true);
+
+                    tdAssign.appendChild(radio);
+                {% endif %}
+
                 tr.appendChild(tdAssign);
             {% endif %}
 
@@ -120,5 +132,7 @@
         }
 
         el.oninput = filter;
+
     </script>
+
 {% endblock command-content %}
