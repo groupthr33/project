@@ -1,0 +1,13 @@
+{% extends "main/nav.html" %}
+{% block command-content %}
+    <div style="text-align: center">
+        <form method="post" action="/cr_course/">
+            {% csrf_token %}
+            <input required type="text" name="course_id" autofocus placeholder="enter course id"/><br/>
+            <input required type="text" name="section" autofocus placeholder="enter course section"/><br/>
+            <input required type="text" name="name" autofocus placeholder="enter course name"/><br/>
+            <input required type="text" name="schedule" autofocus placeholder="enter course schedule"/><br/>
+        </form>
+        <div>{{ message }}</div>
+    </div>
+{% endblock command-content %}
