@@ -101,6 +101,7 @@
             {% if is_privileged %}
                 tdEdit.innerHTML = '<span class="fas fa-edit"/>';
                 tdEdit.id = c.username;
+                tdEdit.className = "pointer-td";
                 tdEdit.onclick = () => redirect(tdEdit);
                 tr.append(tdEdit);
             {% endif %}

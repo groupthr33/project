@@ -76,10 +76,12 @@
 
             tdAssignIns.innerHTML = '<span class="fas fa-chalkboard-teacher"/>';
             tdAssignIns.title = "Assign Instructor";
+            tdAssignIns.className = "pointer-td";
             tdAssignIns.onclick = () => assignInstructor(c.course_id, c.section);
 
             tdAssignTa.innerHTML = '<span class="fas fa-user"/>';
             tdAssignTa.title = "Assign TA";
+            tdAssignTa.className = "pointer-td";
             tdAssignTa.onclick = () => assignTa(c.course_id, c.section);
 
             tr.append(tdAssignIns);

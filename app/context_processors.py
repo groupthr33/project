@@ -7,15 +7,15 @@ def commands(request):
 
     cmds = [
         Command("cr_account", "Create Account", 0xC, True),
-        Command("set_password", "Set Password", 0xF, True),
+        Command("set_password", "Change Password", 0xF, True),
         Command("update_contact", "Update Contact Info", 0xF, True),
-        Command("view_contact_info", "View Contact Info", 0xF, True),
+        Command("view_contact_info", "Users", 0xF, True),
         Command("cr_course", "Create Course", 0xC),
         Command("cr_lab", "Create Lab", 0xC),
         Command("assign_ta_lab", "Assign TA to Lab", 0xA),
         Command("course_assignments", "View Course Assignments", 0x2),
         Command("view_lab_details", "View Lab Details", 0xC),
-        Command("view_courses", "View Courses", 0xC, True),
+        Command("view_courses", "Courses", 0xC, True),
     ]
 
     allowed_commands = [command for command in cmds

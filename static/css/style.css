@@ -27,15 +27,10 @@ body {
     border-radius: 3px;
     text-align: center;
     margin: 2px;
-    padding: 5px;
     text-decoration: none;
     color: black;
-    padding-top: 30px;
+    padding: 30px 5px 5px;
     height: 80px;
-}
-
-.edit-td {
-    /*width: 20px;*/
 }
 
 .nav {
@@ -84,8 +79,8 @@ body {
     background: #d3d3d3;
 }
 
-#contact-info-container td {
-    /*min-width: 100px;*/
+.pointer-td {
+    cursor: pointer;
 }
 
 #course-container {
