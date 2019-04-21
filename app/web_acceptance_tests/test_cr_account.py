@@ -52,7 +52,7 @@ class TestCreateAccount(TestCase):
             'roles[]': ['admin', 'ta']
         }
         expected_response = 'Account for user mrwatts successfully created with roles admin, ta.'
-        
+
         with self.assertTemplateUsed('main/cr_account.html'):
             actual_response = self.client.post('/cr_account/', data)
 

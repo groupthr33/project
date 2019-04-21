@@ -13,5 +13,6 @@ urlpatterns = [
     path("edit_account/", app.views.EditAccount.as_view()),
     path("update_contact/", app.views.UpdateContactInfo.as_view()),
     path("view_courses/", app.views.ViewCourses.as_view()),
-    path("assign_ta_course/", app.views.AssignTaCourse.as_view())
+    path("assign_ta_course/", app.views.AssignTaCourse.as_view()),
+    path("assign_ins/", app.views.AssignInstructor.as_view()),
 ]

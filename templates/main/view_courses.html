@@ -33,12 +33,14 @@
         const thCourseName = document.createElement("TH");
         const thSchedule = document.createElement("TH");
         const thInstructor = document.createElement("TH");
+        const thTAs = document.createElement("TH");
 
         thCourseID.innerText = 'CourseID';
         thCourseSection.innerText = 'Section';
         thCourseName.innerText = 'Name';
         thSchedule.innerText = 'Schedule';
         thInstructor.innerText = 'Instructor';
+        thTAs.innerText = 'TA(s)';
 
         trHeader.appendChild(thAssignIns);
         trHeader.appendChild(thAssignTa);
@@ -47,6 +49,7 @@
         trHeader.appendChild(thCourseName);
         trHeader.appendChild(thSchedule);
         trHeader.appendChild(thInstructor);
+        trHeader.appendChild(thTAs);
 
         container.appendChild(trHeader);
 
@@ -62,12 +65,14 @@
             const tdCourseName = document.createElement("TD");
             const tdSchedule = document.createElement("TD");
             const tdInstructor = document.createElement("TD");
+            const tdTAs = document.createElement("TD");
 
             tdCourseID.innerText = c.course_id;
             tdCourseSection.innerText = c.section;
             tdCourseName.innerText = c.name;
             tdSchedule.innerText = c.schedule;
             tdInstructor.innerText = c.instructor;
+            tdTAs.innerText = c.tas;
 
             tdAssignIns.innerHTML = '<span class="fas fa-chalkboard-teacher"/>';
             tdAssignIns.title = "Assign Instructor";
@@ -84,6 +89,7 @@
             tr.appendChild(tdCourseName);
             tr.appendChild(tdSchedule);
             tr.appendChild(tdInstructor);
+            tr.appendChild(tdTAs);
 
             container.appendChild(tr);
         }

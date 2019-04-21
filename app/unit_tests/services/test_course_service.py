@@ -379,9 +379,9 @@ class TestCourseService(TestCase):
         actual_response = self.course_service.view_courses()
         expected_response = [{'course_id': self.course1.course_id, 'section': self.course1.section,
                               'name': self.course1.name, 'schedule': self.course1.schedule,
-                              'instructor': ''},
+                              'instructor': '', 'tas': ''},
                              {'course_id': self.course2.course_id, 'section': self.course2.section,
                               'name': self.course2.name, 'schedule': self.course2.schedule,
-                              'instructor': ''}]
+                              'instructor': '', 'tas': ''}]
 
         self.assertEqual(expected_response, actual_response)
