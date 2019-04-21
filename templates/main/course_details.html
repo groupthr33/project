@@ -1,0 +1,77 @@
+{% extends "main/nav.html" %}
+{% block command-content %}
+    <style>
+        #course-details-container {
+            display: inline-grid;
+            grid-column-gap: 25px;
+            grid-row-gap: 25px;
+            grid-template-columns: auto auto;
+            width: 100%;
+        }
+
+        #course-details {
+            grid-column: 1/ span 2;
+            background: orange;
+        }
+
+        #tas {
+            grid-column: 1/span 1;
+            background: red;
+        }
+
+        #labs {
+            grid-column: 2 / span 1;
+            background: green;
+        }
+    </style>
+    <div id="course-details-container">
+        <div id="course-details">
+            <table>
+                <tbody>
+                <tr>
+                    <td>
+                        Course ID:
+                    </td>
+                    <td>
+                        {{ course_id }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Lecture Section:
+                    </td>
+                    <td>
+                        {{ section }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Name:
+                    </td>
+                    <td>
+                        {{ name}}
+                    </td>
+                    </tr>
+                    <tr>
+                    <td>
+                    Schedule:
+                    </td>
+                    <td>
+                    {{ schedule }}
+                    </td>
+                    </tr>
+                    <tr>
+                    <td>
+                    Instructor:
+                    </td>
+                    <td>
+                        {{ instructor }}
+                    </td>
+                    </tr>
+                    </tbody>
+                    </table>
+                    </div>
+        <div id="tas">ta content</div>
+        <div id="labs">lab content</div>
+    </div>
+{% endblock command-content %}

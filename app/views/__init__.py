@@ -9,3 +9,4 @@ from app.views.view_accounts import ViewAccounts
 from app.views.view_courses import ViewCourses
 from app.views.my_courses import MyCourses
 from app.views.assign_ins import AssignInstructor
+from app.views.course_details import CourseDetails

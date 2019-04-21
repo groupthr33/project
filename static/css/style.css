@@ -79,7 +79,10 @@ body {
     background: #d3d3d3;
 }
 
-.pointer-td {
+.course-row:hover{
+    background: #a3a3a3 !important;
+}
+.pointer {
     cursor: pointer;
 }
 
@@ -107,7 +110,7 @@ body {
 
 .command-content {
     margin-left: 200px;
-    padding: 25px;
+    padding: 75px 25px 25px 25px;
 }
 
 a.disabled {

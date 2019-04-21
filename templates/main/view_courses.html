@@ -6,19 +6,25 @@
         </table>
     </div>
     <script>
-        const assignTa = (courseId, courseSection) => {
+        const assignTa = (e, courseId, courseSection) => {
+            e.stopPropagation();
             window.location = `/assign_ta_course/?courseid=${courseId}&section=${courseSection}`
         };
 
-        const assignInstructor = (courseId, courseSection) => {
+        const assignInstructor = (e, courseId, courseSection) => {
+            e.stopPropagation();
             window.location = `/assign_ins/?courseid=${courseId}&section=${courseSection}`
         };
 
-        function filter(e) {
+        const filter = e => {
             const rows = document.querySelectorAll('.row');
             rows.forEach(el => el.style.display = el.id.toLowerCase()
                 .includes(e.target.value.toLowerCase()) ? 'table-row' : 'none');
-        }
+        };
+
+        const goToCourseDetails = (courseId, courseSection) => {
+            window.location = `/course_details/?courseid=${courseId}&section=${courseSection}`
+        };
 
         let el = document.getElementById('view-course-input');
         let container = document.getElementById('contact-info-container');
@@ -59,7 +65,8 @@
 
         for (let c of courses) {
             const tr = document.createElement("TR");
-            tr.className = "row";
+            tr.onclick = () => goToCourseDetails(c.course_id, c.section);
+            tr.classList.add("course-row", "pointer");
             tr.id = c.course_id;
 
             const tdCourseID = document.createElement("TD");
@@ -82,13 +89,13 @@
 
                 tdAssignIns.innerHTML = '<span class="fas fa-chalkboard-teacher"/>';
                 tdAssignIns.title = "Assign Instructor";
-                tdAssignIns.className = "pointer-td";
-                tdAssignIns.onclick = () => assignInstructor(c.course_id, c.section);
+                tdAssignIns.className = "pointer";
+                tdAssignIns.onclick = (e) => assignInstructor(e, c.course_id, c.section);
 
                 tdAssignTa.innerHTML = '<span class="fas fa-user"/>';
                 tdAssignTa.title = "Assign TA";
-                tdAssignTa.className = "pointer-td";
-                tdAssignTa.onclick = () => assignTa(c.course_id, c.section);
+                tdAssignTa.className = "pointer";
+                tdAssignTa.onclick = (e) => assignTa(e, c.course_id, c.section);
 
                 tr.append(tdAssignIns);
                 tr.append(tdAssignTa);

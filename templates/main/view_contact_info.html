@@ -80,7 +80,6 @@
 
         for (let c of contactInfos) {
             const tr = document.createElement("TR");
-            tr.className = "row";
             tr.id = c.name;
             const tdEdit = document.createElement("TD");
             const tdAssign = document.createElement("TD");
@@ -101,7 +100,7 @@
             {% if is_privileged %}
                 tdEdit.innerHTML = '<span class="fas fa-edit"/>';
                 tdEdit.id = c.username;
-                tdEdit.className = "pointer-td";
+                tdEdit.className = "pointer";
                 tdEdit.onclick = () => redirect(tdEdit);
                 tr.append(tdEdit);
             {% endif %}

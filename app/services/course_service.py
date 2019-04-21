@@ -180,6 +180,13 @@ class CourseService:
         courses = Course.objects.filter(instructor__username__iexact=username)
         return self.create_course_objects_from_models(courses)
 
+    def get_course_by_id_and_section(self, course_id, section):
+        courses = Course.objects.filter(course_id__iexact=course_id, section__iexact=section)
+        courses_info = self.create_course_objects_from_models(courses)
+        if len(courses_info) == 0:
+            raise Exception("Course does not exist.")
+        return courses_info[0]
+
     def view_specified_courses(self, course_id, section_id):
         courses = Course.objects.filter(course_id__iexact=course_id, section=section_id)
         if courses.count() == 0:
