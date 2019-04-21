@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from app.services.auth_service import AuthService
+from app.models import Account
 
 auth_service = AuthService()
 

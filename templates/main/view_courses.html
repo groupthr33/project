@@ -27,8 +27,6 @@
 
         const trHeader = document.createElement("TR");
         const thCourseID = document.createElement("TH");
-        const thAssignIns = document.createElement("TH");
-        const thAssignTa = document.createElement("TH");
         const thCourseSection = document.createElement("TH");
         const thCourseName = document.createElement("TH");
         const thSchedule = document.createElement("TH");
@@ -42,8 +40,14 @@
         thInstructor.innerText = 'Instructor';
         thTAs.innerText = 'TA(s)';
 
-        trHeader.appendChild(thAssignIns);
-        trHeader.appendChild(thAssignTa);
+        {% if is_authorized %}
+            const thAssignIns = document.createElement("TH");
+            const thAssignTa = document.createElement("TH");
+
+            trHeader.appendChild(thAssignIns);
+            trHeader.appendChild(thAssignTa);
+        {% endif %}
+
         trHeader.appendChild(thCourseID);
         trHeader.appendChild(thCourseSection);
         trHeader.appendChild(thCourseName);
@@ -58,8 +62,6 @@
             tr.className = "row";
             tr.id = c.course_id;
 
-            const tdAssignIns = document.createElement("TD");
-            const tdAssignTa = document.createElement("TD");
             const tdCourseID = document.createElement("TD");
             const tdCourseSection = document.createElement("TD");
             const tdCourseName = document.createElement("TD");
@@ -74,18 +76,24 @@
             tdInstructor.innerText = c.instructor;
             tdTAs.innerText = c.tas;
 
-            tdAssignIns.innerHTML = '<span class="fas fa-chalkboard-teacher"/>';
-            tdAssignIns.title = "Assign Instructor";
-            tdAssignIns.className = "pointer-td";
-            tdAssignIns.onclick = () => assignInstructor(c.course_id, c.section);
+            {% if is_authorized %}
+                const tdAssignIns = document.createElement("TD");
+                const tdAssignTa = document.createElement("TD");
 
-            tdAssignTa.innerHTML = '<span class="fas fa-user"/>';
-            tdAssignTa.title = "Assign TA";
-            tdAssignTa.className = "pointer-td";
-            tdAssignTa.onclick = () => assignTa(c.course_id, c.section);
+                tdAssignIns.innerHTML = '<span class="fas fa-chalkboard-teacher"/>';
+                tdAssignIns.title = "Assign Instructor";
+                tdAssignIns.className = "pointer-td";
+                tdAssignIns.onclick = () => assignInstructor(c.course_id, c.section);
 
-            tr.append(tdAssignIns);
-            tr.append(tdAssignTa);
+                tdAssignTa.innerHTML = '<span class="fas fa-user"/>';
+                tdAssignTa.title = "Assign TA";
+                tdAssignTa.className = "pointer-td";
+                tdAssignTa.onclick = () => assignTa(c.course_id, c.section);
+
+                tr.append(tdAssignIns);
+                tr.append(tdAssignTa);
+            {% endif %}
+
             tr.appendChild(tdCourseID);
             tr.appendChild(tdCourseSection);
             tr.appendChild(tdCourseName);
