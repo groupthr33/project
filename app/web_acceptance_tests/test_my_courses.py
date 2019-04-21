@@ -9,7 +9,7 @@ class TestMyCourses(TestCase):
         self.user = Account.objects.create(username='super_visor', password='p', name='n', is_logged_in=True, roles=0x8)
 
         self.course1 = Course.objects.create(course_id="CS535", section="001", name="Software Engineering",
-                                             schedule="TH12001315")
+                                             schedule="TH12001315", instructor=self.user)
         self.course2 = Course.objects.create(course_id='CS337', section='001', name='test course',
                                              schedule='MW12301345')
 
@@ -20,15 +20,13 @@ class TestMyCourses(TestCase):
         self.session.save()
 
     def test_view_courses(self):
-        expected_response = [{'course_id': self.course1.course_id, 'section': self.course1.section,
+        expected_response = [
+                             {'course_id': self.course1.course_id, 'section': self.course1.section,
                               'name': self.course1.name, 'schedule': self.course1.schedule,
-                              'instructor': '', 'tas': ''},
-                             {'course_id': self.course2.course_id, 'section': self.course2.section,
-                              'name': self.course2.name, 'schedule': self.course2.schedule,
-                              'instructor': '', 'tas': ''}]
+                              'instructor': 'n', 'tas': ''}]
 
         with self.assertTemplateUsed('main/view_courses.html'):
-            actual_response = self.client.get('/view_courses/')
+            actual_response = self.client.get('/my_courses/')
 
         self.assertEqual(expected_response, actual_response.context['courses'])
 
