@@ -7,4 +7,5 @@ from app.views.logout import Logout
 from app.views.update_contact import UpdateContactInfo
 from app.views.view_accounts import ViewAccounts
 from app.views.view_courses import ViewCourses
+from app.views.my_courses import MyCourses
 from app.views.assign_ins import AssignInstructor

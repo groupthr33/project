@@ -43,7 +43,7 @@ class CourseService:
             course.save()
 
             result = f'{instructor_user_name} has been assigned as the instructor ' \
-            f'for {course_id}-{section_id}.{already_assigned_string}'
+                f'for {course_id}-{section_id}.{already_assigned_string}'
         else:
             result = f'{instructor_user_name} is already assigned to {course_id}-{section_id}.'
 
@@ -147,9 +147,8 @@ class CourseService:
 
         return lab_details
 
-    def view_courses(self):
+    def create_course_objects_from_models(self, courses):
         courses_info = []
-        courses = Course.objects.all()
         for course in courses:
             instructor = ''
             if course.instructor is not None:
@@ -162,17 +161,24 @@ class CourseService:
             if tas_list.count() > 0:
                 for i, ta in enumerate(tas_list):
                     ta_name = ta.assigned_ta.name
-                    if i == tas_list.count()-1:
+                    if i == tas_list.count() - 1:
                         tas += ta_name
                     else:
-                        tas += ta_name+', '
-
+                        tas += ta_name + ', '
 
             courses_info.append({'course_id': course.course_id, 'section': course.section,
-                           'name': course.name, 'schedule': course.schedule,
-                           'instructor': instructor, 'tas': tas})
+                                 'name': course.name, 'schedule': course.schedule,
+                                 'instructor': instructor, 'tas': tas})
 
         return courses_info
+
+    def view_courses(self):
+        courses = Course.objects.all()
+        return self.create_course_objects_from_models(courses)
+
+    def get_courses_for_instructor(self, username):
+        courses = Course.objects.filter(instructor__username__iexact=username)
+        return self.create_course_objects_from_models(courses)
 
     def view_specified_courses(self, course_id, section_id):
         courses = Course.objects.filter(course_id__iexact=course_id, section=section_id)

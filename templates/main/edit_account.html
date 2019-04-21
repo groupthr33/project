@@ -6,9 +6,9 @@
             {% csrf_token %}
             <input required readonly type="text" name="username" value="{{ account.username }}"><br/>
             <input required type="text" name="name" placeholder="name" value="{{ account.name }}"><br/>
-            <input type="text" name="phonenumber" placeholder="phone number" value="{{ account.phoneNumber }}"><br/>
+            <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" name="phonenumber" placeholder="phone number" value="{{ account.phoneNumber }}"><br/>
             <input type="text" name="address" placeholder="address" value="{{ account.address }}"><br/>
-            <input type="text" name="email" placeholder="email" value="{{ account.email }}"><br/>
+            <input type="email" name="email" placeholder="email" value="{{ account.email }}"><br/>
 
             {% if is_privileged %}
                 <label name="rolelabel" for="roles[]">Roles: </label><br/>
