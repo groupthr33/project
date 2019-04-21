@@ -35,14 +35,19 @@ class CourseService:
         course = courses.first()
 
         already_assigned_string = ""
-        if course.instructor is not None:
-            already_assigned_string += f" {course.instructor.username} was removed as instructor."
+        if not course.instructor == instructor:
+            if course.instructor is not None:
+                already_assigned_string += f" {course.instructor.username} was removed as instructor."
 
-        course.instructor = instructor
-        course.save()
+            course.instructor = instructor
+            course.save()
 
-        return f'{instructor_user_name} has been assigned as the instructor ' \
+            result = f'{instructor_user_name} has been assigned as the instructor ' \
             f'for {course_id}-{section_id}.{already_assigned_string}'
+        else:
+            result = f'{instructor_user_name} is already assigned to {course_id}-{section_id}.'
+
+        return result
 
     def create_lab_section(self, lab_section_id, course_id, course_section_id, schedule):
         courses = Course.objects.filter(course_id__iexact=course_id, section__iexact=course_section_id)
