@@ -3,6 +3,14 @@
     <div style="text-align: center">
         <input id="view-contact-username-input" type="search" name="username" autofocus
                placeholder="Filter by username..."/>
+        {% if is_assigning %}
+            {% if post_route == '/assign_ta_course/' %}
+                </br><p>Assigning TA(s) to {{ course_id }}-{{ course_section }}</p>
+            {% endif %}
+            {% if post_route == '/assign_ins/' %}
+                </br><p>Assigning instructor to {{ course_id }}-{{ course_section }}</p>
+            {% endif %}
+        {% endif %}
         <form name="input" method="post" action="{{ post_route }}">
             {% csrf_token %}
             <table id="contact-info-container">
