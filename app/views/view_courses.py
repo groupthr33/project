@@ -2,8 +2,11 @@ from django.shortcuts import render
 import json
 from django.views import View
 from app.services.course_service import CourseService
+from app.services.auth_service import AuthService
 
 course_service = CourseService()
+auth_service = AuthService()
+
 
 class ViewCourses(View):
     def get(self, request):
@@ -11,8 +14,6 @@ class ViewCourses(View):
         username = request.session.get('username', None)
 
         is_authorized = auth_service.is_authorized(username, 0x8)
-        print(username)
-        print(is_authorized)
 
         return render(request, 'main/view_courses.html',
                       {'courses_json': json.dumps(courses),
