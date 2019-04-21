@@ -21,5 +21,6 @@ def commands(request):
     allowed_commands = [command for command in cmds
                         if auth_service.is_authorized(request.session.get('username', None), command.req_permissions)]
 
-    return {'commands': allowed_commands, 'username': request.session.get('username', '').lower()}
-
+    print(request.path)
+    return {'commands': allowed_commands, 'username': request.session.get('username', '').lower(),
+            'active': request.path.strip('/')}

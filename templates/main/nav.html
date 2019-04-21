@@ -8,7 +8,7 @@
     <div class="nav">
         <a href="/dashboard">Dashboard</a>
         {% for cmd in commands %}
-            <div>
+            <div class="{% if active == cmd.name %}nav-item-selected{% endif %}">
                 <a class="{% if not cmd.active %}disabled{% endif %}" href="/{{ cmd.name }}">{{ cmd.friendly_name }}</a>
             </div>
         {% endfor %}

@@ -92,10 +92,6 @@ body {
     background: #d3d3d3;
 }
 
-#course-container td {
-    /*min-width: 100px;*/
-}
-
 .welcome-name {
     position: absolute;
     top: 10px;
@@ -103,6 +99,10 @@ body {
 }
 .nav a:visited {
     color: black;
+}
+
+.nav-item-selected {
+    background-color: #509090;
 }
 
 .command-content {
