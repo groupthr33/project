@@ -9,11 +9,11 @@ class TestCreateAccount(TestCase):
 
     def setUp(self):
         self.account = Account.objects.create(username='theuser', password='thepassword', name='thename',
-                                              is_logged_in=False)
+                                              is_logged_in=False, roles=0x8)
 
         self.client = Client()
         self.session = self.client.session
-        self.session['username'] = 'theuesr'
+        self.session['username'] = 'theuser'
         self.session.save()
 
         self.auth_service = AuthService()
@@ -51,6 +51,7 @@ class TestCreateAccount(TestCase):
             'name': 'matt',
             'roles[]': ['admin', 'ta']
         }
+
         expected_response = 'Account for user mrwatts successfully created with roles admin, ta.'
 
         with self.assertTemplateUsed('main/cr_account.html'):

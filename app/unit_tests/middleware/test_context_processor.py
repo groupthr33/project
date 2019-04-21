@@ -4,6 +4,7 @@ from app.models.account import Account
 from app.classes.command import Command
 from django.http import HttpRequest
 
+
 # This is an integration test using the AuthService, I cannot inject the AuthService into the context processor,
 # and think patching is outside the scope of this class
 
@@ -16,21 +17,21 @@ class TestContextProcessor(TestCase):
     def test_allowed_commands_god_account(self):
         request = HttpRequest()
         request.session = {'username': 'theuser'}
+        request.path = "/test_path/"
 
         expected_response = {'commands': [
             Command("cr_account", "Create Account", 0xC, True),
-            Command("set_password", "Set Password", 0xF, True),
+            Command("set_password", "Change Password", 0xF, True),
             Command("update_contact", "Update Contact Info", 0xF, True),
-            Command("view_contact_info", "View Contact Info", 0xF, True),
+            Command("view_contact_info", "Users", 0xF, True),
             Command("cr_course", "Create Course", 0xC),
-            Command("assign_ta_course", "Assign TA to Course", 0x8),
             Command("cr_lab", "Create Lab", 0xC),
             Command("assign_ta_lab", "Assign TA to Lab", 0xA),
-            Command("assign_ins", "Assign Instructor", 0x8),
             Command("course_assignments", "View Course Assignments", 0x2),
             Command("view_lab_details", "View Lab Details", 0xC),
-            Command("view_courses", "View Courses", 0xC, True),
-            ], 'username': 'theuser'}
+            Command("view_courses", "Courses", 0xC, True),
+        ], 'username': 'theuser',
+            'active': 'test_path'}
 
         actual_response = ctxp.commands(request)
         self.assertEqual(expected_response, actual_response)
@@ -41,12 +42,14 @@ class TestContextProcessor(TestCase):
 
         request = HttpRequest()
         request.session = {'username': 'theuser'}
+        request.path = "/test_path/"
 
         expected_response = {'commands': [
-            Command("set_password", "Set Password", 0xF, True),
+            Command("set_password", "Change Password", 0xF, True),
             Command("update_contact", "Update Contact Info", 0xF, True),
-            Command("view_contact_info", "View Contact Info", 0xF, True),
-        ], 'username': 'theuser'}
+            Command("view_contact_info", "Users", 0xF, True),
+        ], 'username': 'theuser',
+            'active': 'test_path'}
 
         actual_response = ctxp.commands(request)
         self.assertEqual(expected_response, actual_response)

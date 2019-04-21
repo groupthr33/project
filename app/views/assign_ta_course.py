@@ -33,7 +33,6 @@ class AssignTaCourse(View):
                        'post_route': '/assign_ta_course/'})
 
     def post(self, request):
-        print(request.POST)
         tas = request.POST.getlist('assignees', [])
         course_id = request.POST.get("course_id", None)
         course_section = request.POST.get("course_section", None)
@@ -53,5 +52,6 @@ class AssignTaCourse(View):
                        'course_section': course_section,
                        'is_privileged': False,
                        'is_assigning': True,
-                       'post_route': '/assign_ta_course/',
-                       'message': message})
+                       'message': message,
+                       'post_route': '/assign_ta_course/'
+                       })

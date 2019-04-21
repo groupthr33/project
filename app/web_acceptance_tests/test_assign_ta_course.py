@@ -1,10 +1,7 @@
 from django.test import TestCase
-from app.services.auth_service import AuthService
-from app.services.account_service import AccountService
-from app.services.course_service import CourseService
 from app.models.account import Account
 from app.models.course import Course
-from app.services.ta_service import TaService
+from django.test import Client
 
 
 class TestAssignTaCourse(TestCase):
@@ -13,47 +10,131 @@ class TestAssignTaCourse(TestCase):
         self.account = Account.objects.create(username="theuser", password="thepassword", name="thename",
                                               is_logged_in=True, roles=0x8)
         self.ta = Account.objects.create(username="theta", password="p", name="n", is_logged_in=False, roles=0x1)
-        self.course = Course.objects.create(course_id="cs417", section="001", name="Theory of Comp",
+        self.course = Course.objects.create(course_id="CS361", section="001", name="Theory of Comp",
                                             schedule="MW13001400")
+        self.client = Client()
 
-        self.auth_service = AuthService()
-        self.account_service = AccountService()
-        self.course_service = CourseService()
-        self.ta_service = TaService()
+        self.session = self.client.session
+        self.session['username'] = 'theuser'
+        self.session.save()
 
-    def test_assign_ta_course_happy_path(self):
-        actual_response = self.app.command("assign_ta_course theta cs417 001")
-        expected_response = "theta assigned to cs417-001."
+    def test_assign_ta_course_happy_path_get(self):
+        expected_response = [
+            {'username': self.ta.username,
+             'name': self.ta.name,
+             'phoneNumber': self.ta.phone_number,
+             'address': self.ta.address,
+             'email': '',
+             'roles': 'ta'}
+        ]
 
-        self.assertEqual(expected_response, actual_response)
+        with self.assertTemplateUsed('main/view_contact_info.html'):
+            actual_response = self.client.get('/assign_ta_course/?courseid=CS361&section=001')
 
-    def test_assign_ta_course_wrong_number_of_args(self):
-        actual_response = self.app.command("assign_ta_course theta")
-        expected_response = "assign_ta_course must have at least 3 arguments. " \
-                            "Correct usage: assign_ta <user_name> <course_id> <section_id> [remaining sections]."
+        self.assertEqual(expected_response, actual_response.context['contact_infos'])
+        self.assertEqual('CS361', actual_response.context['course_id'])
+        self.assertEqual('001', actual_response.context['course_section'])
+        self.assertEqual('/assign_ta_course/', actual_response.context['post_route'])
+        self.assertEqual(False, actual_response.context['is_privileged'])
+        self.assertEqual(True, actual_response.context['is_assigning'])
 
-        self.assertEqual(expected_response, actual_response)
+    def test_assign_ta_course_no_id_param_get(self):
+        actual_response = self.client.get('/assign_ta_course/?section=001')
+        self.assertEqual('/view_courses/', actual_response['Location'])
 
-    def test_assign_ta_course_ta_does_not_exist(self):
-        self.ta.delete()
+    def test_assign_ta_course_no_section_param_get(self):
+        actual_response = self.client.get('/assign_ta_course/?courseid=CS361')
+        self.assertEqual('/view_courses/', actual_response['Location'])
 
-        expected_response = "theta dne."
-        actual_response = self.app.command("assign_ta_course theta cs417 001")
+    def test_assign_ta_course_happy_path_post(self):
+        expected_response = [
+            {'username': self.ta.username,
+             'name': self.ta.name,
+             'phoneNumber': self.ta.phone_number,
+             'address': self.ta.address,
+             'email': '',
+             'roles': 'ta'}
+        ]
 
-        self.assertEqual(expected_response, actual_response)
+        with self.assertTemplateUsed('main/view_contact_info.html'):
+            actual_response = self.client.post('/assign_ta_course/', {'course_id': 'CS361',
+                                                                      'course_section': '001',
+                                                                      'assignees': ['theta']})
 
-    def test_assign_ta_course_course_does_not_exist(self):
-        self.course.delete()
+        self.assertEqual(expected_response, actual_response.context['contact_infos'])
+        self.assertEqual('CS361', actual_response.context['course_id'])
+        self.assertEqual('001', actual_response.context['course_section'])
+        self.assertEqual('/assign_ta_course/', actual_response.context['post_route'])
+        self.assertEqual('theta assigned to CS361-001. \n', actual_response.context['message'])
+        self.assertEqual(False, actual_response.context['is_privileged'])
+        self.assertEqual(True, actual_response.context['is_assigning'])
 
-        expected_response = "Course with ID cs417-001 does not exist."
-        actual_response = self.app.command("assign_ta_course theta cs417 001")
+    def test_assign_ta_course_ta_does_not_exist_post(self):
+        expected_response = [
+            {'username': self.ta.username,
+             'name': self.ta.name,
+             'phoneNumber': self.ta.phone_number,
+             'address': self.ta.address,
+             'email': '',
+             'roles': 'ta'}
+        ]
 
-        self.assertEqual(expected_response, actual_response)
+        with self.assertTemplateUsed('main/view_contact_info.html'):
+            actual_response = self.client.post('/assign_ta_course/', {'course_id': 'CS361',
+                                                                      'course_section': '001',
+                                                                      'assignees': ['someguy']})
 
-    def test_assign_ta_course_ta_is_not_a_ta(self):
-        Account.objects.create(username="justanadmin", password="p", name="n", is_logged_in=False, roles=0x4)
+        self.assertEqual(expected_response, actual_response.context['contact_infos'])
+        self.assertEqual('CS361', actual_response.context['course_id'])
+        self.assertEqual('001', actual_response.context['course_section'])
+        self.assertEqual('/assign_ta_course/', actual_response.context['post_route'])
+        self.assertEqual('someguy dne. \n', actual_response.context['message'])
+        self.assertEqual(False, actual_response.context['is_privileged'])
+        self.assertEqual(True, actual_response.context['is_assigning'])
 
-        expected_response = "justanadmin does not have the ta role."
-        actual_response = self.app.command("assign_ta_course justanadmin cs417 001")
+    def test_assign_ta_course_course_does_not_exist_post(self):
+        expected_response = [
+            {'username': self.ta.username,
+             'name': self.ta.name,
+             'phoneNumber': self.ta.phone_number,
+             'address': self.ta.address,
+             'email': '',
+             'roles': 'ta'}
+        ]
 
-        self.assertEqual(expected_response, actual_response)
+        with self.assertTemplateUsed('main/view_contact_info.html'):
+            actual_response = self.client.post('/assign_ta_course/', {'course_id': 'CS333',
+                                                                      'course_section': '001',
+                                                                      'assignees': ['theta']})
+
+        self.assertEqual(expected_response, actual_response.context['contact_infos'])
+        self.assertEqual('CS333', actual_response.context['course_id'])
+        self.assertEqual('001', actual_response.context['course_section'])
+        self.assertEqual('/assign_ta_course/', actual_response.context['post_route'])
+        self.assertEqual(f"Course with ID CS333-001 does not exist. \n", actual_response.context['message'])
+        self.assertEqual(False, actual_response.context['is_privileged'])
+        self.assertEqual(True, actual_response.context['is_assigning'])
+
+    def test_assign_ta_course_ta_is_not_a_ta_post(self):
+        expected_response = [
+            {'username': self.ta.username,
+             'name': self.ta.name,
+             'phoneNumber': self.ta.phone_number,
+             'address': self.ta.address,
+             'email': '',
+             'roles': 'ta'}
+        ]
+
+        with self.assertTemplateUsed('main/view_contact_info.html'):
+            actual_response = self.client.post('/assign_ta_course/', {'course_id': 'CS361',
+                                                                      'course_section': '001',
+                                                                      'assignees': ['theuser']})
+
+        self.assertEqual(expected_response, actual_response.context['contact_infos'])
+        self.assertEqual('CS361', actual_response.context['course_id'])
+        self.assertEqual('001', actual_response.context['course_section'])
+        self.assertEqual('/assign_ta_course/', actual_response.context['post_route'])
+        self.assertEqual(f"theuser does not have the ta role. \n", actual_response.context['message'])
+        self.assertEqual(False, actual_response.context['is_privileged'])
+        self.assertEqual(True, actual_response.context['is_assigning'])
+

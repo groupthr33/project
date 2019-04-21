@@ -6,7 +6,7 @@ class TestEditAccount(TestCase):
 
     def setUp(self):
         self.user = Account.objects.create(username='theuser', password='thepassword', name='thename',
-                                           is_logged_in=True)
+                                           is_logged_in=True, roles=0x8)
 
     def test_edit_account_happy_path_get(self):
         s = self.client.session
@@ -22,7 +22,7 @@ class TestEditAccount(TestCase):
         self.assertEqual(True, actual_response.context['is_privileged'])
         self.assertEqual({'username': self.user.username, 'name': self.user.name,
                           'phoneNumber': self.user.phone_number, 'address': self.user.address,
-                          'email': self.user.email, 'roles': 'ta'},
+                          'email': self.user.email, 'roles': 'supervisor '},
                          actual_response.context['account'])
 
     def test_update_contact_is_update_get(self):
@@ -39,7 +39,7 @@ class TestEditAccount(TestCase):
         self.assertEqual(True, actual_response.context['is_privileged'])
         self.assertEqual({'username': self.user.username, 'name': self.user.name,
                           'phoneNumber': self.user.phone_number, 'address': self.user.address,
-                          'email': self.user.email, 'roles': 'ta'},
+                          'email': self.user.email, 'roles': 'supervisor '},
                          actual_response.context['account'])
 
     def test_update_contact_account_dne_get(self):
@@ -61,7 +61,7 @@ class TestEditAccount(TestCase):
 
         data = {'username': self.user.username, 'name': self.user.name,
                 'phoneNumber': self.user.phone_number, 'address': self.user.address,
-                'email': self.user.email, 'roles': 'ta'}
+                'email': self.user.email, 'roles': 'supervisor '}
 
         actual_response = self.client.post('/edit_account/', data)
         self.assertEqual('/edit_account?update=true&username=theuser', actual_response['Location'])
