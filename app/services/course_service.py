@@ -1,4 +1,5 @@
 from app.util.validator_util import ValidatorUtil
+from app.util.account_util import AccountUtil
 from app.models.account import Account
 from app.models.course import Course
 from app.models.ta_course import TaCourse
@@ -146,6 +147,42 @@ class CourseService:
                 lab_details = lab_details + f'\tTA: there is no assigned TA\n'
 
         return lab_details
+
+    def get_labs_for_course(self, course_id, course_section):
+        courses = Course.objects.filter(course_id__iexact=course_id, section__iexact=course_section)
+
+        if courses.count() == 0:
+            raise Exception("Course does not exist.")
+
+        labs = Lab.objects.filter(course=courses.first())
+        lab_objects = []
+
+        for lab in labs:
+            ta = ''
+            if lab.ta is not None:
+                ta = lab.ta.username
+            lab_objects.append({'section': lab.section_id, 'ta': ta, 'schedule': lab.schedule})
+        return lab_objects
+
+    def get_tas_for_course(self, course_id, course_section):
+        courses = Course.objects.filter(course_id__iexact=course_id, section__iexact=course_section)
+
+        if courses.count() == 0:
+            raise Exception("Course does not exist.")
+
+        ta_course_rels = TaCourse.objects.filter(course=courses.first())
+
+        account_objects = []
+
+        for ta_course_rel in ta_course_rels:
+            account = ta_course_rel.assigned_ta
+            role_string = AccountUtil.decode_roles(account.roles)
+            account_objects.append({'username': account.username, 'name': account.name,
+                                    'phoneNumber': account.phone_number, 'address': account.address,
+                                    'email': account.email,
+                                    'roles': role_string})
+
+        return account_objects
 
     def create_course_objects_from_models(self, courses):
         courses_info = []

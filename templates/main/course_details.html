@@ -1,6 +1,20 @@
 {% extends "main/nav.html" %}
 {% block command-content %}
     <style>
+        #ta-header{
+            display: inline;
+        }
+
+        #lab-header{
+            display: inline;
+            margin: 0;
+        }
+
+        #lab-header-container{
+            display: grid;
+            grid-template-columns: auto minmax(auto, 150px) minmax(auto, 150px) 40px;
+        }
+
         #course-details-container {
             display: inline-grid;
             grid-column-gap: 25px;
@@ -10,22 +24,22 @@
         }
 
         #course-details {
-            grid-column: 1/ span 2;
-            background: orange;
+            grid-column: 1/ span 1;
+            background: #d3d3d3;
+            padding: 5px;
         }
 
         #tas {
             grid-column: 1/span 1;
-            background: red;
         }
 
         #labs {
             grid-column: 2 / span 1;
-            background: green;
         }
     </style>
     <div id="course-details-container">
         <div id="course-details">
+            <h3>Course Details</h3>
             <table>
                 <tbody>
                 <tr>
@@ -33,7 +47,7 @@
                         Course ID:
                     </td>
                     <td>
-                        {{ course_id }}
+                        {{ course.course_id }}
                     </td>
                 </tr>
                 <tr>
@@ -41,7 +55,7 @@
                         Lecture Section:
                     </td>
                     <td>
-                        {{ section }}
+                        {{ course.section }}
                     </td>
                 </tr>
                 <tr>
@@ -49,29 +63,67 @@
                         Name:
                     </td>
                     <td>
-                        {{ name}}
+                        {{ course.name }}
                     </td>
-                    </tr>
+                </tr>
+                <tr>
+                    <td>
+                        Schedule:
+                    </td>
+                    <td>
+                        {{ course.schedule }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Instructor:
+                    </td>
+                    <td>
+                        {{ course.instructor }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+        </div>
+        <div id="tas">
+            <h3 id="ta-header">TAs</h3>
+            <table id="contact-info-container">
+                <tr>
+                    <th>Name</th>
+                    <th>Username</th>
+                </tr>
+                {% for ta in tas %}
                     <tr>
-                    <td>
-                    Schedule:
-                    </td>
-                    <td>
-                    {{ schedule }}
-                    </td>
+                        <td>{{ ta.name }}</td>
+                        <td>{{ ta.username }}</td>
                     </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div id="labs">
+        <div id="lab-header-container">
+            <h3 id="lab-header">Labs</h3>
+            <input type="text" placeholder="section" name="section">
+            <input type="text" placeholder="schedule" name="schedule">
+            <input type="submit" value="+">
+        </div>
+            <table id="contact-info-container">
+                <tr>
+                    <th>Section</th>
+                    <th>TA</th>
+                    <th>Schedule</th>
+                </tr>
+                {% for lab in labs %}
                     <tr>
-                    <td>
-                    Instructor:
-                    </td>
-                    <td>
-                        {{ instructor }}
-                    </td>
+                        <td>{{ lab.section }}</td>
+                        <td>{{ lab.ta }}</td>
+                        <td>{{ lab.schedule }}</td>
                     </tr>
-                    </tbody>
-                    </table>
-                    </div>
-        <div id="tas">ta content</div>
-        <div id="labs">lab content</div>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
     </div>
 {% endblock command-content %}

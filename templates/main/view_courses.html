@@ -17,7 +17,7 @@
         };
 
         const filter = e => {
-            const rows = document.querySelectorAll('.row');
+            const rows = document.querySelectorAll('.course-row');
             rows.forEach(el => el.style.display = el.id.toLowerCase()
                 .includes(e.target.value.toLowerCase()) ? 'table-row' : 'none');
         };
@@ -66,7 +66,7 @@
         for (let c of courses) {
             const tr = document.createElement("TR");
             tr.onclick = () => goToCourseDetails(c.course_id, c.section);
-            tr.classList.add("course-row", "pointer");
+            tr.classList.add("course-row", "pointer", "highlight");
             tr.id = c.course_id;
 
             const tdCourseID = document.createElement("TD");

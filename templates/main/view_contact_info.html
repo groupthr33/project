@@ -29,7 +29,7 @@
         }
 
         function filter(e) {
-            const rows = document.querySelectorAll('.row');
+            const rows = document.querySelectorAll('.course-row');
             rows.forEach(el => el.style.display = el.id.toLowerCase()
                 .includes(e.target.value.toLowerCase()) ? 'table-row' : 'none');
         }
@@ -81,6 +81,7 @@
         for (let c of contactInfos) {
             const tr = document.createElement("TR");
             tr.id = c.name;
+            tr.classList.add("course-row");
             const tdEdit = document.createElement("TD");
             const tdAssign = document.createElement("TD");
             const tdName = document.createElement("TD");

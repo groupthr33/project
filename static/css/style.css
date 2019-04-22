@@ -79,7 +79,7 @@ body {
     background: #d3d3d3;
 }
 
-.course-row:hover{
+.highlight:hover{
     background: #a3a3a3 !important;
 }
 .pointer {
@@ -102,6 +102,10 @@ body {
 }
 .nav a:visited {
     color: black;
+}
+
+.nav a:hover {
+    background-color: #509090;
 }
 
 .nav-item-selected {

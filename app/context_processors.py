@@ -11,10 +11,7 @@ def commands(request):
         Command("update_contact", "Update Contact Info", 0xF, True),
         Command("view_contact_info", "Users", 0xF, True),
         Command("cr_course", "Create Course", 0xC),
-        Command("cr_lab", "Create Lab", 0xC),
-        Command("assign_ta_lab", "Assign TA to Lab", 0xA),
         Command("my_courses", "My Courses", 0x2, True),
-        Command("view_lab_details", "View Lab Details", 0xC),
         Command("view_courses", "Courses", 0xC, True),
     ]
 

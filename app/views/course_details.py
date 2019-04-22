@@ -23,4 +23,9 @@ class CourseDetails(View):
             course = course_service.get_course_by_id_and_section(course_id, course_section)
         except:
             return redirect('/view_courses/')
-        return render(request, 'main/course_details.html', course)
+
+        tas = course_service.get_tas_for_course(course_id, course_section)
+        labs = course_service.get_labs_for_course(course_id, course_section)
+
+        print(labs)
+        return render(request, 'main/course_details.html', {'course': course, 'tas': tas, 'labs': labs})
