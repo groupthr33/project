@@ -78,6 +78,7 @@ class TaService:
         for lab in assigned_labs:
             if ta_course_rel.remaining_sections == 0:
                 result_string += f"{ta_user_name} cannot TA any more lab sections.\n"
+                break
             else:
                 if lab.ta is not None:
                     u_ta = lab.ta
@@ -91,7 +92,7 @@ class TaService:
                 lab.save()
                 ta_course_rel.remaining_sections = ta_course_rel.remaining_sections - 1
                 ta_course_rel.save()
-                result_string += f'{ta_user_name} assigned to {course_id}-{course_section}, lab {lab.section_id}\n'
+                result_string += f'{ta_user_name} assigned to {course_id}-{course_section}, lab {lab.section_id}.\n'
 
         return result_string + \
             f"{ta_course_rel.remaining_sections} section(s) remaining for {ta_user_name}."

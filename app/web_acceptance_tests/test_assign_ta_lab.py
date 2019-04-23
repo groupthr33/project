@@ -1,7 +1,4 @@
-from django.test import TestCase
-from app.services.auth_service import AuthService
-from app.services.account_service import AccountService
-from app.services.course_service import CourseService
+from django.test import TestCase, Client
 from app.services.ta_service import TaService
 from app.models.account import Account
 from app.models.course import Course
@@ -21,18 +18,68 @@ class TestAssignTaLab(TestCase):
         self.ta = Account.objects.create(
             username="test_ta", password="p", name="n", is_logged_in=False, roles=0x1)
 
-        self.lab = Lab.objects.create(section_id="801", schedule="MW09301045", course=self.course)
+        self.lab1 = Lab.objects.create(section_id="801", schedule="MW09301045", course=self.course)
+        self.lab2 = Lab.objects.create(section_id="802", schedule="MW09301045", course=self.course)
         self.ta_course_rel = TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=2)
 
-        self.auth_service = AuthService()
-        self.current_user_service = AccountService()
-        self.course_service = CourseService()
+        self.client = Client()
+        self.session = self.client.session
+        self.session['username'] = 'the_user'
+        self.session.save()
+
         self.ta_service = TaService()
 
     def test_assign_ta_lab_happy_path(self):
-        actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta assigned to CS417-001, lab(s) 801. 1 section(s) remaining for test_ta."
-        self.assertEqual(expected_response, actual_response)
+        expected_response = "test_ta assigned to CS417-001, lab 801.\n1 section(s) remaining for test_ta."
+
+        actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': "801",
+                                                                'courseid': "CS417",
+                                                                'coursesection': "001",
+                                                                'ta': 'test_ta'})
+
+        self.assertEqual(expected_response, self.client.session['message'])
+        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+
+    def test_assign_ta_lab_multiple_happy_path(self):
+        expected_response = "test_ta assigned to CS417-001, lab 801.\n" + \
+                            "test_ta assigned to CS417-001, lab 802.\n0 section(s) remaining for test_ta."
+
+        actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': ["801", "802"],
+                                                                'courseid': "CS417",
+                                                                'coursesection': "001",
+                                                                'ta': 'test_ta'})
+
+        self.assertEqual(expected_response, self.client.session['message'])
+        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+
+    def test_assign_ta_lab_multiple_one_fail_happy_path(self):
+        self.ta_course_rel.remaining_sections = 1
+        self.ta_course_rel.save()
+
+        expected_response = "test_ta assigned to CS417-001, lab 801.\n" + \
+                            "test_ta cannot TA any more lab sections.\n0 section(s) remaining for test_ta."
+
+        actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': ["801", "802"],
+                                                                'courseid': "CS417",
+                                                                'coursesection': "001",
+                                                                'ta': 'test_ta'})
+
+        self.assertEqual(expected_response, self.client.session['message'])
+        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+
+    def test_assign_ta_lab_multiple_both_fail_happy_path(self):
+        self.ta_course_rel.remaining_sections = 0
+        self.ta_course_rel.save()
+
+        expected_response = "test_ta cannot TA any more lab sections.\n0 section(s) remaining for test_ta."
+
+        actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': ["801", "802"],
+                                                                'courseid': "CS417",
+                                                                'coursesection': "001",
+                                                                'ta': 'test_ta'})
+
+        self.assertEqual(expected_response, self.client.session['message'])
+        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
 
     def test_assign_ta_lab_ins_role_only(self):
         self.current_user.roles = 0x2
@@ -40,65 +87,83 @@ class TestAssignTaLab(TestCase):
         self.course.instructor = self.current_user
         self.course.save()
 
-        actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta assigned to CS417-001, lab(s) 801. 1 section(s) remaining for test_ta."
-        self.assertEqual(expected_response, actual_response)
+        expected_response = "test_ta assigned to CS417-001, lab 801.\n1 section(s) remaining for test_ta."
 
-    def test_assign_ta_lab_wrong_number_of_args(self):
-        actual_response = self.app.command("assign_ta_lab test_ta CS417 001")
-        expected_response = "assign_ta_lab must have at least 4 arguments. " \
-                            "Correct usage: assign_ta_lab <ta_user_name> <course_id> <course_section> <lab_sections...>"
-        self.assertEqual(expected_response, actual_response)
+        actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': "801",
+                                                                'courseid': "CS417",
+                                                                'coursesection': "001",
+                                                                'ta': 'test_ta'})
 
-    def test_assign_ta_lab_ta_dne(self):
-        actual_response = self.app.command("assign_ta_lab other_ta CS417 001 801")
-        expected_response = "TA with user_name other_ta does not exist."
-        self.assertEqual(expected_response, actual_response)
-
-    def test_assign_ta_lab_course_dne(self):
-        actual_response = self.app.command("assign_ta_lab test_ta CS337 001 801")
-        expected_response = "Course with ID CS337-001 does not exist."
-        self.assertEqual(expected_response, actual_response)
-
-    def test_assign_ta_lab_lab_dne(self):
-        actual_response = self.app.command("assign_ta_lab test_ta CS417 001 811")
-        expected_response = "Lab 811 for course CS417-001 does not exist."
-        self.assertEqual(expected_response, actual_response)
-
-    def test_assign_ta_lab_ta_is_not_a_ta(self):
-        actual_response = self.app.command("assign_ta_lab the_user CS417 001 801")
-        expected_response = "the_user does not have the ta role."
-        self.assertEqual(expected_response, actual_response)
-
-    def test_assign_ta_lab_not_assigned_to_course(self):
-        self.ta_course_rel.delete()
-
-        actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta is not assigned to course CS417-001."
-        self.assertEqual(expected_response, actual_response)
+        self.assertEqual(expected_response, self.client.session['message'])
+        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
 
     def test_assign_ta_lab_no_sections_remaining(self):
         self.ta_course_rel.remaining_sections = 0
         self.ta_course_rel.save()
 
-        actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta cannot TA any more lab sections."
-        self.assertEqual(expected_response, actual_response)
+        expected_response = "test_ta cannot TA any more lab sections.\n0 section(s) remaining for test_ta."
+
+        actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': "801",
+                                                                'courseid': "CS417",
+                                                                'coursesection': "001",
+                                                                'ta': 'test_ta'})
+
+        self.assertEqual(expected_response, self.client.session['message'])
+        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
 
     def test_assign_ta_lab_already_assigned(self):
-        self.lab.ta = self.ta
-        self.lab.save()
+        self.lab1.ta = self.ta
+        self.lab1.save()
 
-        actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta is already assigned to CS417-001, lab 801."
-        self.assertEqual(expected_response, actual_response)
+        expected_response = "test_ta is already assigned to CS417-001, lab 801.\n2 section(s) remaining for test_ta."
 
-    def test_assign_ta_lab_not_instructor_for_course(self):
-        instructor = Account.objects.create(username='anotherinst', password='p', name='n', is_logged_in=True,
-                                            roles=0x2)
+        actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': "801",
+                                                                'courseid': "CS417",
+                                                                'coursesection': "001",
+                                                                'ta': 'test_ta'})
 
-        self.app.auth_service.current_account = instructor
+        self.assertEqual(expected_response, self.client.session['message'])
+        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
 
-        actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "anotherinst is not the instructor for CS417-001."
-        self.assertEqual(expected_response, actual_response)
+    def test_assign_ta_lab_replace_ta(self):
+        ta = Account.objects.create(username="replaced_ta", password="p", name="n", is_logged_in=False, roles=0x1)
+        ta.save()
+
+        ta_course_rel = TaCourse.objects.create(course=self.course, assigned_ta=ta, remaining_sections=1)
+        ta_course_rel.save()
+
+        self.lab1.ta = ta
+        self.lab1.save()
+
+        expected_response = "replaced_ta has been removed from CS417-001, lab 801. test_ta assigned to CS417-001, lab 801.\n" + \
+                            "1 section(s) remaining for test_ta."
+
+        actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': "801",
+                                                                'courseid': "CS417",
+                                                                'coursesection': "001",
+                                                                'ta': 'test_ta'})
+
+        self.assertEqual(expected_response, self.client.session['message'])
+        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+
+    def test_assign_ta_lab_multiple_lab_replace_one_ta(self):
+        ta = Account.objects.create(username="replaced_ta", password="p", name="n", is_logged_in=False, roles=0x1)
+        ta.save()
+
+        ta_course_rel = TaCourse.objects.create(course=self.course, assigned_ta=ta, remaining_sections=1)
+        ta_course_rel.save()
+
+        self.lab1.ta = ta
+        self.lab1.save()
+
+        expected_response = "replaced_ta has been removed from CS417-001, lab 801. test_ta assigned to CS417-001, lab 801.\n" + \
+                            "test_ta assigned to CS417-001, lab 802.\n" + \
+                            "0 section(s) remaining for test_ta."
+
+        actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': ["801", "802"],
+                                                                'courseid': "CS417",
+                                                                'coursesection': "001",
+                                                                'ta': 'test_ta'})
+
+        self.assertEqual(expected_response, self.client.session['message'])
+        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])

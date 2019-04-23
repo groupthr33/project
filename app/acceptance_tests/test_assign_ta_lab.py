@@ -37,7 +37,7 @@ class TestAssignTaLab(TestCase):
 
     def test_assign_ta_lab_happy_path(self):
         actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta assigned to CS417-001, lab(s) 801. 1 section(s) remaining for test_ta."
+        expected_response = "test_ta assigned to CS417-001, lab 801.\n1 section(s) remaining for test_ta."
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_lab_ins_role_only(self):
@@ -47,7 +47,7 @@ class TestAssignTaLab(TestCase):
         self.course.save()
 
         actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta assigned to CS417-001, lab(s) 801. 1 section(s) remaining for test_ta."
+        expected_response = "test_ta assigned to CS417-001, lab 801.\n1 section(s) remaining for test_ta."
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_lab_wrong_number_of_args(self):
@@ -88,7 +88,7 @@ class TestAssignTaLab(TestCase):
         self.ta_course_rel.save()
 
         actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta cannot TA any more lab sections."
+        expected_response = "test_ta cannot TA any more lab sections.\n0 section(s) remaining for test_ta."
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_lab_already_assigned(self):
@@ -96,7 +96,7 @@ class TestAssignTaLab(TestCase):
         self.lab.save()
 
         actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta is already assigned to CS417-001, lab 801."
+        expected_response = "test_ta is already assigned to CS417-001, lab 801.\n2 section(s) remaining for test_ta."
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_lab_not_instructor_for_course(self):

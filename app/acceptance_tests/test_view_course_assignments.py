@@ -91,7 +91,7 @@ class TestViewCourseAssignments(TestCase):
                             "\tSchedule: MW12301345\n" \
                             "\tTA(s):\n" \
                             "\t\tTA1_name\n" \
-                            "\t\tTA2_name\n"
+                            "\t\tTA2_name\n\n"
         self.assertEqual(actual_response, expected_response)
 
     def test_view_course_assignments_happy_path_specific_no_TAs(self):
@@ -101,7 +101,7 @@ class TestViewCourseAssignments(TestCase):
         course.save()
 
         actual_response = self.app.command("course_assignments CS417 001")
-        expected_response = "CS417-001:\n\tSchedule: TH12001315\n\tTA(s):\n\t\tno TAs assigned to course\n"
+        expected_response = "CS417-001:\n\tSchedule: TH12001315\n\tTA(s):\n\t\tno TAs assigned to course\n\n"
 
         self.assertEqual(actual_response, expected_response)
 
