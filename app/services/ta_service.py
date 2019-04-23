@@ -58,6 +58,9 @@ class TaService:
             return f"{ta_user_name} is not assigned to course {course_id}-{course_section}."
         ta_course_rel = ta_course_rels.first()
 
+        if ta_course_rel.remaining_sections < len(lab_sections):
+            return f"{ta_user_name} does not have enough remaining sections."
+
         assigned_labs = []
         result_string = ""
 
@@ -76,23 +79,19 @@ class TaService:
                 assigned_labs.append(lab)
 
         for lab in assigned_labs:
-            if ta_course_rel.remaining_sections == 0:
-                result_string += f"{ta_user_name} cannot TA any more lab sections.\n"
-                break
-            else:
-                if lab.ta is not None:
-                    u_ta = lab.ta
-                    u_ta_course_rel = TaCourse.objects.filter(course=course, assigned_ta=u_ta)
-                    u_ta_course_rel = u_ta_course_rel.first()
-                    u_ta_course_rel.remaining_sections = u_ta_course_rel.remaining_sections + 1
-                    u_ta_course_rel.save()
-                    result_string += f'{u_ta.username} has been removed from {course_id}-{course_section}, lab {lab.section_id}. '
+            if lab.ta is not None:
+                u_ta = lab.ta
+                u_ta_course_rel = TaCourse.objects.filter(course=course, assigned_ta=u_ta)
+                u_ta_course_rel = u_ta_course_rel.first()
+                u_ta_course_rel.remaining_sections = u_ta_course_rel.remaining_sections + 1
+                u_ta_course_rel.save()
+                result_string += f'{u_ta.username} has been removed from {course_id}-{course_section}, lab {lab.section_id}. '
 
-                lab.ta = ta
-                lab.save()
-                ta_course_rel.remaining_sections = ta_course_rel.remaining_sections - 1
-                ta_course_rel.save()
-                result_string += f'{ta_user_name} assigned to {course_id}-{course_section}, lab {lab.section_id}.\n'
+            lab.ta = ta
+            lab.save()
+            ta_course_rel.remaining_sections = ta_course_rel.remaining_sections - 1
+            ta_course_rel.save()
+            result_string += f'{ta_user_name} assigned to {course_id}-{course_section}, lab {lab.section_id}.\n'
 
         return result_string + \
             f"{ta_course_rel.remaining_sections} section(s) remaining for {ta_user_name}."

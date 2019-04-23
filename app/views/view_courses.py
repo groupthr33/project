@@ -1,19 +1,19 @@
 from django.shortcuts import render
 import json
 from django.views import View
-from app.services.course_service import CourseService
-from app.services.auth_service import AuthService
-
-course_service = CourseService()
-auth_service = AuthService()
 
 
 class ViewCourses(View):
+    auth_service = None
+    account_service = None
+    course_service = None
+    ta_service = None
+
     def get(self, request):
-        courses = course_service.view_courses()
+        courses = self.course_service.view_courses()
         username = request.session.get('username', None)
 
-        is_authorized = auth_service.is_authorized(username, 0x8)
+        is_authorized = self.auth_service.is_authorized(username, 0x8)
 
         return render(request, 'main/view_courses.html',
                       {'courses_json': json.dumps(courses),

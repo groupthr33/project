@@ -1,15 +1,13 @@
 from django.shortcuts import render
 from django.views import View
-from app.services.auth_service import AuthService
-from app.services.account_service import AccountService
-from app.services.course_service import CourseService
-
-auth_service = AuthService()
-account_service = AccountService()
-course_service = CourseService()
 
 
 class CreateCourse(View):
+    auth_service = None
+    account_service = None
+    course_service = None
+    ta_service = None
+
     def get(self, request):
         return render(request, 'main/cr_course.html')
 
@@ -19,7 +17,7 @@ class CreateCourse(View):
         name = request.POST['name']
         schedule = request.POST['schedule']
 
-        cr_course_response = course_service.create_course(course_id, section, name, schedule)
+        cr_course_response = self.course_service.create_course(course_id, section, name, schedule)
 
         context = {'message': cr_course_response}
 

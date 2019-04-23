@@ -1,17 +1,13 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from app.services.auth_service import AuthService
-from app.services.account_service import AccountService
-from app.services.course_service import CourseService
-from app.services.ta_service import TaService
-
-auth_service = AuthService()
-account_service = AccountService()
-course_service = CourseService()
-ta_service = TaService()
 
 
 class Login(View):
+    auth_service = None
+    account_service = None
+    course_service = None
+    ta_service = None
+
     def get(self, request):
         logged_in_user = request.session.get('username', None)
 
@@ -24,7 +20,7 @@ class Login(View):
         username = request.POST['username']
         password = request.POST['password']
 
-        login_response = auth_service.login(username, password)
+        login_response = self.auth_service.login(username, password)
 
         if login_response != "Incorrect username." and login_response != "Incorrect password.":
             request.session['username'] = username
