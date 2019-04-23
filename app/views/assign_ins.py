@@ -34,7 +34,6 @@ class AssignInstructor(View):
         return render(request, 'main/view_contact_info.html', context)
 
     def post(self, request):
-        print(request.POST)
         instructor = request.POST.get('assignee', None)
         course_id = request.POST.get("course_id", None)
         course_section = request.POST.get("course_section", None)

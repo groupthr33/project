@@ -1,18 +1,24 @@
 {% extends "main/nav.html" %}
 {% block command-content %}
     <style>
-        #ta-header{
+        #ta-header {
             display: inline;
         }
 
-        #lab-header{
+        #lab-header {
             display: inline;
             margin: 0;
         }
 
-        #lab-header-container{
+        #lab-header-container {
             display: grid;
-            grid-template-columns: auto minmax(auto, 150px) minmax(auto, 150px) 40px;
+            grid-template-columns: auto minmax(auto, 300px);
+        }
+
+        #lab-form {
+            display: grid;
+            grid-template-columns: minmax(auto, 200px) minmax(auto, 200px) 40px;
+            justify-content: end;
         }
 
         #course-details-container {
@@ -86,6 +92,9 @@
             </table>
         </div>
         <div>
+            {{ message }}
+        </div>
+        <div>
         </div>
         <div id="tas">
             <h3 id="ta-header">TAs</h3>
@@ -103,12 +112,17 @@
             </table>
         </div>
         <div id="labs">
-        <div id="lab-header-container">
-            <h3 id="lab-header">Labs</h3>
-            <input type="text" placeholder="section" name="section">
-            <input type="text" placeholder="schedule" name="schedule">
-            <input type="submit" value="+">
-        </div>
+            <div id="lab-header-container">
+                <h3 id="lab-header">Labs</h3>
+                <form id="lab-form" action="/cr_lab/" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="courseid" value="{{ course.course_id }}">
+                    <input type="hidden" name="coursesection" value="{{ course.section }}">
+                    <input type="text" required placeholder="section" name="labsection">
+                    <input type="text" required placeholder="schedule" name="labschedule">
+                    <input type="submit" value="+">
+                </form>
+            </div>
             <table id="contact-info-container">
                 <tr>
                     <th>Section</th>
@@ -124,6 +138,5 @@
                 {% endfor %}
             </table>
         </div>
-    </div>
     </div>
 {% endblock command-content %}

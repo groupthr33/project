@@ -15,6 +15,10 @@ class CourseDetails(View):
     def get(self, request):
         course_id = request.GET.get('courseid', None)
         course_section = request.GET.get('section', None)
+        message = request.session.get('message', '')
+
+        if 'message' in request.session:
+            del request.session['message']
 
         if course_id is None or course_section is None:
             return redirect('/view_courses/')
@@ -27,5 +31,5 @@ class CourseDetails(View):
         tas = course_service.get_tas_for_course(course_id, course_section)
         labs = course_service.get_labs_for_course(course_id, course_section)
 
-        print(labs)
-        return render(request, 'main/course_details.html', {'course': course, 'tas': tas, 'labs': labs})
+        return render(request, 'main/course_details.html', {'course': course, 'tas': tas, 'labs': labs,
+                                                            'message': message})
