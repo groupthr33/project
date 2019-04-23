@@ -26,8 +26,15 @@ class TestSetPassword(TestCase):
         expected_response = "Your password has been updated."
         self.assertEqual(expected_response, actual_response)
 
-    def test_set_password_wrong_number_of_args(self):
+    def test_set_password_wrong_number_of_args_too_few(self):
         actual_response = self.app.command("set_password newpassword")
+        expected_response = "set_password must have exactly 2 arguments. " \
+                            "Correct usage: set_password <old_password> <new_password>"
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_set_password_wrong_number_of_args_too_many(self):
+        actual_response = self.app.command("set_password thepassword newpassword extrajunk")
         expected_response = "set_password must have exactly 2 arguments. " \
                             "Correct usage: set_password <old_password> <new_password>"
 
