@@ -63,46 +63,51 @@ class CourseService:
 
         return f"Lab {lab_section_id} for {course_id}-{course_section_id} created."
 
-    def view_course_assignments(self, requester, course_id="all", course_section="001"):
-        if course_id == "all":
-            courses = Course.objects.filter(instructor__username__iexact=requester)
-            assignments = "You are not assigned to any courses."
+    def course_assignments_str_builder(self, courses, course_id, course_section):
+        assignments = "You are not assigned to any courses."
 
-            if not courses.count() == 0:
-                assignments = ""
+        if not course_id == "all":
+            course = Course.objects.filter(course_id__iexact=course_id,section__iexact=course_section)
 
-                for i in courses:
-                    assignments = assignments + f'{i.course_id}-{i.section}:\n\tSchedule: {i.schedule}\n'
-                    tas = TaCourse.objects.filter(course=i)
-                    ta_names = "\t\tno TAs assigned to course\n"
-
-                    if not tas.count() == 0:
-                        ta_names = ""
-
-                        for j in tas:
-                            ta_names = f'{ta_names}\t\t{j.assigned_ta.name}\n'
-
-                    assignments = assignments + f'\tTA(s):\n{ta_names}\n'
-        else:
-            courses = Course.objects.filter(course_id__iexact=course_id, section__iexact=course_section)
-            assignments = f'Course {course_id}-{course_section} does not exist.'
-
-            if not courses.count() == 0:
-                course = courses.first()
+            if course.count() == 0:
+                assignments = f'Course {course_id}-{course_section} does not exist.'
+            else:
                 assignments = f'You are not assigned to Course {course_id}-{course_section}.'
 
-                if course.instructor is not None and course.instructor.username == requester:
-                    assignments = f'{course.course_id}-{course.section}:\n\tSchedule: {course.schedule}\n'
-                    tas = TaCourse.objects.filter(course=course)
-                    ta_names = "\t\tno TAs assigned to course\n"
+        if len(courses) > 0:
+            assignments = ""
 
-                    if tas.count() != 0:
-                        ta_names = ""
+            for i in courses:
+                course = Course.objects.filter(course_id__iexact=i.get('course_id'),
+                                               section__iexact=i.get('section'))
 
-                        for i in tas:
-                            ta_names = f'{ta_names}\t\t{i.assigned_ta.name}\n'
+                course = course.first()
 
-                    assignments = assignments + f'\tTA(s):\n{ta_names}'
+                assignments = assignments + f'{course.course_id}-{course.section}:\n\tSchedule: {course.schedule}\n'
+                tas = TaCourse.objects.filter(course=course)
+                ta_names = "\t\tno TAs assigned to course\n"
+
+                if not tas.count() == 0:
+                    ta_names = ""
+
+                    for j in tas:
+                        ta_names = f'{ta_names}\t\t{j.assigned_ta.name}\n'
+
+                assignments = assignments + f'\tTA(s):\n{ta_names}\n'
+
+        return assignments
+
+    def view_course_assignments(self, requester, course_id="all", course_section="001"):
+        if not course_id == "all":
+            courses = Course.objects.filter(instructor__username__iexact=requester,
+                                            course_id__exact=course_id,
+                                            section__exact=course_section)
+        else:
+            courses = Course.objects.filter(instructor__username__iexact=requester)
+
+        assigned_courses = self.create_course_objects_from_models(courses)
+
+        assignments = self.course_assignments_str_builder(assigned_courses, course_id, course_section)
 
         return assignments
 
@@ -179,8 +184,8 @@ class CourseService:
             role_string = AccountUtil.decode_roles(account.roles)
             account_objects.append({'username': account.username, 'name': account.name,
                                     'phoneNumber': account.phone_number, 'address': account.address,
-                                    'email': account.email,
-                                    'roles': role_string})
+                                    'email': account.email, 'roles': role_string,
+                                    'remaining': ta_course_rel.remaining_sections})
 
         return account_objects
 
