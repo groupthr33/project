@@ -16,6 +16,9 @@ class CourseDetails(View):
         course_id = request.GET.get('courseid', None)
         course_section = request.GET.get('section', None)
         message = request.session.get('message', '')
+        username = request.session.get('username', '')
+        is_privileged = auth_service.is_authorized(username, 0xC)
+        is_assigner = auth_service.is_authorized(username, 0xA)
 
         if 'message' in request.session:
             del request.session['message']
@@ -32,4 +35,5 @@ class CourseDetails(View):
         labs = course_service.get_labs_for_course(course_id, course_section)
 
         return render(request, 'main/course_details.html', {'course': course, 'tas': tas, 'labs': labs,
-                                                            'message': message})
+                                                            'message': message, 'is_privileged': is_privileged,
+                                                            'is_assigner': is_assigner})

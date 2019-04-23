@@ -20,4 +20,5 @@ urlpatterns = [
     path("cr_course/", app.views.CreateCourse.as_view()),
     path("assign_ins/", app.views.AssignInstructor.as_view()),
     path("assign_ta_labs/", app.views.AssignTaLabs.as_view()),
+    path("my_courses_ta/", app.views.MyCoursesTa.as_view())
 ]

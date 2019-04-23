@@ -385,3 +385,25 @@ class TestCourseService(TestCase):
                               'instructor': '', 'tas': ''}]
 
         self.assertEqual(expected_response, actual_response)
+
+    def test_get_courses_for_instructor(self):
+        self.course2.instructor = self.instructor
+        self.course2.save()
+
+        actual_response = self.course_service.get_courses_for_instructor(self.instructor.username)
+        expected_response = [{'course_id': self.course2.course_id, 'section': self.course2.section,
+                              'name': self.course2.name, 'schedule': self.course2.schedule,
+                              'instructor': self.instructor.name, 'tas': ''}]
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_get_courses_for_ta(self):
+        self.tacourse = TaCourse.objects.create(course=self.course2, assigned_ta=self.ta1)
+        self.tacourse.save()
+
+        actual_response = self.course_service.get_courses_for_ta(self.ta1.username)
+        expected_response = [{'course_id': self.course2.course_id, 'section': self.course2.section,
+                              'name': self.course2.name, 'schedule': self.course2.schedule,
+                              'instructor': '', 'tas': self.ta1.name}]
+
+        self.assertEqual(expected_response, actual_response)

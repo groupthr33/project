@@ -88,7 +88,7 @@ class TestTaService(TestCase):
     def test_assign_ta_to_labs_happy_path(self):
         TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=2)
 
-        expected_response = "test_ta assigned to CS417-001, lab(s) 801. 1 section(s) remaining for test_ta."
+        expected_response = "test_ta assigned to CS417-001, lab 801.\n1 section(s) remaining for test_ta."
         actual_response = self.ta_service.assign_ta_to_labs(
             self.ta_user_name, self.course_id, self.course_section, [self.lab_section], "the_user")
         self.assertEqual(actual_response, expected_response)
@@ -105,7 +105,7 @@ class TestTaService(TestCase):
         self.course.instructor = self.current_user
         self.course.save()
 
-        expected_response = "test_ta assigned to CS417-001, lab(s) 801. 1 section(s) remaining for test_ta."
+        expected_response = "test_ta assigned to CS417-001, lab 801.\n1 section(s) remaining for test_ta."
         actual_response = self.ta_service.assign_ta_to_labs(
             self.ta_user_name, self.course_id, self.course_section, [self.lab_section], "the_user")
         self.assertEqual(actual_response, expected_response)
@@ -119,7 +119,8 @@ class TestTaService(TestCase):
         TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=2)
         Lab.objects.create(section_id="802", schedule="TR09301045", course=self.course)
 
-        expected_response = "test_ta assigned to CS417-001, lab(s) 801 802. 0 section(s) remaining for test_ta."
+        expected_response = "test_ta assigned to CS417-001, lab 801.\n" + \
+                            "test_ta assigned to CS417-001, lab 802.\n0 section(s) remaining for test_ta."
         actual_response = self.ta_service.assign_ta_to_labs(
             self.ta_user_name, self.course_id, self.course_section, [self.lab_section, "802"], "the_user")
         self.assertEqual(actual_response, expected_response)
@@ -187,7 +188,7 @@ class TestTaService(TestCase):
 
         actual_response = self.ta_service.assign_ta_to_labs(
             self.ta_user_name, self.course_id, self.course_section, [self.lab_section], "the_user")
-        expected_response = "test_ta cannot TA any more lab sections."
+        expected_response = "test_ta cannot TA any more lab sections.\n0 section(s) remaining for test_ta."
         self.assertEqual(expected_response, actual_response)
 
         lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()
@@ -202,7 +203,7 @@ class TestTaService(TestCase):
 
         actual_response = self.ta_service.assign_ta_to_labs(
             self.ta_user_name, self.course_id, self.course_section, [self.lab_section], "the_user")
-        expected_response = "test_ta is already assigned to CS417-001, lab 801."
+        expected_response = "test_ta is already assigned to CS417-001, lab 801.\n2 section(s) remaining for test_ta."
         self.assertEqual(expected_response, actual_response)
 
         lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()

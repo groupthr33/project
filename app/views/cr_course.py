@@ -14,12 +14,12 @@ class CreateCourse(View):
         return render(request, 'main/cr_course.html')
 
     def post(self, request):
-        coures_id = request.POST['course_id']
+        course_id = request.POST['course_id']
         section = request.POST['section']
         name = request.POST['name']
         schedule = request.POST['schedule']
 
-        cr_course_response = course_service.create_course(coures_id, section, name, schedule)
+        cr_course_response = course_service.create_course(course_id, section, name, schedule)
 
         context = {'message': cr_course_response}
 
