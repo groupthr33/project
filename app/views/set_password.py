@@ -20,7 +20,7 @@ class SetPassword(View):
 
         message = request.GET.get('update', 'false')
 
-        return render(request, 'main/edit_account.html',
+        return render(request, 'main/set_password.html',
                       {'account': account,
                        'is_privileged': False,
                        'message': 'Your password has been updated.' if message == 'true' else ''})
@@ -29,6 +29,6 @@ class SetPassword(View):
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
 
-        auth_service.set_password(username, password)
+        auth_service.set_password(username, {'password': password})
 
-        return redirect('/update_contact/?update=true')
+        return redirect('/set_password/?update=true')
