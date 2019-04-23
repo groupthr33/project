@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.views import View
 from app.services.auth_service import AuthService
 from app.services.account_service import AccountService
