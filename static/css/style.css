@@ -86,15 +86,6 @@ body {
     cursor: pointer;
 }
 
-#course-container {
-    width: 100%;
-    margin-top: 25px;
-}
-
-#course-container tr{
-    background: #d3d3d3;
-}
-
 .welcome-name {
     position: absolute;
     top: 10px;

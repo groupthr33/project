@@ -214,7 +214,7 @@ class TestCourseService(TestCase):
                             "\tSchedule: MW12301345\n" \
                             "\tTA(s):\n" \
                             "\t\tTA1_name\n" \
-                            "\t\tTA2_name\n"
+                            "\t\tTA2_name\n\n"
         actual_response = self.course_service.view_course_assignments("theinstructor", "CS337", self.course_section)
         self.assertEqual(actual_response, expected_response)
 
@@ -236,7 +236,7 @@ class TestCourseService(TestCase):
         self.course1.instructor = self.instructor
         self.course1.save()
 
-        expected_response = "CS535-001:\n\tSchedule: TH12001315\n\tTA(s):\n\t\tno TAs assigned to course\n"
+        expected_response = "CS535-001:\n\tSchedule: TH12001315\n\tTA(s):\n\t\tno TAs assigned to course\n\n"
         actual_response = self.course_service.view_course_assignments("theinstructor", self.course_id,
                                                                       self.course_section)
         self.assertEqual(actual_response, expected_response)
@@ -258,7 +258,7 @@ class TestCourseService(TestCase):
 
         actual_response = self.course_service.view_course_assignments("unassigned_instructor", "CS535", "001")
         expected_response = "You are not assigned to Course CS535-001."
-        self.assertEqual(actual_response, expected_response)
+        self.assertEqual(expected_response, actual_response)
 
         courses = Course.objects.filter(instructor=unassigned_instructor)
         self.assertEqual(0, courses.count())

@@ -11,4 +11,5 @@ from app.views.my_courses import MyCourses
 from app.views.assign_ins import AssignInstructor
 from app.views.course_details import CourseDetails
 from app.views.create_lab import CreateLab
+from app.views.assign_ta_labs import AssignTaLabs
 from app.views.cr_course import CreateCourse

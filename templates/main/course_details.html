@@ -92,7 +92,7 @@
             </table>
         </div>
         <div>
-            {{ message }}
+            <pre>{{ message }}</pre>
         </div>
         <div>
         </div>
@@ -100,13 +100,17 @@
             <h3 id="ta-header">TAs</h3>
             <table id="contact-info-container">
                 <tr>
+                    <th></th>
                     <th>Name</th>
                     <th>Username</th>
+                    <th>Remaining Sections</th>
                 </tr>
                 {% for ta in tas %}
                     <tr>
+                        <td><input required type="radio" name="ta" value={{ ta.username }} form="assign-ta-form"</td>
                         <td>{{ ta.name }}</td>
                         <td>{{ ta.username }}</td>
+                        <td>{{ ta.remaining }}</td>
                     </tr>
                 {% endfor %}
             </table>
@@ -123,20 +127,42 @@
                     <input type="submit" value="+">
                 </form>
             </div>
-            <table id="contact-info-container">
-                <tr>
-                    <th>Section</th>
-                    <th>TA</th>
-                    <th>Schedule</th>
-                </tr>
-                {% for lab in labs %}
+            <form id="assign-ta-form" action="/assign_ta_labs/" method="post">
+                {% csrf_token %}
+                <table id="contact-info-container">
                     <tr>
-                        <td>{{ lab.section }}</td>
-                        <td>{{ lab.ta }}</td>
-                        <td>{{ lab.schedule }}</td>
+                        <th></th>
+                        <th>Section</th>
+                        <th>TA</th>
+                        <th>Schedule</th>
                     </tr>
-                {% endfor %}
-            </table>
+                    {% for lab in labs %}
+                        <tr>
+                            <td><input required type="checkbox" name="lab_sections[]" value={{ lab.section }}></td>
+                            <td>{{ lab.section }}</td>
+                            <td>{{ lab.ta }}</td>
+                            <td>{{ lab.schedule }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <input type="hidden" name="courseid" value="{{ course.course_id }}">
+                <input type="hidden" name="coursesection" value="{{ course.section }}">
+                <input type="submit" value="Assign">
+            </form>
         </div>
     </div>
+    <script>
+        $(function () {
+            var requiredCheckboxes = $(':checkbox[required]');
+
+            requiredCheckboxes.change(function () {
+
+                if (requiredCheckboxes.is(':checked')) {
+                    requiredCheckboxes.removeAttr('required');
+                } else {
+                    requiredCheckboxes.attr('required', 'required');
+                }
+            });
+        });
+    </script>
 {% endblock command-content %}
