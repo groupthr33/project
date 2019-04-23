@@ -16,6 +16,8 @@ class CourseDetails(View):
         is_privileged = self.auth_service.is_authorized(username, 0xC)
         is_assigner = self.auth_service.is_authorized(username, 0xA)
 
+        user_details = self.account_service.get_account_details(username)
+
         if 'message' in request.session:
             del request.session['message']
 
@@ -25,6 +27,12 @@ class CourseDetails(View):
         try:
             course = self.course_service.get_course_by_id_and_section(course_id, course_section)
         except:
+            return redirect('/view_courses/')
+
+        is_instructor = (user_details.get('roles') == "instructor ") and (user_details.get('name') == course.get('instructor'))
+        is_ta = (user_details.get('roles') == "ta") and (user_details.get('name') in course.get('tas'))
+
+        if not is_instructor and not is_ta and not is_privileged:
             return redirect('/view_courses/')
 
         tas = self.course_service.get_tas_for_course(course_id, course_section)
