@@ -24,15 +24,13 @@
         </form>
     </div>
     <script>
-        function redirect(e) {
-            window.location = `/edit_account?username=${e.id}`
-        }
+        const redirect = e => window.location = `/edit_account?username=${e.id}`;
 
-        function filter(e) {
+        const filter = e => {
             const rows = document.querySelectorAll('.course-row');
             rows.forEach(el => el.style.display = el.id.toLowerCase()
                 .includes(e.target.value.toLowerCase()) ? 'table-row' : 'none');
-        }
+        };
 
         let el = document.getElementById('view-contact-username-input');
         let container = document.getElementById('contact-info-container');
@@ -141,7 +139,5 @@
         }
 
         el.oninput = filter;
-
     </script>
-
 {% endblock command-content %}

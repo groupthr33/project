@@ -1,6 +1,6 @@
 {% extends "main/nav.html" %}
 {% block command-content %}
-        <div style="margin: auto; width: 25%">
+    <div style="margin: auto; width: 25%">
         <form method="post" action="/cr_account/">
             {% csrf_token %}
             <input required type="text" name="username" autofocus placeholder="username"/><br/>
@@ -19,17 +19,13 @@
         <div>{{ message }}</div>
     </div>
     <script>
-        $(function () {
-            var requiredCheckboxes = $(':checkbox[required]');
-
-            requiredCheckboxes.change(function () {
-
-                if (requiredCheckboxes.is(':checked')) {
-                    requiredCheckboxes.removeAttr('required');
-                } else {
-                    requiredCheckboxes.attr('required', 'required');
-                }
-            });
-        });
-    </script>
+        const requiredCheckboxes = document.querySelectorAll('input[type=checkbox]');
+        const onChange = () => {
+            const toggleRequired = [...requiredCheckboxes].filter(c => c.checked).length
+                ? c => c.removeAttribute('required')
+                : c => c.required = true;
+            requiredCheckboxes.forEach(toggleRequired);
+        };
+        requiredCheckboxes.forEach(c => c.onchange = onChange);
+   </script>
 {% endblock command-content %}
