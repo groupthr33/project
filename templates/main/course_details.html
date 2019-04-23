@@ -100,14 +100,18 @@
             <h3 id="ta-header">TAs</h3>
             <table id="contact-info-container">
                 <tr>
-                    <th></th>
+                    {% if is_assigner %}
+                        <th></th>
+                    {% endif %}
                     <th>Name</th>
                     <th>Username</th>
                     <th>Remaining Sections</th>
                 </tr>
                 {% for ta in tas %}
                     <tr>
-                        <td><input required type="radio" name="ta" value={{ ta.username }} form="assign-ta-form"</td>
+                        {% if is_assigner %}
+                            <td><input required type="radio" name="ta" value={{ ta.username }} form="assign-ta-form"</td>
+                        {% endif %}
                         <td>{{ ta.name }}</td>
                         <td>{{ ta.username }}</td>
                         <td>{{ ta.remaining }}</td>
@@ -133,14 +137,18 @@
                 {% csrf_token %}
                 <table id="contact-info-container">
                     <tr>
-                        <th></th>
+                        {% if is_assigner %}
+                            <th></th>
+                        {% endif %}
                         <th>Section</th>
                         <th>TA</th>
                         <th>Schedule</th>
                     </tr>
                     {% for lab in labs %}
                         <tr>
-                            <td><input required type="checkbox" name="lab_sections[]" value={{ lab.section }}></td>
+                            {% if is_assigner %}
+                                <td><input required type="checkbox" name="lab_sections[]" value={{ lab.section }}></td>
+                            {% endif %}
                             <td>{{ lab.section }}</td>
                             <td>{{ lab.ta }}</td>
                             <td>{{ lab.schedule }}</td>
@@ -149,7 +157,9 @@
                 </table>
                 <input type="hidden" name="courseid" value="{{ course.course_id }}">
                 <input type="hidden" name="coursesection" value="{{ course.section }}">
-                <input type="submit" value="Assign">
+                {% if is_assigner %}
+                    <input type="submit" value="Assign">
+                {% endif %}
             </form>
         </div>
     </div>

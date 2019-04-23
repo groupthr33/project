@@ -222,6 +222,14 @@ class CourseService:
         courses = Course.objects.filter(instructor__username__iexact=username)
         return self.create_course_objects_from_models(courses)
 
+    def get_courses_for_ta(self, username):
+        tacourses = TaCourse.objects.filter(assigned_ta__username__iexact=username)
+        courses = []
+        for tacourse in tacourses:
+            courses.append(tacourse.course)
+
+        return self.create_course_objects_from_models(courses)
+
     def get_course_by_id_and_section(self, course_id, section):
         courses = Course.objects.filter(course_id__iexact=course_id, section__iexact=section)
         courses_info = self.create_course_objects_from_models(courses)

@@ -10,14 +10,16 @@ paths = {
     "view_contact_info": 0xF,
     "assign_ta_course": 0x8,
     "assign_ins": 0x8,
-    "view_courses": 0xC,
+    "view_courses": 0xF,
     "edit_account": 0xC,
-    "course_details": 0xE,
+    "course_details": 0xF,
     "cr_course": 0xC,
     "set_password": 0xF,
     "cr_lab": 0xC,
     "assign_ta_lab": 0xA,
     "view_lab_details": 0xC,
+    "my_courses": 0x2,
+    "my_courses_ta": 0x1
 }
 
 
