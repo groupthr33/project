@@ -8,7 +8,7 @@ from app.models.course import Course
 from app.models.lab import Lab
 
 
-class TestViewLabDetails(TestCase):
+class TestCourseDetails(TestCase):
 
     def setUp(self):
         self.account = Account.objects.create(username='supervisor', password='thepassword', name='supervisor_name',

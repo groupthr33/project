@@ -10,7 +10,7 @@ def commands(request):
         Command("set_password", "Change Password", 0xF, True),
         Command("update_contact", "Update Contact Info", 0xF, True),
         Command("view_contact_info", "Users", 0xF, True),
-        Command("cr_course", "Create Course", 0xC),
+        Command("cr_course", "Create Course", 0xC, True),
         Command("my_courses", "My Courses", 0x2, True),
         Command("view_courses", "Courses", 0xC, True),
     ]
