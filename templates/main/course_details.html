@@ -120,11 +120,13 @@
                 <h3 id="lab-header">Labs</h3>
                 <form id="lab-form" action="/cr_lab/" method="post">
                     {% csrf_token %}
-                    <input type="hidden" name="courseid" value="{{ course.course_id }}">
-                    <input type="hidden" name="coursesection" value="{{ course.section }}">
-                    <input type="text" required placeholder="section" name="labsection">
-                    <input type="text" required placeholder="schedule" name="labschedule">
-                    <input type="submit" value="+">
+                    {% if is_privileged %}
+                        <input type="hidden" name="courseid" value="{{ course.course_id }}">
+                        <input type="hidden" name="coursesection" value="{{ course.section }}">
+                        <input type="text" required placeholder="section" name="labsection">
+                        <input type="text" required placeholder="schedule" name="labschedule">
+                        <input type="submit" value="+">
+                    {% endif %}
                 </form>
             </div>
             <form id="assign-ta-form" action="/assign_ta_labs/" method="post">
