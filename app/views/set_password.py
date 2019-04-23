@@ -10,25 +10,32 @@ account_service = AccountService()
 course_service = CourseService()
 ta_service = TaService()
 
+
 class SetPassword(View):
     def get(self, request):
         username = request.session.get('username')
         account = account_service.get_account_details(username)
+        message = request.session.get('message', '')
+
+        if 'message' in request.session:
+            del request.session['message']
 
         if not account:
             return redirect('/')
 
-        message = request.GET.get('update', 'false')
-
         return render(request, 'main/set_password.html',
                       {'account': account,
                        'is_privileged': False,
-                       'message': 'Your password has been updated.' if message == 'true' else ''})
+                       'message': message})
 
     def post(self, request):
         username = request.POST.get('username', '')
-        password = request.POST.get('password', '')
+        old_password = request.POST.get('old_password', None)
+        new_password = request.POST.get('new_password', None)
 
-        auth_service.set_password(username, {'password': password})
+        print(old_password)
+        message = auth_service.set_password(username, old_password,  new_password)
 
-        return redirect('/set_password/?update=true')
+        print(message)
+        request.session['message'] = message
+        return redirect('/set_password/')

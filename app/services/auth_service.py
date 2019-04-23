@@ -84,6 +84,9 @@ class AuthService:
         if not account.password == old_password:
             return "Incorrect current password."
 
+        if new_password is None:
+            return "You must provide a new password."
+
         account.password = new_password
         account.save()
 
