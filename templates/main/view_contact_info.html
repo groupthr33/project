@@ -2,7 +2,7 @@
 {% block command-content %}
     <div style="text-align: center">
         <input id="view-contact-username-input" type="search" name="username" autofocus
-               placeholder="Filter by username..."/>
+               placeholder=" Filter by username..."/>
         {% if is_assigning %}
             {% if post_route == '/assign_ta_course/' %}
                 </br><p>Assigning TA(s) to {{ course_id }}-{{ course_section }}</p>
@@ -18,7 +18,7 @@
             {% if is_assigning %}
                 <input type="hidden" name="course_id" value="{{ course_id }}">
                 <input type="hidden" name="course_section" value="{{ course_section }}">
-                <input type="submit">
+                <input class="assign-course-submit" type="submit">
                 <pre>{{ message }}</pre>
             {% endif %}
         </form>

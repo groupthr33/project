@@ -33,6 +33,10 @@ body {
     height: 80px;
 }
 
+.dashboard-item:hover {
+    background-color: #509090;
+}
+
 .nav {
     height: 100%;
     width: 200px;
@@ -62,11 +66,11 @@ body {
 
 .logout-button {
     background-color: Transparent;
-    background-repeat:no-repeat;
+    background-repeat: no-repeat;
     border: none;
-    cursor:pointer;
+    cursor: pointer;
     overflow: hidden;
-    outline:none;
+    outline: none;
     font-style: italic;
 }
 
@@ -75,13 +79,14 @@ body {
     margin-top: 25px;
 }
 
-#contact-info-container tr{
+#contact-info-container tr {
     background: #d3d3d3;
 }
 
-.highlight:hover{
+.highlight:hover {
     background: #a3a3a3 !important;
 }
+
 .pointer {
     cursor: pointer;
 }
@@ -91,6 +96,7 @@ body {
     top: 10px;
     right: 10px;
 }
+
 .nav a:visited {
     color: black;
 }
@@ -112,4 +118,197 @@ a.disabled {
     pointer-events: none;
     cursor: default;
     color: #555555;
+}
+
+#login-page {
+    margin: auto;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.message {
+    min-height: 37px;
+    text-align: center;
+}
+
+.page {
+    margin: auto;
+    height: calc(100vh - 100px);
+    display: flex;
+    justify-content: center;
+    padding-bottom: 50px;
+    align-items: center;
+}
+
+#login-form-container {
+    padding: 50px 50px 25px 50px;
+    border-radius: 4px;
+    background-color: cadetblue;
+    text-align: center;
+    box-shadow: 1px 1px 5px 1px;
+    min-width: 300px;
+}
+
+.page form {
+    border-right: 10px solid #ccc;
+    border-bottom: 10px solid #ccc;
+    padding: 15px;
+    width: 300px;
+}
+
+
+.assign-course-submit {
+    border: 1px solid #333;
+    background: white;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px;
+    height: 25px;
+    border-radius: 4px;
+}
+
+.assign-course-submit:hover {
+    background: cadetblue;
+    color: white;
+}
+
+#view-contact-username-input, #view-course-input {
+    margin: 5px;
+    height: 25px;
+    border-radius: 4px;
+}
+
+.page form input[type="text"],
+.page form input[type="password"],
+.page form input[type="tel"],
+.page form input[type="email"],
+.page form input[type="submit"] {
+    margin: 5px;
+    width: 90%;
+    height: 30px;
+    border-radius: 4px;
+}
+
+.page form input[type="submit"] {
+    border: 1px solid #333;
+    background: white;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.page form input[type="submit"]:hover {
+    background: cadetblue;
+    color: white;
+}
+
+#login-page form input[type="text"],
+#login-page form input[type="password"],
+#login-page form input[type="submit"] {
+    margin: 5px;
+    width: 100%;
+    height: 30px;
+    border-radius: 4px;
+}
+
+#role-label {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+#login-page form input[type="submit"] {
+    border: 1px solid #333;
+    background: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#login-page form input[type="submit"]:hover {
+    background: lightgrey;
+}
+
+#ta-header {
+    display: inline;
+    margin: 0;
+}
+
+#lab-form input[type="submit"] {
+    height: 25px;
+    border-radius: 0 4px 4px 0;
+    background-color: white;
+    border: 1px solid #333;
+}
+
+#lab-form #section {
+    height: 25px;
+    border: 1px solid #333;
+    border-radius: 4px 0px 0px 4px;
+}
+
+#lab-form #schedule {
+    height: 25px;
+    border: 1px solid #333;
+    border-left: 0px;
+    border-right: 0px;
+}
+
+#assign-ta-btn-div {
+    text-align: right;
+}
+
+#assign-ta-btn-div input {
+    height: 25px;
+    background-color: white;
+    border-radius: 4px;
+    border: 1px solid #333;
+    cursor: pointer;
+}
+
+#lab-header {
+    display: inline;
+    margin: 0;
+}
+
+#lab-header-container {
+    display: grid;
+    grid-template-columns: auto minmax(auto, 300px);
+}
+
+#ta-header-container {
+    display: grid;
+    grid-template-columns: auto minmax(auto, 300px);
+}
+
+#lab-form {
+    display: grid;
+    grid-template-columns: minmax(auto, 150px) minmax(auto, 150px) 40px;
+    justify-content: end;
+}
+
+#lab-form input[type="submit"] {
+    cursor: pointer;
+}
+
+#course-details-container {
+    display: inline-grid;
+    grid-column-gap: 25px;
+    grid-row-gap: 25px;
+    grid-template-columns: auto auto;
+    width: 100%;
+}
+
+#course-details {
+    grid-column: 1/ span 1;
+    background: #d3d3d3;
+    padding: 5px;
+}
+
+#tas {
+    grid-column: 1/span 1;
+}
+
+#labs {
+    grid-column: 2 / span 1;
 }

@@ -33,9 +33,7 @@ class SetPassword(View):
         old_password = request.POST.get('old_password', None)
         new_password = request.POST.get('new_password', None)
 
-        print(old_password)
         message = auth_service.set_password(username, old_password,  new_password)
 
-        print(message)
         request.session['message'] = message
         return redirect('/set_password/')

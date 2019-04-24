@@ -1,48 +1,5 @@
 {% extends "main/nav.html" %}
 {% block command-content %}
-    <style>
-        #ta-header {
-            display: inline;
-        }
-
-        #lab-header {
-            display: inline;
-            margin: 0;
-        }
-
-        #lab-header-container {
-            display: grid;
-            grid-template-columns: auto minmax(auto, 300px);
-        }
-
-        #lab-form {
-            display: grid;
-            grid-template-columns: minmax(auto, 200px) minmax(auto, 200px) 40px;
-            justify-content: end;
-        }
-
-        #course-details-container {
-            display: inline-grid;
-            grid-column-gap: 25px;
-            grid-row-gap: 25px;
-            grid-template-columns: auto auto;
-            width: 100%;
-        }
-
-        #course-details {
-            grid-column: 1/ span 1;
-            background: #d3d3d3;
-            padding: 5px;
-        }
-
-        #tas {
-            grid-column: 1/span 1;
-        }
-
-        #labs {
-            grid-column: 2 / span 1;
-        }
-    </style>
     <div id="course-details-container">
         <div id="course-details">
             <h3>Course Details</h3>
@@ -97,7 +54,14 @@
         <div>
         </div>
         <div id="tas">
-            <h3 id="ta-header">TAs</h3>
+            <div id="ta-header-container">
+                <h3 id="ta-header">TAs</h3>
+                <div id="assign-ta-btn-div">
+                    {% if is_assigner %}
+                        <input form="assign-ta-form" type="submit" value="Assign">
+                    {% endif %}
+                </div>
+            </div>
             <table id="contact-info-container">
                 <tr>
                     {% if is_assigner %}
@@ -110,7 +74,9 @@
                 {% for ta in tas %}
                     <tr>
                         {% if is_assigner %}
-                            <td><input required type="radio" name="ta" value={{ ta.username }} form="assign-ta-form"</td>
+                            <td>
+                                <input required type="radio" name="ta" value={{ ta.username }} form="assign-ta-form">
+                            </td>
                         {% endif %}
                         <td>{{ ta.name }}</td>
                         <td>{{ ta.username }}</td>
@@ -127,8 +93,8 @@
                     {% if is_privileged %}
                         <input type="hidden" name="courseid" value="{{ course.course_id }}">
                         <input type="hidden" name="coursesection" value="{{ course.section }}">
-                        <input type="text" required placeholder="section" name="labsection">
-                        <input type="text" required placeholder="schedule" name="labschedule">
+                        <input id="section" type="text" required placeholder=" section" name="labsection">
+                        <input id="schedule" type="text" required placeholder=" schedule" name="labschedule">
                         <input type="submit" value="+">
                     {% endif %}
                 </form>
@@ -157,9 +123,6 @@
                 </table>
                 <input type="hidden" name="courseid" value="{{ course.course_id }}">
                 <input type="hidden" name="coursesection" value="{{ course.section }}">
-                {% if is_assigner %}
-                    <input type="submit" value="Assign">
-                {% endif %}
             </form>
         </div>
     </div>
