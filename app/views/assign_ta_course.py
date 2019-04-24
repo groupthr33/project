@@ -32,11 +32,14 @@ class AssignTaCourse(View):
         tas = request.POST.getlist('assignees', [])
         course_id = request.POST.get("course_id", None)
         course_section = request.POST.get("course_section", None)
-        remaining_sections = request.POST.get("remaining_sections", 1)
 
         message = ""
         for ta in tas:
-            message += self.ta_service.assign_ta_to_course(ta, course_id, course_section, remaining_sections) + " \n"
+            remaining_sections = request.POST.get(ta)
+            if remaining_sections == '' or remaining_sections is None:
+                remaining_sections = "0"
+
+            message += self.ta_service.assign_ta_to_course(ta, course_id, course_section, int(remaining_sections)) + " \n"
 
         contact_infos = self.account_service.get_accounts()
         contact_infos = list(filter(lambda c: 'ta' in c['roles'], contact_infos))

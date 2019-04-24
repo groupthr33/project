@@ -58,9 +58,7 @@ class TaService:
             return f"{ta_user_name} is not assigned to course {course_id}-{course_section}."
         ta_course_rel = ta_course_rels.first()
 
-        if ta_course_rel.remaining_sections < len(lab_sections):
-            return f"{ta_user_name} does not have enough remaining sections."
-
+        labs_length = len(lab_sections)
         assigned_labs = []
         result_string = ""
 
@@ -73,10 +71,14 @@ class TaService:
             if lab.ta is not None:
                 if lab.ta == ta:
                     result_string += f"{lab.ta.username} is already assigned to {course_id}-{course_section}, lab {lab.section_id}.\n"
+                    labs_length -= 1
                 else:
                     assigned_labs.append(lab)
             else:
                 assigned_labs.append(lab)
+
+        if ta_course_rel.remaining_sections < labs_length:
+            return f"{ta_user_name} does not have enough remaining sections."
 
         for lab in assigned_labs:
             if lab.ta is not None:

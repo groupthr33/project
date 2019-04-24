@@ -59,7 +59,8 @@ class TestAssignTaCourse(TestCase):
         with self.assertTemplateUsed('main/view_contact_info.html'):
             actual_response = self.client.post('/assign_ta_course/', {'course_id': 'CS361',
                                                                       'course_section': '001',
-                                                                      'assignees': ['theta']})
+                                                                      'assignees': ['theta'],
+                                                                      'theta': "2"})
 
         self.assertEqual(expected_response, actual_response.context['contact_infos'])
         self.assertEqual('CS361', actual_response.context['course_id'])
