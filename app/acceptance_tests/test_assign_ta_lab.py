@@ -88,7 +88,7 @@ class TestAssignTaLab(TestCase):
         self.ta_course_rel.save()
 
         actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta cannot TA any more lab sections.\n0 section(s) remaining for test_ta."
+        expected_response = "test_ta does not have enough remaining sections."
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_lab_already_assigned(self):

@@ -40,6 +40,7 @@
         const trHeader = document.createElement("TR");
         const thEdit = document.createElement("TH");
         const thAssign = document.createElement("TH");
+        const thSections = document.createElement("TH");
         const thName = document.createElement("TH");
         const thUsername = document.createElement("TH");
         const thRoles = document.createElement("TH");
@@ -47,6 +48,7 @@
         const thAddress = document.createElement("TH");
         const thEmail = document.createElement("TH");
 
+        thSections.innerText = '# of Sections';
         thName.innerText = 'Name';
         thUsername.innerText = 'Username';
         thRoles.innerText = 'Roles';
@@ -61,6 +63,9 @@
 
         {% if is_assigning %}
             trHeader.appendChild(thAssign);
+            {% if post_route == '/assign_ta_course/' %}
+                trHeader.appendChild(thSections);
+            {% endif %}
         {% endif %}
 
         trHeader.appendChild(thName);
@@ -82,12 +87,14 @@
             tr.classList.add("course-row");
             const tdEdit = document.createElement("TD");
             const tdAssign = document.createElement("TD");
+            const tdSections = document.createElement("TD");
             const tdName = document.createElement("TD");
             const tdUsername = document.createElement("TD");
             const tdRoles = document.createElement("TD");
             const tdPhoneNumber = document.createElement("TD");
             const tdAddress = document.createElement("TD");
             const tdEmail = document.createElement("TD");
+
 
             tdName.innerText = c.name;
             tdUsername.innerText = c.username;
@@ -111,7 +118,16 @@
                     checkbox.setAttribute("name", "assignees");
                     checkbox.setAttribute("value", c.username);
 
+                    const sections = document.createElement("input");
+                    sections.setAttribute("type", "number");
+                    sections.setAttribute("name", c.username);
+                    sections.setAttribute("min", "0");
+                    sections.setAttribute("step", "1")
+                    sections.setAttribute("value", "0");
+                    sections.setAttribute("style", "width: 40px");
+
                     tdAssign.appendChild(checkbox);
+                    tdSections.appendChild(sections);
                 {% endif %}
                 {% if post_route == '/assign_ins/' %}
                     const radio = document.createElement("input");
@@ -124,6 +140,9 @@
                 {% endif %}
 
                 tr.appendChild(tdAssign);
+                {% if post_route == '/assign_ta_course/' %}
+                    tr.appendChild(tdSections);
+                {% endif %}
             {% endif %}
 
             tr.appendChild(tdName);

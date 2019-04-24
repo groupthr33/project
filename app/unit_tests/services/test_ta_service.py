@@ -188,7 +188,7 @@ class TestTaService(TestCase):
 
         actual_response = self.ta_service.assign_ta_to_labs(
             self.ta_user_name, self.course_id, self.course_section, [self.lab_section], "the_user")
-        expected_response = "test_ta cannot TA any more lab sections.\n0 section(s) remaining for test_ta."
+        expected_response = "test_ta does not have enough remaining sections."
         self.assertEqual(expected_response, actual_response)
 
         lab = Lab.objects.filter(section_id__iexact="801", course=self.course).first()

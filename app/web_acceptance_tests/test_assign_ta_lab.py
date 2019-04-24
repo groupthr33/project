@@ -52,35 +52,6 @@ class TestAssignTaLab(TestCase):
         self.assertEqual(expected_response, self.client.session['message'])
         self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
 
-    def test_assign_ta_lab_multiple_one_fail_happy_path(self):
-        self.ta_course_rel.remaining_sections = 1
-        self.ta_course_rel.save()
-
-        expected_response = "test_ta assigned to CS417-001, lab 801.\n" + \
-                            "test_ta cannot TA any more lab sections.\n0 section(s) remaining for test_ta."
-
-        actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': ["801", "802"],
-                                                                'courseid': "CS417",
-                                                                'coursesection': "001",
-                                                                'ta': 'test_ta'})
-
-        self.assertEqual(expected_response, self.client.session['message'])
-        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
-
-    def test_assign_ta_lab_multiple_both_fail_happy_path(self):
-        self.ta_course_rel.remaining_sections = 0
-        self.ta_course_rel.save()
-
-        expected_response = "test_ta cannot TA any more lab sections.\n0 section(s) remaining for test_ta."
-
-        actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': ["801", "802"],
-                                                                'courseid': "CS417",
-                                                                'coursesection': "001",
-                                                                'ta': 'test_ta'})
-
-        self.assertEqual(expected_response, self.client.session['message'])
-        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
-
     def test_assign_ta_lab_ins_role_only(self):
         self.current_user.roles = 0x2
         self.current_user.save()
@@ -101,7 +72,7 @@ class TestAssignTaLab(TestCase):
         self.ta_course_rel.remaining_sections = 0
         self.ta_course_rel.save()
 
-        expected_response = "test_ta cannot TA any more lab sections.\n0 section(s) remaining for test_ta."
+        expected_response = "test_ta does not have enough remaining sections."
 
         actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': "801",
                                                                 'courseid': "CS417",
