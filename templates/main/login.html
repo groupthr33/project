@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-    <div style="text-align: center" >
-        <form method="post" action="/login/">
-            {% csrf_token %}
-            <input required type="text" name="username" autofocus placeholder="username"/><br>
-            <input required type="password" name="password" placeholder="password"/><br>
-            <input type="submit" value="Login">
-        </form>
-        <div>{{ message }}</div>
+    <div id="login-page">
+        <div id="login-form-container">
+            <form method="post" action="/login/">
+                {% csrf_token %}
+                <input required type="text" name="username" autofocus placeholder=" username"/><br>
+                <input required type="password" name="password" placeholder=" password"/><br>
+                <input type="submit" value="Login">
+                <div style="height: 25px">{{ message }}</div>
+            </form>
+        </div>
     </div>
 {% endblock content %}
