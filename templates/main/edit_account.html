@@ -6,7 +6,7 @@
             {% csrf_token %}
             <input required readonly type="text" name="username" value="{{ account.username }}"><br/>
             <input required type="text" name="name" placeholder=" name" value="{{ account.name }}"><br/>
-            <input type="tel" pattern="[0-9]{10}" name="phonenumber" placeholder=" phone number" value="{{ account.phoneNumber }}"><br/>
+            <input type="tel" pattern="[0-9]{10}" name="phonenumber" placeholder=" phone number" value="{{ account.phoneNumber }}" title="0123456789"><br/>
             <input type="text" name="address" placeholder=" address" value="{{ account.address }}"><br/>
             <input type="email" name="email" placeholder=" email" value="{{ account.email }}"><br/>
 

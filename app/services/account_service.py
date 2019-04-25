@@ -14,7 +14,7 @@ class AccountService:
         except Exception as e:
             return str(e)
 
-        Account.objects.create(username=username, name=name, roles=role_string)
+        Account.objects.create(username=username, name=name, roles=role_string, email=username+'@uwm.edu')
         return f"Account for user {username} successfully created with roles {', '.join(roles)}."
 
     def update_contact_info(self, username, field, new_value):

@@ -11,6 +11,9 @@ class CourseService:
         if not ValidatorUtil.is_valid_course_id(course_id):
             return "course ID is not valid. Please use correct format, e.g. CS534"
 
+        if not ValidatorUtil.is_valid_section(section):
+            return "section is not valid. Please use correct format, e.g. 001"
+
         if not ValidatorUtil.is_valid_schedule(schedule):
             return "course_schedule is not valid. Please use format: DDDDSSSSEEEE"
 

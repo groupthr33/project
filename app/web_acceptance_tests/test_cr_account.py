@@ -16,9 +16,6 @@ class TestCreateAccount(TestCase):
         self.session['username'] = 'theuser'
         self.session.save()
 
-        self.auth_service = AuthService()
-        self.account_service = AccountService()
-
     def test_cr_account_happy_path(self):
         data = {
             'username': 'mrwatts',

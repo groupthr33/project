@@ -17,10 +17,6 @@ class TestCreateCourse(TestCase):
         self.session['username'] = 'theuser'
         self.session.save()
 
-        self.auth_service = AuthService()
-        self.account_service = AccountService()
-        self.course_service = CourseService()
-
     def test_cr_course_happy_path(self):
         data = {
             'course_id': 'CS417',

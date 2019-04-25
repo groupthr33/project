@@ -27,8 +27,6 @@ class TestAssignTaLab(TestCase):
         self.session['username'] = 'the_user'
         self.session.save()
 
-        self.ta_service = TaService()
-
     def test_assign_ta_lab_happy_path(self):
         expected_response = "test_ta assigned to CS417-001, lab 801.\n1 section(s) remaining for test_ta."
 

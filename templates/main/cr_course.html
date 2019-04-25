@@ -3,10 +3,10 @@
     <div class="page">
         <form method="post" action="/cr_course/">
             {% csrf_token %}
-            <input required type="text" name="course_id" autofocus placeholder=" course ID"/><br/>
-            <input required type="text" name="section" placeholder=" section"/><br/>
+            <input required type="text" name="course_id" pattern="[a-zA-Z]{2,3}[0-9]{3}" autofocus placeholder=" course ID" title="e.g. CS534"/><br/>
+            <input required type="text" name="section" pattern="[0-9]{3}" placeholder=" section" title="e.g 001"/><br/>
             <input required type="text" name="name" placeholder=" course name"/><br/>
-            <input required type="text" name="schedule" placeholder=" schedule"/><br/>
+            <input required type="text" name="schedule" pattern="[a-zA-Z]{1,5}[0-9]{8}" placeholder=" schedule" title="e.g. MWF11001215"/><br/>
             <input type="submit" value="Create Course">
             <div class="message">{{ message }}</div>
         </form>

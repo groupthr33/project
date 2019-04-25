@@ -16,11 +16,6 @@ class TestCreateLab(TestCase):
 
         self.course = Course.objects.create(course_id="CS361", section="001", name="Intro", schedule="MW09000950")
 
-        self.auth_service = AuthService()
-        self.account_service = AccountService()
-        self.course_service = CourseService()
-        self.ta_service = TaService()
-
     def test_cr_lab_happy_path(self):
         actual_response = self.app.command("cr_lab 801 CS361 001 MW12301345")
         expected_response = "Lab 801 for CS361-001 created."
