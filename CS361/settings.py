@@ -25,6 +25,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'app.middleware.verify_logged_in.VerifyLoggedIn',
+    'app.middleware.verify_permissions.VerifyPermissions',
 ]
 
 ROOT_URLCONF = 'CS361.urls'
@@ -41,6 +43,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'app.context_processors.commands'
             ],
         },
     },

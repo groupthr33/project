@@ -37,7 +37,17 @@ class TestAssignTaLab(TestCase):
 
     def test_assign_ta_lab_happy_path(self):
         actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta assigned to CS417-001, lab(s) 801. 1 section(s) remaining for test_ta."
+        expected_response = "test_ta assigned to CS417-001, lab 801.\n1 section(s) remaining for test_ta."
+        self.assertEqual(expected_response, actual_response)
+
+    def test_assign_ta_lab_ins_role_only(self):
+        self.current_user.roles = 0x2
+        self.current_user.save()
+        self.course.instructor = self.current_user
+        self.course.save()
+
+        actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
+        expected_response = "test_ta assigned to CS417-001, lab 801.\n1 section(s) remaining for test_ta."
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_lab_wrong_number_of_args(self):
@@ -78,7 +88,7 @@ class TestAssignTaLab(TestCase):
         self.ta_course_rel.save()
 
         actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta cannot TA any more lab sections."
+        expected_response = "test_ta does not have enough remaining sections."
         self.assertEqual(expected_response, actual_response)
 
     def test_assign_ta_lab_already_assigned(self):
@@ -86,7 +96,15 @@ class TestAssignTaLab(TestCase):
         self.lab.save()
 
         actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
-        expected_response = "test_ta is already assigned to CS417-001, lab 801."
+        expected_response = "test_ta is already assigned to CS417-001, lab 801.\n2 section(s) remaining for test_ta."
         self.assertEqual(expected_response, actual_response)
 
-# todo: make sure that the instructor for that course is the one assigning TA's - next story
+    def test_assign_ta_lab_not_instructor_for_course(self):
+        instructor = Account.objects.create(username='anotherinst', password='p', name='n', is_logged_in=True,
+                                            roles=0x2)
+
+        self.app.auth_service.current_account = instructor
+
+        actual_response = self.app.command("assign_ta_lab test_ta CS417 001 801")
+        expected_response = "anotherinst is not the instructor for CS417-001."
+        self.assertEqual(expected_response, actual_response)

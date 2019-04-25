@@ -48,4 +48,8 @@ class TestAssignInstructor(TestCase):
         actual_response = self.app.command('cr_account mrwatts matt admin ta')
         self.assertEqual(expected_response, actual_response)
 
-    # todo : test multiroles one invalid
+    def test_cr_account_multiple_roles_one_invalid(self):
+        expected_response = 'superman is not a valid role. Valid roles are: supervisor, admin, instructor, and ta.'
+        actual_response = self.app.command('cr_account mrwatts matt admin superman')
+        self.assertEqual(expected_response, actual_response)
+

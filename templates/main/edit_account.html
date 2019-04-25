@@ -1,0 +1,34 @@
+{% extends "main/nav.html" %}
+{% block command-content %}
+    <div class="page">
+        <form style="position: relative;" method="post"
+              action="{% if is_privileged %}/edit_account/{% else %}/update_contact/{% endif %}">
+            {% csrf_token %}
+            <input required readonly type="text" name="username" value="{{ account.username }}"><br/>
+            <input required type="text" name="name" placeholder=" name" value="{{ account.name }}"><br/>
+            <input type="tel" pattern="[0-9]{10}" name="phonenumber" placeholder=" phone number" value="{{ account.phoneNumber }}"><br/>
+            <input type="text" name="address" placeholder=" address" value="{{ account.address }}"><br/>
+            <input type="email" name="email" placeholder=" email" value="{{ account.email }}"><br/>
+
+            {% if is_privileged %}
+                <div  id="role-label">
+                    <label name="rolelabel" for="roles[]">Select Roles: </label><br/>
+                </div>
+                <input  type="checkbox" name="roles[]" value="supervisor"
+                       {% if "supervisor" in account.roles %}checked{% endif %}>
+                <label for="roles[]">Supervisor</label><br/>
+                <input  type="checkbox" name="roles[]" value="admin"
+                       {% if "admin" in account.roles %}checked{% endif %}/>
+                <label for="roles[]">Admin</label><br/>
+                <input  type="checkbox" name="roles[]" value="instructor"
+                       {% if "instructor" in account.roles %}checked{% endif %}/>
+                <label for="roles[]">Instructor</label><br/>
+                <input  type="checkbox" name="roles[]" value="ta"
+                       {% if "ta" in account.roles %}checked{% endif %}/>
+                <label for="roles[]">TA</label><br/>
+            {% endif %}
+            <input type="submit" value="Update" id="update-btn"/>
+            <div class="message">{{ message }}</div>
+        </form>
+    </div>
+{% endblock command-content %}

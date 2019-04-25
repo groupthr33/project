@@ -12,4 +12,4 @@ class TestValidatorUtil(TestCase):
     # def test_parse_command_optional_args(self):
     #     expected_response = True
     #     actual_response = False
-    #     self.assertEqual(expected_response, actual_response, "todos")
+    #     self.assertEqual(expected_response, actual_response)

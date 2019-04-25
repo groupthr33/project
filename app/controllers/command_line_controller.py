@@ -19,8 +19,12 @@ class CommandLineController:
             "assign_ta_lab": 4,
             "logout": 0,
             "assign_ins": 3,
-            "course_assignments": 2,
-            "view_lab_details": 2
+            "course_assignments": 0,
+            "view_lab_details": 2,
+            "set_password": 2,
+            "view_courses": 0,
+            "update_contact": 2,
+            "view_account_details": 1
         }
 
         self.req_permissions = defaultdict(lambda: 0x0, {
@@ -30,9 +34,13 @@ class CommandLineController:
             "cr_lab": 0xC,
             "assign_ins": 0x8,
             "assign_ta_lab": 0xA,
-            "course_assignments": 0xE,
+            "course_assignments": 0x2,
             "assign_ta_course": 0x8,
-            "view_lab_details": 0xC
+            "view_lab_details": 0xC,
+            "set_password": 0xF,
+            "view_courses": 0xC,
+            "update_contact": 0xF,
+            "view_account_details": 0xC
         })
 
     def command(self, command_with_args):
@@ -98,7 +106,8 @@ class CommandLineController:
                 return "assign_ta_lab must have at least 4 arguments. Correct usage: assign_ta_lab " \
                        "<ta_user_name> <course_id> <course_section> <lab_sections...>"
 
-            return self.ta_service.assign_ta_to_labs(args[0], args[1], args[2], args[3::])
+            return self.ta_service.assign_ta_to_labs(args[0], args[1], args[2], args[3::],
+                                                     self.auth_service.get_current_username())
 
         if command == "assign_ta_course":
             if not len(args) > 2:
@@ -111,11 +120,19 @@ class CommandLineController:
             return self.ta_service.assign_ta_to_course(args[0], args[1], args[2], remaining_sections)
 
         if command == "course_assignments":
-            if not self.is_args_length_correct(command, args):
-                return "course_assignments must have exactly 2 arguments. " \
-                       "Correct usage: course_assignments <course_id> <course_section_id>"
+            if not len(args) < 3:
+                return "course_assignments can only have 2 optional arguments. " \
+                       "Correct usage: course_assignments [course_id] [course_section_id]"
 
-            return self.course_service.view_course_assignments(args[0], args[1])
+            elif len(args) == 2:
+                return self.course_service.view_course_assignments(self.auth_service.get_current_username(),
+                                                                   args[0], args[1])
+
+            elif len(args) == 1:
+                return self.course_service.view_course_assignments(self.auth_service.get_current_username(),
+                                                                   args[0])
+            else:
+                return self.course_service.view_course_assignments(self.auth_service.get_current_username())
 
         if command == "view_lab_details":
             if not len(args) > 1:
@@ -126,6 +143,37 @@ class CommandLineController:
                 return self.course_service.view_lab_details(args[0], args[1])
 
             return self.course_service.view_lab_details(args[0], args[1], args[2])
+
+        if command == "set_password":
+            if not self.is_args_length_correct(command, args):
+                return "set_password must have exactly 2 arguments. " \
+                       "Correct usage: set_password <old_password> <new_password>"
+
+            return self.auth_service.set_password(self.auth_service.get_current_username(), args[0], args[1])
+
+        if command == "view_courses":
+            if len(args) == 0:
+                return self.course_service.view_courses()
+            if len(args) == 2:
+                return self.course_service.view_specified_courses(args[0], args[1])
+            else:
+                return "view_courses must have 1 or 2 arguments."
+
+        if command == "update_contact":
+            if not self.is_args_length_correct(command, args):
+                return "update_contact must have exactly 2 arguments. Correct usage: update_contact <field> <new_value>"
+
+            return self.account_service.update_contact_info(self.auth_service.get_current_username(), args[0], args[1])
+
+        if command == "view_account_details":
+            if not len(args) < 2:
+                return "view_account_details must have at most 1 argument. Correct usage: " \
+                       "view_account_details [username]"
+
+            if len(args) == 1:
+                return self.account_service.view_account_details(args[0])
+            else:
+                return self.account_service.view_accounts()
 
         return "There is no service to handle your request."
 

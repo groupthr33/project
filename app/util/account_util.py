@@ -22,3 +22,20 @@ class AccountUtil:
                 role_string ^= 0x1
 
         return role_string
+
+    @staticmethod
+    def decode_roles(roles):
+        role = ""
+        if roles & 0x8 != 0:
+            role += "supervisor "
+
+        if roles & 0x4 != 0:
+            role += "admin "
+
+        if roles & 0x2 != 0:
+            role += "instructor "
+
+        if roles & 0x1 != 0:
+            role += "ta"
+
+        return role

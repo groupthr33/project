@@ -13,10 +13,7 @@ class AuthService:
         return self.current_account.username
 
     def login(self, username, password):
-        if self.current_account:
-            return f"{self.get_current_username()} is already logged in."
-
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
             return "Incorrect username."
@@ -26,7 +23,6 @@ class AuthService:
         if account.password == password:
             account.is_logged_in = True
             account.save()
-            self.current_account = account
             return f"Welcome, {account.name}."
 
         return "Incorrect password."
@@ -35,7 +31,7 @@ class AuthService:
         if username is None:
             return False
 
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
             return False
@@ -46,10 +42,10 @@ class AuthService:
         if username is None:
             return False
 
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
-            raise Exception("User does not exist.")
+            return False
 
         return accounts.first().roles & required_permissions != 0
 
@@ -57,10 +53,10 @@ class AuthService:
         if username is None:
             return "You need to log in first."
 
-        accounts = Account.objects.filter(username=username)
+        accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
-            return "You need to log in first."
+            return f"Account for user {username} does not exist."
 
         account = accounts.first()
 
@@ -73,3 +69,25 @@ class AuthService:
         self.current_account = None
 
         return "You are now logged out."
+
+    def set_password(self, username, old_password, new_password):
+        if username is None:
+            return "You need to log in first."
+
+        accounts = Account.objects.filter(username__iexact=username)
+
+        if accounts.count() == 0:
+            return f"Account for user {username} does not exist."
+
+        account = accounts.first()
+
+        if not account.password == old_password:
+            return "Incorrect current password."
+
+        if new_password is None:
+            return "You must provide a new password."
+
+        account.password = new_password
+        account.save()
+
+        return "Your password has been updated."

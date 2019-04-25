@@ -1,0 +1,116 @@
+{% extends "main/nav.html" %}
+{% block command-content %}
+    <div style="text-align: center">
+        <input id="view-course-input" type="search" name="courseid" autofocus placeholder=" Filter by course id..."/>
+        <table id="contact-info-container">
+        </table>
+    </div>
+    <script>
+        const assignTa = (e, courseId, courseSection) => {
+            e.stopPropagation();
+            window.location = `/assign_ta_course/?courseid=${courseId}&section=${courseSection}`
+        };
+
+        const assignInstructor = (e, courseId, courseSection) => {
+            e.stopPropagation();
+            window.location = `/assign_ins/?courseid=${courseId}&section=${courseSection}`
+        };
+
+        const filter = e => {
+            const rows = document.querySelectorAll('.course-row');
+            rows.forEach(el => el.style.display = el.id.toLowerCase()
+                .includes(e.target.value.toLowerCase()) ? 'table-row' : 'none');
+        };
+
+        const goToCourseDetails = (courseId, courseSection) => {
+            window.location = `/course_details/?courseid=${courseId}&section=${courseSection}`
+        };
+
+        let el = document.getElementById('view-course-input');
+        let container = document.getElementById('contact-info-container');
+        let courses = JSON.parse('{{ courses_json | escapejs }}');
+        container.innerHTML = '';
+
+        const trHeader = document.createElement("TR");
+        const thCourseID = document.createElement("TH");
+        const thCourseSection = document.createElement("TH");
+        const thCourseName = document.createElement("TH");
+        const thSchedule = document.createElement("TH");
+        const thInstructor = document.createElement("TH");
+        const thTAs = document.createElement("TH");
+
+        thCourseID.innerText = 'CourseID';
+        thCourseSection.innerText = 'Section';
+        thCourseName.innerText = 'Name';
+        thSchedule.innerText = 'Schedule';
+        thInstructor.innerText = 'Instructor';
+        thTAs.innerText = 'TA(s)';
+
+        {% if is_authorized %}
+            const thAssignIns = document.createElement("TH");
+            const thAssignTa = document.createElement("TH");
+
+            trHeader.appendChild(thAssignIns);
+            trHeader.appendChild(thAssignTa);
+        {% endif %}
+
+        trHeader.appendChild(thCourseID);
+        trHeader.appendChild(thCourseSection);
+        trHeader.appendChild(thCourseName);
+        trHeader.appendChild(thSchedule);
+        trHeader.appendChild(thInstructor);
+        trHeader.appendChild(thTAs);
+
+        container.appendChild(trHeader);
+
+        for (let c of courses) {
+            const tr = document.createElement("TR");
+            tr.onclick = () => goToCourseDetails(c.course_id, c.section);
+            tr.classList.add("course-row", "pointer", "highlight");
+            tr.id = c.course_id;
+
+            const tdCourseID = document.createElement("TD");
+            const tdCourseSection = document.createElement("TD");
+            const tdCourseName = document.createElement("TD");
+            const tdSchedule = document.createElement("TD");
+            const tdInstructor = document.createElement("TD");
+            const tdTAs = document.createElement("TD");
+
+            tdCourseID.innerText = c.course_id;
+            tdCourseSection.innerText = c.section;
+            tdCourseName.innerText = c.name;
+            tdSchedule.innerText = c.schedule;
+            tdInstructor.innerText = c.instructor;
+            tdTAs.innerText = c.tas;
+
+            {% if is_authorized %}
+                const tdAssignIns = document.createElement("TD");
+                const tdAssignTa = document.createElement("TD");
+
+                tdAssignIns.innerHTML = '<span class="fas fa-chalkboard-teacher"/>';
+                tdAssignIns.title = "Assign Instructor";
+                tdAssignIns.className = "pointer";
+                tdAssignIns.onclick = (e) => assignInstructor(e, c.course_id, c.section);
+
+                tdAssignTa.innerHTML = '<span class="fas fa-user"/>';
+                tdAssignTa.title = "Assign TA";
+                tdAssignTa.className = "pointer";
+                tdAssignTa.onclick = (e) => assignTa(e, c.course_id, c.section);
+
+                tr.append(tdAssignIns);
+                tr.append(tdAssignTa);
+            {% endif %}
+
+            tr.appendChild(tdCourseID);
+            tr.appendChild(tdCourseSection);
+            tr.appendChild(tdCourseName);
+            tr.appendChild(tdSchedule);
+            tr.appendChild(tdInstructor);
+            tr.appendChild(tdTAs);
+
+            container.appendChild(tr);
+        }
+
+        el.oninput = filter;
+    </script>
+{% endblock command-content %}

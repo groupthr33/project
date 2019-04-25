@@ -1,0 +1,33 @@
+{% extends "main/nav.html" %}
+{% block command-content %}
+    <div class="page">
+        <form style="position: relative;" method="post" action="/cr_account/">
+            {% csrf_token %}
+            <input required type="text" name="username" autofocus placeholder=" username"/><br/>
+            <input required type="text" name="name" autofocus placeholder=" name"/><br/>
+            <div  id="role-label">
+                <label name="rolelabel">Select Roles: </label><br/>
+            </div>
+            <input required type="checkbox" name="roles[]" value="supervisor"/>
+            <label for="roles[]">Supervisor</label><br/>
+            <input required type="checkbox" name="roles[]" value="admin"/>
+            <label for="roles[]">Admin</label><br/>
+            <input required type="checkbox" name="roles[]" value="instructor"/>
+            <label for="roles[]">Instructor</label><br/>
+            <input required type="checkbox" name="roles[]" value="ta"/>
+            <label for="roles[]">TA</label><br/>
+            <input type="submit" value="Create Account" id="crBtn"/>
+            <div class="message">{{ message }}</div>
+        </form>
+    </div>
+    <script>
+        const requiredCheckboxes = document.querySelectorAll('input[type=checkbox]');
+        const onChange = () => {
+            const toggleRequired = [...requiredCheckboxes].filter(c => c.checked).length
+                ? c => c.removeAttribute('required')
+                : c => c.required = true;
+            requiredCheckboxes.forEach(toggleRequired);
+        };
+        requiredCheckboxes.forEach(c => c.onchange = onChange);
+   </script>
+{% endblock command-content %}

@@ -27,7 +27,8 @@ cr_account <u>username</u> <u>name</u> <u>roles...</u>
 <h5>DESCRIPTION</h5> 
 
 Create a new account with the assigned </u>roles...</u> and <u>username</u> for   
-user with name <u>name</u>. This command is for administrators or supervisors only.
+user with name <u>name</u>. This command is for administrators or supervisors only.   
+Valid roles are ta, instructor, admin, and supervisor.
 
 <br>
 <h5>NAME</h5> 
@@ -81,7 +82,7 @@ Assign <u>instructor</u> to section with <u>section_id</u> for course with
 <h5>SYNOPSIS</h5>
 
 <b>assign_ta_course</b> <u>ta_user_name</u> <u>course_id</u>   
-<u>course_section_id</u> [-l <u>num_labs</u>]
+<u>course_section_id</u>  [<u>num_labs</u>]
 
 <b>DESCRIPTION</b>
 
@@ -121,7 +122,9 @@ a number of labs, the TA will be assigned as a grader. Can only be used by the S
 
 <b>DESCRIPTION</b>
 
-Create a lab section with id <u>lab_id</u> for course <u>course_id</u>-<u>course_section_id</u>.
+Create a lab section with id <u>lab_id</u> for course <u>course_id</u>-<u>course_section_id</u>.   
+Can only be used by administrators and supervisors.
+
 
 <br>
 <h5>NAME</h5>
@@ -130,24 +133,91 @@ Create a lab section with id <u>lab_id</u> for course <u>course_id</u>-<u>course
 
 <h5>SYNOPSIS</h5>
 
-<b>course_assignments</b> <u>course_id</u> <u>course_section_id</u>
+<b>course_assignments</b> <u>[course_id]</u> <u>[course_section_id]</u>
 
 <b>DESCRIPTION</b>
 
-Display the name of instructor and TA(s) assigned to course  <u>course_id</u>-<u>course_section_id</u>
-and how many more lab sections each TA can be assigned to.
+Display all courses the instructor is assigned to and the names of the TAs for those courses.
+If only the <u>[course_id]</u> is provided then the course section is defaulted to 001, then 
+display the names of the TAs for that specific course. If the <u>[course_id]</u> and <u>[course_section_id]</u>
+are provided then display the names of the TAs for that specific course. Can only be used by   
+instructors.
+
 
 <br>
 <h5>NAME</h5>
 
-<b>view_lab_details</b> - view the labs of the specified course
+<b>view_lab_details</b> - view the lab details of a course
 
 <h5>SYNOPSIS</h5>
 
-<b>view_lab_details</b> <u>course_id</u> <u>course_section_id</u> <u>[lab_section]</u>
+<b>view_lab_details</b> <u>course_id</u> <u>course_section_id</u> <u>[lab_section_id]</u>
 
 <b>DESCRIPTION</b>
 
-Display the details of all labs of <u>course_id</u>-<u>course_section_id</u>. Specifying the
-<u>lab_section</u> is optional. If the <u>lab_section</u> is specified then only display the
-details for that section.
+Display all lab details for <u>course_id</u>-<u>course_section_id</u>. If <u>[lab_section_id]</u>
+is provided, then only display the lab details of that specific lab for <u>course_id</u>-<u>course_section_id</u>.   
+Can only be used by administrators and supervisors.
+
+
+<br>
+<h5>NAME</h5>
+
+<b>set_password</b> - sets the password for the current user
+
+<h5>SYNOPSIS</h5>
+
+<b>set_password</b> <u>old_password</u> <u>new_password</u>
+
+
+<b>DESCRIPTION</b>
+
+Set the password of the requesting user to <u>new_password</u> if their current password matches   
+<u>old_password</u>
+
+
+<br>
+<h5>NAME</h5>
+
+<b>update_contact</b> - updates a field of the current user's contact info
+
+<h5>SYNOPSIS</h5>
+
+<b>update_contact</b> <u>field</u> <u>new_value</u>
+
+
+<b>DESCRIPTION</b>
+
+Updates the field <u>field</u> with the value <u>new_value</u> for the currently logged in user.
+
+<br>
+<h5>NAME</h5>
+
+<b>view_account_details</b> - displays the details for all accounts, or optionally a specified account.
+
+<h5>SYNOPSIS</h5>
+
+<b>view_account_details</b> [<u>username</u>]
+
+
+<b>DESCRIPTION</b>
+
+Displays the account details for all registered users of the application if no <u>username</u> is   
+specified. If one is specified, only that user's information will be displayed. Can only be used   
+administrators and supervisors.
+
+<br>
+<h5>NAME</h5>
+
+<b>view_course_details</b> - displays the details for all courses, or optionally a specified course.
+
+<h5>SYNOPSIS</h5>
+
+<b>view_course_details</b> [<u>course_id</u> <u>section_id</u>]
+
+
+<b>DESCRIPTION</b>
+
+Displays the course details for all courses within the application if no arguments are   
+specified. If they are specified, only that courses's information will be displayed.
+Can only be used by administrators and supervisors.

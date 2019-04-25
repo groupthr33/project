@@ -30,7 +30,7 @@ class TestLogin(TestCase):
         self.account.save()
         self.auth_service.current_account = self.account
 
-        expected_response = "theuser is already logged in."
+        expected_response = "Welcome, thename."
         actual_response = self.app.command("login theuser thepassword")
 
         self.assertEqual(expected_response, actual_response)
@@ -42,7 +42,7 @@ class TestLogin(TestCase):
 
         Account.objects.create(username='otheruser', password='thepassword', name='othername')
 
-        expected_response = "theuser is already logged in."
+        expected_response = "Welcome, othername."
         actual_response = self.app.command("login otheruser thepassword")
 
         self.assertEqual(expected_response, actual_response)

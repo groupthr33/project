@@ -1,0 +1,162 @@
+{% extends "main/nav.html" %}
+{% block command-content %}
+    <div style="text-align: center">
+        <input id="view-contact-username-input" type="search" name="username" autofocus
+               placeholder=" Filter by username..."/>
+        {% if is_assigning %}
+            {% if post_route == '/assign_ta_course/' %}
+                </br><p>Assigning TA(s) to {{ course_id }}-{{ course_section }}</p>
+            {% endif %}
+            {% if post_route == '/assign_ins/' %}
+                </br><p>Assigning instructor to {{ course_id }}-{{ course_section }}</p>
+            {% endif %}
+        {% endif %}
+        <form name="input" method="post" action="{{ post_route }}">
+            {% csrf_token %}
+            <table id="contact-info-container">
+            </table>
+            {% if is_assigning %}
+                <input type="hidden" name="course_id" value="{{ course_id }}">
+                <input type="hidden" name="course_section" value="{{ course_section }}">
+                <input class="assign-course-submit" type="submit">
+                <pre>{{ message }}</pre>
+            {% endif %}
+        </form>
+    </div>
+    <script>
+        const redirect = e => window.location = `/edit_account?username=${e.id}`;
+
+        const filter = e => {
+            const rows = document.querySelectorAll('.course-row');
+            rows.forEach(el => el.style.display = el.id.toLowerCase()
+                .includes(e.target.value.toLowerCase()) ? 'table-row' : 'none');
+        };
+
+        let el = document.getElementById('view-contact-username-input');
+        let container = document.getElementById('contact-info-container');
+        let contactInfos = JSON.parse('{{ contact_infos_json | escapejs }}');
+        container.innerHTML = '';
+
+        const trHeader = document.createElement("TR");
+        const thEdit = document.createElement("TH");
+        const thAssign = document.createElement("TH");
+        const thSections = document.createElement("TH");
+        const thName = document.createElement("TH");
+        const thUsername = document.createElement("TH");
+        const thRoles = document.createElement("TH");
+        const thPhoneNumber = document.createElement("TH");
+        const thAddress = document.createElement("TH");
+        const thEmail = document.createElement("TH");
+
+        thSections.innerText = '# of Sections';
+        thName.innerText = 'Name';
+        thUsername.innerText = 'Username';
+        thRoles.innerText = 'Roles';
+        thPhoneNumber.innerText = 'Phone';
+        thAddress.innerText = 'Address';
+        thEmail.innerText = 'Email';
+
+
+        {% if is_privileged %}
+            trHeader.appendChild(thEdit);
+        {% endif %}
+
+        {% if is_assigning %}
+            trHeader.appendChild(thAssign);
+            {% if post_route == '/assign_ta_course/' %}
+                trHeader.appendChild(thSections);
+            {% endif %}
+        {% endif %}
+
+        trHeader.appendChild(thName);
+        trHeader.appendChild(thUsername);
+
+        {% if is_privileged %}
+            trHeader.appendChild(thRoles);
+        {% endif %}
+
+        trHeader.appendChild(thPhoneNumber);
+        trHeader.appendChild(thAddress);
+        trHeader.appendChild(thEmail);
+
+        container.appendChild(trHeader);
+
+        for (let c of contactInfos) {
+            const tr = document.createElement("TR");
+            tr.id = c.name;
+            tr.classList.add("course-row");
+            const tdEdit = document.createElement("TD");
+            const tdAssign = document.createElement("TD");
+            const tdSections = document.createElement("TD");
+            const tdName = document.createElement("TD");
+            const tdUsername = document.createElement("TD");
+            const tdRoles = document.createElement("TD");
+            const tdPhoneNumber = document.createElement("TD");
+            const tdAddress = document.createElement("TD");
+            const tdEmail = document.createElement("TD");
+
+
+            tdName.innerText = c.name;
+            tdUsername.innerText = c.username;
+            tdRoles.innerText = c.roles;
+            tdPhoneNumber.innerText = c.phoneNumber;
+            tdAddress.innerText = c.address;
+            tdEmail.innerText = c.email;
+
+            {% if is_privileged %}
+                tdEdit.innerHTML = '<span class="fas fa-edit"/>';
+                tdEdit.id = c.username;
+                tdEdit.className = "pointer";
+                tdEdit.onclick = () => redirect(tdEdit);
+                tr.append(tdEdit);
+            {% endif %}
+
+            {% if is_assigning %}
+                {% if post_route == '/assign_ta_course/' %}
+                    const checkbox = document.createElement("input");
+                    checkbox.setAttribute("type", "checkbox");
+                    checkbox.setAttribute("name", "assignees");
+                    checkbox.setAttribute("value", c.username);
+
+                    const sections = document.createElement("input");
+                    sections.setAttribute("type", "number");
+                    sections.setAttribute("name", c.username);
+                    sections.setAttribute("min", "0");
+                    sections.setAttribute("step", "1")
+                    sections.setAttribute("value", "0");
+                    sections.setAttribute("style", "width: 40px");
+
+                    tdAssign.appendChild(checkbox);
+                    tdSections.appendChild(sections);
+                {% endif %}
+                {% if post_route == '/assign_ins/' %}
+                    const radio = document.createElement("input");
+                    radio.setAttribute("type", "radio");
+                    radio.setAttribute("name", "assignee");
+                    radio.setAttribute("value", c.username);
+                    radio.setAttribute("required", true);
+
+                    tdAssign.appendChild(radio);
+                {% endif %}
+
+                tr.appendChild(tdAssign);
+                {% if post_route == '/assign_ta_course/' %}
+                    tr.appendChild(tdSections);
+                {% endif %}
+            {% endif %}
+
+            tr.appendChild(tdName);
+            tr.appendChild(tdUsername);
+            {% if is_privileged %}
+                tr.appendChild(tdRoles);
+            {% endif %}
+            tr.appendChild(tdPhoneNumber);
+            tr.appendChild(tdAddress);
+            tr.appendChild(tdEmail);
+
+            container.appendChild(tr);
+        }
+
+        el.oninput = filter;
+    </script>
+{% endblock command-content %}

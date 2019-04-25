@@ -1,0 +1,139 @@
+{% extends "main/nav.html" %}
+{% block command-content %}
+    <div id="course-details-container">
+        <div id="course-details">
+            <h3>Course Details</h3>
+            <table>
+                <tbody>
+                <tr>
+                    <td>
+                        Course ID:
+                    </td>
+                    <td>
+                        {{ course.course_id }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Lecture Section:
+                    </td>
+                    <td>
+                        {{ course.section }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Name:
+                    </td>
+                    <td>
+                        {{ course.name }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Schedule:
+                    </td>
+                    <td>
+                        {{ course.schedule }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Instructor:
+                    </td>
+                    <td>
+                        {{ course.instructor }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <pre>{{ message }}</pre>
+        </div>
+        <div>
+        </div>
+        <div id="tas">
+            <div id="ta-header-container">
+                <h3 id="ta-header">TAs</h3>
+                <div id="assign-ta-btn-div">
+                    {% if is_assigner %}
+                        <input form="assign-ta-form" type="submit" value="Assign">
+                    {% endif %}
+                </div>
+            </div>
+            <table id="contact-info-container">
+                <tr>
+                    {% if is_assigner %}
+                        <th></th>
+                    {% endif %}
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Remaining Sections</th>
+                </tr>
+                {% for ta in tas %}
+                    <tr>
+                        {% if is_assigner %}
+                            <td>
+                                <input required type="radio" name="ta" value={{ ta.username }} form="assign-ta-form">
+                            </td>
+                        {% endif %}
+                        <td>{{ ta.name }}</td>
+                        <td>{{ ta.username }}</td>
+                        <td>{{ ta.remaining }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div id="labs">
+            <div id="lab-header-container">
+                <h3 id="lab-header">Labs</h3>
+                <form id="lab-form" action="/cr_lab/" method="post">
+                    {% csrf_token %}
+                    {% if is_privileged %}
+                        <input type="hidden" name="courseid" value="{{ course.course_id }}">
+                        <input type="hidden" name="coursesection" value="{{ course.section }}">
+                        <input id="section" type="text" required placeholder=" section" name="labsection">
+                        <input id="schedule" type="text" required placeholder=" schedule" name="labschedule">
+                        <input type="submit" value="+">
+                    {% endif %}
+                </form>
+            </div>
+            <form id="assign-ta-form" action="/assign_ta_labs/" method="post">
+                {% csrf_token %}
+                <table id="contact-info-container">
+                    <tr>
+                        {% if is_assigner %}
+                            <th></th>
+                        {% endif %}
+                        <th>Section</th>
+                        <th>TA</th>
+                        <th>Schedule</th>
+                    </tr>
+                    {% for lab in labs %}
+                        <tr>
+                            {% if is_assigner %}
+                                <td><input required type="checkbox" name="lab_sections[]" value={{ lab.section }}></td>
+                            {% endif %}
+                            <td>{{ lab.section }}</td>
+                            <td>{{ lab.ta }}</td>
+                            <td>{{ lab.schedule }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <input type="hidden" name="courseid" value="{{ course.course_id }}">
+                <input type="hidden" name="coursesection" value="{{ course.section }}">
+            </form>
+        </div>
+    </div>
+    <script>
+        const requiredCheckboxes = document.querySelectorAll('input[type=checkbox]');
+        const onChange = () => {
+            const toggleRequired = [...requiredCheckboxes].filter(c => c.checked).length
+                ? c => c.removeAttribute('required')
+                : c => c.required = true;
+            requiredCheckboxes.forEach(toggleRequired);
+        };
+        requiredCheckboxes.forEach(c => c.onchange = onChange);
+    </script>
+{% endblock command-content %}
