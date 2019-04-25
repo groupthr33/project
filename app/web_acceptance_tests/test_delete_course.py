@@ -5,7 +5,7 @@ from app.models.account import Account
 class TestDeleteCourse(TestCase):
 
     def setUp(self):
-        self.current_user = Account.objects.create(sername="the_user", password="p", name="n", is_logged_in=True,
+        self.current_user = Account.objects.create(username="the_user", password="p", name="n", is_logged_in=True,
                                                    roles=0x8)
 
         self.client = Client()
