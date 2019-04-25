@@ -1,5 +1,4 @@
 from django.test import TestCase, Client
-from app.services.ta_service import TaService
 from app.models.account import Account
 from app.models.course import Course
 from app.models.lab import Lab
