@@ -1,10 +1,8 @@
 from django.test import TestCase
-from app.services.auth_service import AuthService
-from app.services.account_service import AccountService
-from app.services.course_service import CourseService
 from app.models.account import Account
 from app.models.course import Course
 from django.test import Client
+
 
 class TestCreateCourse(TestCase):
 

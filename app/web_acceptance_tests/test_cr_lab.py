@@ -1,11 +1,8 @@
 from django.test import TestCase
-from app.services.auth_service import AuthService
-from app.services.account_service import AccountService
-from app.services.course_service import CourseService
-from app.services.ta_service import TaService
 from app.models.account import Account
-from app.models.course import Course
 from app.models.lab import Lab
+from app.models.course import Course
+from django.test import Client
 
 
 class TestCreateLab(TestCase):
@@ -15,27 +12,34 @@ class TestCreateLab(TestCase):
                                               is_logged_in=True, roles=0x8)
 
         self.course = Course.objects.create(course_id="CS361", section="001", name="Intro", schedule="MW09000950")
+        self.client = Client()
+        self.session = self.client.session
+        self.session['username'] = 'theuser'
+        self.session.save()
 
     def test_cr_lab_happy_path(self):
-        actual_response = self.app.command("cr_lab 801 CS361 001 MW12301345")
-        expected_response = "Lab 801 for CS361-001 created."
-        self.assertEqual(expected_response, actual_response)
+        data = {
+            'courseid': 'CS417',
+            'coursesection': '001',
+            'labsection': '001',
+            'labschedule': 'TH12001315'
+        }
 
-    def test_cr_lab_wrong_number_of_args(self):
-        expected_response = \
-            "cr_lab must have exactly 4 arguments. " \
-            "Correct usage: cr_lab <lab_id> <course_id> <course_section> <lab_schedule>"
-        actual_response = self.app.command("cr_lab 801 CS361 001")
-        self.assertEqual(expected_response, actual_response)
+        actual_response = self.client.post('/cr_lab/', data)
+        self.assertEqual(actual_response['Location'], '/course_details/?courseid=CS417&section=001')
 
     def test_cr_lab_already_exists(self):
-        Lab.objects.create(section_id="801", course=self.course, schedule='TH12001315')
+        course = Course.objects.create(course_id='CS417', section='001', name='Theory of Computation',
+                                       schedule='TH12001315')
+        Lab.objects.create(course=course, section_id='802', schedule='TH12301345')
 
-        expected_response = "There is already a lab 801 for course CS361-001."
-        actual_response = self.app.command("cr_lab 801 CS361 001 MW12301345")
-        self.assertEqual(expected_response, actual_response)
+        data = {
+            'courseid': 'CS417',
+            'coursesection': '001',
+            'labsection': '802',
+            'labschedule': 'TH12001315'
+        }
 
-    def test_cr_lab_course_dne(self):
-        expected_response = "Course CS417-001 does not exist."
-        actual_response = self.app.command("cr_lab 801 CS417 001 MW12301345")
-        self.assertEqual(expected_response, actual_response)
+        actual_response = self.client.post('/cr_lab/', data)
+        self.assertEqual(self.client.session.get('message'), 'There is already a lab 802 for course CS417-001.')
+        self.assertEqual(actual_response['Location'], '/course_details/?courseid=CS417&section=001')
