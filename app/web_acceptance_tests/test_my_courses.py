@@ -6,13 +6,11 @@ from app.models.course import Course
 
 class TestMyCourses(TestCase):
     def setUp(self):
-        self.user = Account.objects.create(username='super_visor', password='p', name='n', is_logged_in=True, roles=0x8)
+        self.user = Account.objects.create(username='super_visor', password='p', name='n', is_logged_in=True, roles=0x2)
 
         self.course1 = Course.objects.create(course_id="CS535", section="001", name="Software Engineering",
                                              schedule="TH12001315", instructor=self.user)
-        self.course2 = Course.objects.create(course_id='CS337', section='001', name='test course',
-                                             schedule='MW12301345')
-
+        
         self.client = Client()
 
         self.session = self.client.session
