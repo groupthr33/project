@@ -29,7 +29,7 @@ urlpatterns = [
     path("assign_ta_course/", app.views.AssignTaCourse.as_view(**deps)),
     path("cr_lab/", app.views.CreateLab.as_view(**deps)),
     path("cr_course/", app.views.CreateCourse.as_view(**deps)),
-    path("set_password/", app.views.SetPassword.as_view()),
+    path("set_password/", app.views.SetPassword.as_view(**deps)),
     path("assign_ins/", app.views.AssignInstructor.as_view(**deps)),
     path("assign_ta_labs/", app.views.AssignTaLabs.as_view(**deps)),
     path("my_courses_ta/", app.views.MyCoursesTa.as_view(**deps))
