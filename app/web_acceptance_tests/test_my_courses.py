@@ -10,7 +10,7 @@ class TestMyCourses(TestCase):
 
         self.course1 = Course.objects.create(course_id="CS535", section="001", name="Software Engineering",
                                              schedule="TH12001315", instructor=self.user)
-        
+
         self.client = Client()
 
         self.session = self.client.session
