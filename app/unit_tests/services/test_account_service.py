@@ -177,3 +177,13 @@ class TestAccountService(TestCase):
 
         actual_response = self.account_service.update_account_info('Eric', data)
         self.assertEqual(None, actual_response)
+
+    def test_delete_account_happy_path(self):
+        actual_response = self.account_service.delete_account(self.account.username)
+        expected_response = {'username': self.account.username}
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_delete_account_dne(self):
+        with self.assertRaises(Exception):
+            self.account_service.delete_account('badName')

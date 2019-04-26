@@ -15,3 +15,4 @@ from app.views.assign_ta_labs import AssignTaLabs
 from app.views.cr_course import CreateCourse
 from app.views.my_courses_ta import MyCoursesTa
 from app.views.set_password import SetPassword
+from app.views.del_account import DeleteAccount

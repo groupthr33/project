@@ -32,5 +32,6 @@ urlpatterns = [
     path("set_password/", app.views.SetPassword.as_view(**deps)),
     path("assign_ins/", app.views.AssignInstructor.as_view(**deps)),
     path("assign_ta_labs/", app.views.AssignTaLabs.as_view(**deps)),
-    path("my_courses_ta/", app.views.MyCoursesTa.as_view(**deps))
+    path("my_courses_ta/", app.views.MyCoursesTa.as_view(**deps)),
+    path("del_account/", app.views.DeleteAccount.as_view(**deps))
 ]

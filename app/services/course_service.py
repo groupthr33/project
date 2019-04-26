@@ -260,3 +260,6 @@ class CourseService:
                "\nAssigned TAs: " + ta_names
 
         return info
+
+    def delete_course(self):
+        return {}

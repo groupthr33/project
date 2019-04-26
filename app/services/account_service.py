@@ -105,3 +105,13 @@ class AccountService:
             info += self.create_acc_string(account) + "\n\n"
 
         return info
+
+    def delete_account(self, username):
+        try:
+            account = Account.objects.get(username__iexact=username)
+        except Account.DoesNotExist:
+            raise Exception('User not found.')
+
+        account_obj = {'username': account.username}
+        account.delete()
+        return account_obj
