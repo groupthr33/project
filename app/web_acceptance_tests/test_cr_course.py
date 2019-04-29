@@ -6,6 +6,7 @@ from app.models.account import Account
 from app.models.course import Course
 from django.test import Client
 
+
 class TestCreateCourse(TestCase):
 
     def setUp(self):
