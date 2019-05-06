@@ -407,3 +407,43 @@ class TestCourseService(TestCase):
                               'instructor': '', 'tas': self.ta1.name}]
 
         self.assertEqual(expected_response, actual_response)
+
+    def test_delete_lab_happy_path(self):
+        actual_response = self.course_service.delete_lab(self.course2.course_id, self.course2.section, self.lab_id1)
+        expected_response = f'Lab section 801 deleted from Course CS337-001.'
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_delete_lab_assigned_ta_happy_path(self):
+        tacourse = TaCourse.objects.create(course=self.course2, assigned_ta=self.ta1, remaining_sections=1)
+        tacourse.save()
+
+        self.lab1.ta = self.ta1
+        self.lab1.save()
+
+        actual_response = self.course_service.delete_lab(self.course2.course_id, self.course2.section, self.lab_id1)
+        expected_response = f'Lab section 801 deleted from Course CS337-001.'
+
+        self.assertEqual(expected_response, actual_response)
+
+        tacourse = TaCourse.objects.filter(course=self.course2, assigned_ta=self.ta1)
+        tacourse = tacourse.first()
+        self.assertEqual(2, tacourse.remaining_sections)
+
+    def test_delete_lab_lab_section_dne(self):
+        actual_response = self.course_service.delete_lab(self.course2.course_id, self.course2.section, "803")
+        expected_response = f'Lab section 803 does not exist for Course CS337-001.'
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_delete_lab_course_dne(self):
+        actual_response = self.course_service.delete_lab("CS361", "001", "801")
+        expected_response = f'Course CS361-001 does not exist.'
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_delete_lab_course_section_dne(self):
+        actual_response = self.course_service.delete_lab("CS337", "002", "801")
+        expected_response = f'Course CS337-002 does not exist.'
+
+        self.assertEqual(expected_response, actual_response)
