@@ -19,14 +19,20 @@ class TestCreateLab(TestCase):
 
     def test_cr_lab_happy_path(self):
         data = {
-            'courseid': 'CS417',
+            'courseid': 'CS361',
             'coursesection': '001',
             'labsection': '001',
             'labschedule': 'TH12001315'
         }
 
-        actual_response = self.client.post('/cr_lab/', data)
-        self.assertEqual(actual_response['Location'], '/course_details/?courseid=CS417&section=001')
+        expected_response = "Lab 001 for CS361-001 created."
+
+        actual_response = self.client.post('/cr_lab/', data, follow=True)
+        # self.assertEqual(actual_response['Location'], '/course_details/?courseid=CS417&section=001')
+        self.assertRedirects(actual_response, '/course_details/?courseid=CS361&section=001')
+
+        message = list(actual_response.context.get('messages'))[0]
+        self.assertEqual(message.message, expected_response)
 
     def test_cr_lab_already_exists(self):
         course = Course.objects.create(course_id='CS417', section='001', name='Theory of Computation',
@@ -40,6 +46,12 @@ class TestCreateLab(TestCase):
             'labschedule': 'TH12001315'
         }
 
-        actual_response = self.client.post('/cr_lab/', data)
-        self.assertEqual(self.client.session.get('message'), 'There is already a lab 802 for course CS417-001.')
-        self.assertEqual(actual_response['Location'], '/course_details/?courseid=CS417&section=001')
+        expected_response = "There is already a lab 802 for course CS417-001."
+
+        actual_response = self.client.post('/cr_lab/', data, follow=True)
+        # self.assertEqual(self.client.session.get('message'), 'There is already a lab 802 for course CS417-001.')
+        # self.assertEqual(actual_response['Location'], '/course_details/?courseid=CS417&section=001')
+        self.assertRedirects(actual_response, '/course_details/?courseid=CS417&section=001')
+
+        message = list(actual_response.context.get('messages'))[0]
+        self.assertEqual(message.message, expected_response)
