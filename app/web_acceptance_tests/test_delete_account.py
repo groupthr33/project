@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.test import Client
+from django.contrib import messages
 from app.models.account import Account
 
 
@@ -15,6 +16,10 @@ class TestDeleteAccount(TestCase):
         self.session.save()
 
     def test_delete_account(self):
-        response = self.client.post('/del_account/', {'username': self.user.username})
+        actual_response = self.client.post('/del_account/', {'username': self.user.username})
         expected_response = '/view_accounts/'
-        self.assertEqual(expected_response, response['Location'])
+        self.assertEqual(expected_response, actual_response['Location'])
+
+    def test_delete_account_dne(self):
+        actual_response = self.client.post('/del_account/', {'username': 'badusername'})
+        self.assertEqual(actual_response['Location'], '/view_accounts/')

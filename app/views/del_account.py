@@ -1,6 +1,5 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.views import View
-from app.util.account_util import AccountUtil
 
 
 class DeleteAccount(View):
@@ -18,5 +17,5 @@ class DeleteAccount(View):
             pass
 
         finally:
-            return redirect('/view_accounts/')
+            return redirect('/view_contact_info/')
 

@@ -11,6 +11,9 @@ class TestUpdateRemainingTaSections(TestCase):
 
         self.client = Client()
 
+        s = self.client.session
+        s.update({"super_visor": self.user.username})
+
     def test_update_remaining_ta_sections_happy_path(self):
         self.fail()
 

@@ -27,7 +27,8 @@
                        {% if "ta" in account.roles %}checked{% endif %}/>
                 <label for="roles[]">TA</label><br/>
             {% endif %}
-            <input type="submit" value="Update" id="update-btn"/>
+            <input name="submit-button" type="submit" value="Update" id="update-btn"/>
+            <input formaction="/del_account/" name="delete-button" type="submit" value="DELETE ACCOUNT" class="delete-btn"/>
             <div class="message">{{ message }}</div>
         </form>
     </div>
