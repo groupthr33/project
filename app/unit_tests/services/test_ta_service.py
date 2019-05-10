@@ -225,3 +225,49 @@ class TestTaService(TestCase):
         ta_course_rel = TaCourse.objects.filter(course=self.course, assigned_ta=self.ta).first()
         self.assertEqual(None, lab.ta)
         self.assertEqual(2, ta_course_rel.remaining_sections)
+
+    def test_update_remaining_sections_happy_path(self):
+        TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=2)
+
+        actual_response = self.ta_service.update_remaining_sections(self.course_id, self.course_section,
+                                                                    self.ta_user_name, 1)
+
+        expected_response = f'Remaining sections for {self.ta_user_name} has been updated to 1.'
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_update_remaining_sections_ta_not_assigned_to_course(self):
+        actual_response = self.ta_service.update_remaining_sections(self.course_id, self.course_section,
+                                                                    self.ta_user_name, 1)
+
+        expected_response = f'{self.ta_user_name} is not assigned to CS417-001.'
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_update_remaining_sections_ta_dne(self):
+        actual_response = self.ta_service.update_remaining_sections(self.course_id, self.course_section,
+                                                                    'theta', 1)
+
+        expected_response = f'{self.ta_user_name} does not exist.'
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_update_remaining_sections_course_dne(self):
+        actual_response = self.ta_service.update_remaining_sections("CS361", self.course_section,
+                                                                    self.ta_user_name, 1)
+
+        self.assertEqual('Course CS361-001 does not exist.', actual_response)
+
+    def test_update_remaining_sections_course_section_dne(self):
+        actual_response = self.ta_service.update_remaining_sections(self.course_id, "401",
+                                                                    self.ta_user_name, 1)
+
+        self.assertEqual('Course CS417-401 does not exist.', actual_response)
+
+    def test_update_remaining_sections_negative_value(self):
+        TaCourse.objects.create(course=self.course, assigned_ta=self.ta, remaining_sections=2)
+
+        actual_response = self.ta_service.update_remaining_sections(self.course_id, self.course_section,
+                                                                    self.ta_user_name, -1)
+
+        self.assertEqual('Remaining sections cannot be negative.', actual_response)
