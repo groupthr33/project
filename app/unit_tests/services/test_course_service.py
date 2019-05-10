@@ -447,3 +447,51 @@ class TestCourseService(TestCase):
         expected_response = f'Course CS337-002 does not exist.'
 
         self.assertEqual(expected_response, actual_response)
+
+    def test_edit_course_happy_path(self):
+        data = {'course_id': 'CS361', 'section': '401', 'name': 'new course name'}
+
+        expected_response = {'course_id': 'CS361', 'section': '401',
+                              'name': 'new course name', 'schedule': 'MW12301345',
+                              'instructor': '', 'tas': ''}
+
+        actual_response = self.course_service.edit_course('CS337', '001', data)
+
+        self.assertEqual(expected_response, actual_response)
+
+    def test_edit_course_course_dne(self):
+        data = {'course_id': 'CS361', 'section': '401', 'name': 'new course name'}
+
+        actual_response = self.course_service.edit_course('CS361', '001', data)
+
+        self.assertEqual(None, actual_response)
+
+    def test_edit_course_course_course_section_dne(self):
+        data = {'course_id': 'CS361', 'section': '401', 'name': 'new course name'}
+
+        actual_response = self.course_service.edit_course('CS337', '401', data)
+
+        self.assertEqual(None, actual_response)
+
+    def test_unassign_instructor_happy_path(self):
+        self.course1.instructor = self.instructor
+        self.course1.save()
+
+        actual_response = self.course_service.unassign_instructor('CS535', '001')
+
+        self.assertEqual('theinstructor has been unassigned from course CS535-001.', actual_response)
+
+    def test_unassign_instructor_course_dne(self):
+        actual_response = self.course_service.unassign_instructor('CS361', '001')
+
+        self.assertEqual('Course CS361-001 does not exist.', actual_response)
+
+    def test_unassign_instructor_course_section_dne(self):
+        actual_response = self.course_service.unassign_instructor('CS535', '401')
+
+        self.assertEqual('Course CS535-401 does not exist.', actual_response)
+
+    def test_unassign_instructor_no_assigned_instructor(self):
+        actual_response = self.course_service.unassign_instructor('CS535', '001')
+
+        self.assertEqual('Course CS535-001 does not have an instructor.', actual_response)
