@@ -144,8 +144,20 @@ class TaService:
                 and (course.instructor is None or course.instructor.username != requester.username):
             return f"{requester.username} is not the instructor for {course_id}-{course_section}."
 
-        ta_course_rels = TaCourse.objects.filter(course=course, assigned_ta=ta)
+        ta_course_rels = TaCourse.objects.filter(course=course_id, assigned_ta=ta)
         if ta_course_rels.count() == 0:
             return f"{ta_user_name} is not assigned to course {course_id}-{course_section}."
 
+        labs = Lab.objects.filter(course=course_id, ta=ta)
+        removed = []
+        for i in labs:
+            if i.section_id in lab_sections:
+                i.ta = ""
+                removed.append(i.section_id)
+            for j in ta_course_rels:
+                j.remaining_sections = j.remaining_sections + 1
+
+        lst_str = str(removed).strip('[]')
+
+        return f"{ta_user_name} was unassigned from lab section(s) {lst_str} in {course_id}."
 
