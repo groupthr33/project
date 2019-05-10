@@ -13,5 +13,5 @@ class ValidatorUtil:
 
     @staticmethod
     def is_valid_schedule(schedule):
-        pattern = re.compile("^[a-z]{1,5}[0-9]{8}$", re.IGNORECASE)
+        pattern = re.compile("^[mtwrf]{1,5}[0-9]{8}$", re.IGNORECASE)
         return pattern.match(schedule)

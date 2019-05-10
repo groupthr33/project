@@ -28,7 +28,7 @@ class TestCreateLab(TestCase):
         expected_response = "Lab 001 for CS361-001 created."
 
         actual_response = self.client.post('/cr_lab/', data, follow=True)
-        # self.assertEqual(actual_response['Location'], '/course_details/?courseid=CS417&section=001')
+        
         self.assertRedirects(actual_response, '/course_details/?courseid=CS361&section=001')
 
         message = list(actual_response.context.get('messages'))[0]
@@ -49,8 +49,7 @@ class TestCreateLab(TestCase):
         expected_response = "There is already a lab 802 for course CS417-001."
 
         actual_response = self.client.post('/cr_lab/', data, follow=True)
-        # self.assertEqual(self.client.session.get('message'), 'There is already a lab 802 for course CS417-001.')
-        # self.assertEqual(actual_response['Location'], '/course_details/?courseid=CS417&section=001')
+
         self.assertRedirects(actual_response, '/course_details/?courseid=CS417&section=001')
 
         message = list(actual_response.context.get('messages'))[0]

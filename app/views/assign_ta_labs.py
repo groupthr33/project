@@ -20,7 +20,6 @@ class AssignTaLabs(View):
             return redirect('/view_courses/')
 
         if ta is None or len(lab_sections) == 0:
-            # request.session['message'] = "You must select a TA and at least 1 lab."
             messages.add_message(request, messages.INFO, "You must select a TA and at least 1 lab.")
             return redirect(f'/course_details/?courseid={course_id}&section={course_section}')
 
@@ -30,7 +29,6 @@ class AssignTaLabs(View):
             return redirect('/view_courses/')
 
         message = self.ta_service.assign_ta_to_labs(ta, course_id, course_section, lab_sections, user)
-        # request.session['message'] = message
         messages.add_message(request, messages.INFO, message)
 
         return redirect(f'/course_details/?courseid={course_id}&section={course_section}')
