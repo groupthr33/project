@@ -18,7 +18,7 @@ class TestSetPassword(TestCase):
         with self.assertTemplateUsed('main/set_password.html'):
             actual_response = self.client.get('/set_password/')
 
-        self.assertEqual('', actual_response.context['message'])
+        self.assertEqual(0, len(list(actual_response.context.get('messages'))))
 
     # def test_set_password_success_get(self):
     #     s = self.client.session

@@ -58,7 +58,7 @@ class TestCourseDetails(TestCase):
         self.assertEqual(expected_response, actual_response.context['course'])
         self.assertEqual(True, actual_response.context['is_privileged'])
         self.assertEqual(True, actual_response.context['is_assigner'])
-        self.assertEqual('', actual_response.context['message'])
+        self.assertEqual(0, len(list(actual_response.context.get('messages'))))
         self.assertEqual(labs, actual_response.context['labs'])
         self.assertEqual(tas, actual_response.context['tas'])
 
