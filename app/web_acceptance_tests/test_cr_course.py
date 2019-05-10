@@ -20,12 +20,11 @@ class TestCreateCourse(TestCase):
             self.client.get('/cr_course/')
 
     def test_cr_course_happy_path_post(self):
-        data = {
-            'course_id': 'CS417',
-            'section': '001',
-            'name': 'Theory of Computation',
-            'schedule': 'TH12001315'
-        }
+        data = {'course_id': 'CS417',
+                'section': '001',
+                'name': 'Theory of Computation',
+                'schedule': 'TR12001315'}
+
         expected_response = 'CS417 - 001 Theory of Computation created.'
 
         with self.assertTemplateUsed('main/cr_course.html'):
