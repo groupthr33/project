@@ -14,7 +14,7 @@ class TestMyCoursesTa(TestCase):
         self.course2 = Course.objects.create(course_id='CS337', section='001', name='test course',
                                              schedule='MW12301345')
 
-        self.tacourse = TaCourse.objects.create(course=self.course1,assigned_ta=self.ta)
+        self.tacourse = TaCourse.objects.create(course=self.course1, assigned_ta=self.ta)
 
         self.client = Client()
 
@@ -31,5 +31,20 @@ class TestMyCoursesTa(TestCase):
             actual_response = self.client.get('/my_courses_ta/')
 
         self.assertEqual(expected_response, actual_response.context['courses'])
+        self.assertEqual(False, actual_response.context['is_authorized'])
+
+    def test_view_course_ta_with_supervisor_role(self):
+        self.ta.roles = 0x9
+        self.ta.save()
+        expected_response = [{'course_id': self.course1.course_id, 'section': self.course1.section,
+                              'name': self.course1.name, 'schedule': self.course1.schedule,
+                              'instructor': '', 'tas': self.ta.name}]
+
+        with self.assertTemplateUsed('main/view_courses.html'):
+            actual_response = self.client.get('/my_courses_ta/')
+
+        self.assertEqual(expected_response, actual_response.context['courses'])
+        self.assertEqual(True, actual_response.context['is_authorized'])
+
 
 

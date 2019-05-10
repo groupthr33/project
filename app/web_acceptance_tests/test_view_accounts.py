@@ -33,9 +33,7 @@ class TestViewAccounts(TestCase):
 
     def test_view_accounts_not_privileged(self):
         s = self.client.session
-        s.update({
-            "username": self.account.username,
-        })
+        s.update({"username": self.account.username,})
         s.save()
 
         expected_response = [{'username': self.user.username, 'name': self.user.name,

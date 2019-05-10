@@ -25,11 +25,9 @@ class TestUpdateContact(TestCase):
                           'email': self.user.email, 'roles': 'ta'},
                          actual_response.context['account'])
 
-    def test_update_contact_is_update_get(self):
+    def test_update_contact_has_been_updated_get(self):
         s = self.client.session
-        s.update({
-            "username": self.user.username,
-        })
+        s.update({"username": self.user.username})
         s.save()
 
         with self.assertTemplateUsed('main/edit_account.html'):
@@ -40,13 +38,11 @@ class TestUpdateContact(TestCase):
         self.assertEqual({'username': self.user.username, 'name': self.user.name,
                           'phoneNumber': self.user.phone_number, 'address': self.user.address,
                           'email': self.user.email, 'roles': 'ta'},
-                         actual_response.context['account'])
+                           actual_response.context['account'])
 
     def test_update_contact_account_dne_get(self):
         s = self.client.session
-        s.update({
-            "username": 'Rick'
-        })
+        s.update({"username": 'Rick'})
         s.save()
 
         actual_response = self.client.get('/update_contact/')
@@ -54,9 +50,7 @@ class TestUpdateContact(TestCase):
 
     def test_update_contact_happy_path_post(self):
         s = self.client.session
-        s.update({
-            "username": self.user.username,
-        })
+        s.update({"username": self.user.username})
         s.save()
 
         data = {'username': self.user.username, 'name': self.user.name,

@@ -18,8 +18,7 @@ class TestMyCourses(TestCase):
         self.session.save()
 
     def test_view_courses(self):
-        expected_response = [
-                             {'course_id': self.course1.course_id, 'section': self.course1.section,
+        expected_response = [{'course_id': self.course1.course_id, 'section': self.course1.section,
                               'name': self.course1.name, 'schedule': self.course1.schedule,
                               'instructor': 'n', 'tas': ''}]
 
@@ -27,5 +26,18 @@ class TestMyCourses(TestCase):
             actual_response = self.client.get('/my_courses/')
 
         self.assertEqual(expected_response, actual_response.context['courses'])
+        self.assertEqual(False, actual_response.context['is_authorized'])
 
 
+    def test_view_courses_also_supervisor_role(self):
+        self.user.roles = 0xA
+        self.user.save()
+        expected_response = [{'course_id': self.course1.course_id, 'section': self.course1.section,
+                              'name': self.course1.name, 'schedule': self.course1.schedule,
+                              'instructor': 'n', 'tas': ''}]
+
+        with self.assertTemplateUsed('main/view_courses.html'):
+            actual_response = self.client.get('/my_courses/')
+
+        self.assertEqual(expected_response, actual_response.context['courses'])
+        self.assertEqual(True, actual_response.context['is_authorized'])

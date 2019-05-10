@@ -31,3 +31,14 @@ class TestViewCourses(TestCase):
             actual_response = self.client.get('/view_courses/')
 
         self.assertEqual(expected_response, actual_response.context['courses'])
+        self.assertEqual(True, actual_response.context['is_authorized'])
+
+    def test_view_course_no_permissions(self):
+        expected_response = False
+
+        with self.assertTemplateUsed('main/view_course.html'):
+            acutual_response = self.client.get('/view_courses/')
+
+        self.assertEqual(expected_response, acutual_response.context['is_authorized'])
+
+
