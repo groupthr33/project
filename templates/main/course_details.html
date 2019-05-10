@@ -49,7 +49,11 @@
             </table>
         </div>
         <div>
-            <pre>{{ message }}</pre>
+            {% if messages %}
+                {% for message in messages %}
+                    <pre>{{ message }}</pre>
+                {% endfor %}
+            {% endif %}
         </div>
         <div>
         </div>

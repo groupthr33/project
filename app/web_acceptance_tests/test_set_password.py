@@ -20,18 +20,18 @@ class TestSetPassword(TestCase):
 
         self.assertEqual('', actual_response.context['message'])
 
-    def test_set_password_success_get(self):
-        s = self.client.session
-        s.update({
-            "username": self.user.username,
-            "message": 'Success'
-        })
-        s.save()
-
-        with self.assertTemplateUsed('main/set_password.html'):
-            actual_response = self.client.get('/set_password/')
-
-        self.assertEqual('Success', actual_response.context['message'])
+    # def test_set_password_success_get(self):
+    #     s = self.client.session
+    #     s.update({
+    #         "username": self.user.username,
+    #         "message": 'Success'
+    #     })
+    #     s.save()
+    #
+    #     with self.assertTemplateUsed('main/set_password.html'):
+    #         actual_response = self.client.get('/set_password/')
+    #
+    #     self.assertEqual('Success', actual_response.context['message'])
 
     def test_set_password_happy_path_post(self):
         s = self.client.session
@@ -40,7 +40,25 @@ class TestSetPassword(TestCase):
         })
         s.save()
 
-        actual_response = self.client.post('/set_password/', {'old_password':'thepassword', 'new_password':'pass'})
+        actual_response = self.client.post('/set_password/', {'old_password':'thepassword', 'new_password':'pass'},
+                                           follow=True)
 
-        self.assertEqual('/set_password/', actual_response['Location'])
-        self.assertEqual('Your password has been updated.', self.client.session['message'])
+        self.assertRedirects(actual_response, '/set_password/')
+
+        message = list(actual_response.context.get('messages'))[0]
+        self.assertEqual(message.message, 'Your password has been updated.')
+
+    def test_set_password_incorrect_old_password(self):
+        s = self.client.session
+        s.update({
+            "username": self.user.username,
+        })
+        s.save()
+
+        actual_response = self.client.post('/set_password/', {'old_password': 'password', 'new_password': 'pass'},
+                                           follow=True)
+
+        self.assertRedirects(actual_response, '/set_password/')
+
+        message = list(actual_response.context.get('messages'))[0]
+        self.assertEqual(message.message, 'Incorrect current password.')

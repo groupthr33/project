@@ -11,14 +11,14 @@ class CourseDetails(View):
     def get(self, request):
         course_id = request.GET.get('courseid', None)
         course_section = request.GET.get('section', None)
-        message = request.session.get('message', '')
+        # message = request.session.get('message', '')
         username = request.session.get('username', '')
         is_privileged = self.auth_service.is_authorized(username, 0xC)
 
         user_details = self.account_service.get_account_details(username)
 
-        if 'message' in request.session:
-            del request.session['message']
+        # if 'message' in request.session:
+        #     del request.session['message']
 
         if course_id is None or course_section is None:
             return redirect('/view_courses/')
@@ -40,5 +40,5 @@ class CourseDetails(View):
         labs = self.course_service.get_labs_for_course(course_id, course_section)
 
         return render(request, 'main/course_details.html', {'course': course, 'tas': tas, 'labs': labs,
-                                                            'message': message, 'is_privileged': is_privileged,
+                                                            'is_privileged': is_privileged,
                                                             'is_assigner': is_assigner})
