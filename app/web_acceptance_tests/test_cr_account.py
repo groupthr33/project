@@ -1,6 +1,4 @@
 from django.test import TestCase
-from app.services.auth_service import AuthService
-from app.services.account_service import AccountService
 from app.models.account import Account
 from django.test import Client
 
@@ -16,7 +14,11 @@ class TestCreateAccount(TestCase):
         self.session['username'] = 'theuser'
         self.session.save()
 
-    def test_cr_account_happy_path(self):
+    def test_cr_account_happy_path_get(self):
+        with self.assertTemplateUsed('main/cr_account.html'):
+            self.client.get('/cr_account/')
+
+    def test_cr_account_happy_path_post(self):
         data = {
             'username': 'mrwatts',
             'name': 'matt',
@@ -29,7 +31,7 @@ class TestCreateAccount(TestCase):
 
         self.assertEqual(expected_response, actual_response.context['message'])
 
-    def test_cr_account_already_exists(self):
+    def test_cr_account_already_exists_post(self):
         data = {
             'username': 'theuser',
             'name': 'thename',
@@ -42,7 +44,7 @@ class TestCreateAccount(TestCase):
 
         self.assertEqual(expected_response, actual_response.context['message'])
 
-    def test_cr_account_multiple_roles(self):
+    def test_cr_account_multiple_roles_post(self):
         data = {
             'username': 'mrwatts',
             'name': 'matt',

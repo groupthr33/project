@@ -124,7 +124,8 @@ class TestAssignTaLab(TestCase):
         self.lab1.ta = ta
         self.lab1.save()
 
-        expected_response = "replaced_ta has been removed from CS417-001, lab 801. test_ta assigned to CS417-001, lab 801.\n" + \
+        expected_response = "replaced_ta has been removed from CS417-001, lab 801." \
+                            " test_ta assigned to CS417-001, lab 801.\n" + \
                             "test_ta assigned to CS417-001, lab 802.\n" + \
                             "0 section(s) remaining for test_ta."
 

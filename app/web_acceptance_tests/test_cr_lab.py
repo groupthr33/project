@@ -43,3 +43,7 @@ class TestCreateLab(TestCase):
         actual_response = self.client.post('/cr_lab/', data)
         self.assertEqual(self.client.session.get('message'), 'There is already a lab 802 for course CS417-001.')
         self.assertEqual(actual_response['Location'], '/course_details/?courseid=CS417&section=001')
+
+    def test_cr_lab_missing_form_attribute(self):
+        actual_response = self.client.post('/cr_lab/')
+        self.assertEqual(actual_response['Location'], '/view_courses/')

@@ -125,7 +125,8 @@ class TestAssignInstructor(TestCase):
         self.assertEqual('CS417', actual_response.context['course_id'])
         self.assertEqual('001', actual_response.context['course_section'])
         self.assertEqual('/assign_ins/', actual_response.context['post_route'])
-        self.assertEqual("theinstructor has been assigned as the instructor for CS417-001. anotherinst was removed as instructor. \n",
+        self.assertEqual("theinstructor has been assigned as the instructor for CS417-001."
+                         " anotherinst was removed as instructor. \n",
                          actual_response.context['message'])
         self.assertEqual(False, actual_response.context['is_privileged'])
         self.assertEqual(True, actual_response.context['is_assigning'])
