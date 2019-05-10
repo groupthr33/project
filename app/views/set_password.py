@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
+from django.contrib import messages
 
 
 class SetPassword(View):
@@ -9,12 +10,7 @@ class SetPassword(View):
     ta_service = None
 
     def get(self, request):
-        message = request.session.get('message', '')
-
-        if 'message' in request.session:
-            del request.session['message']
-
-        return render(request, 'main/set_password.html', {'message': message})
+        return render(request, 'main/set_password.html')
 
     def post(self, request):
         username = request.session.get('username')
@@ -22,6 +18,6 @@ class SetPassword(View):
         new_password = request.POST.get('new_password', None)
 
         message = self.auth_service.set_password(username, old_password, new_password)
-        request.session['message'] = message
+        messages.add_message(request, messages.INFO, message)
 
         return redirect('/set_password/')

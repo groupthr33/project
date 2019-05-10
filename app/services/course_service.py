@@ -263,3 +263,28 @@ class CourseService:
 
     def delete_course(self):
         return {}
+
+    def delete_lab(self, course_id, course_section, lab_section):
+        courses = Course.objects.filter(course_id__iexact=course_id, section__iexact=course_section)
+
+        if(courses.count() == 0):
+            return f'Course {course_id}-{course_section} does not exist.'
+
+        courses = courses.first()
+
+        lab = Lab.objects.filter(course=courses, section_id__iexact=lab_section)
+
+        if(lab.count() == 0):
+            return f'Lab section {lab_section} does not exist for Course {course_id}-{course_section}.'
+
+        lab = lab.first()
+
+        if lab.ta is not None:
+            taCourse = TaCourse.objects.filter(assigned_ta=lab.ta)
+            taCourse = taCourse.first()
+            taCourse.remaining_sections += 1
+            taCourse.save()
+
+        lab.delete()
+
+        return f'Lab section {lab_section} deleted from Course {course_id}-{course_section}.'

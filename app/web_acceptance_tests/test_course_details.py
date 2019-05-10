@@ -58,6 +58,32 @@ class TestCourseDetails(TestCase):
         self.assertEqual(expected_response, actual_response.context['course'])
         self.assertEqual(True, actual_response.context['is_privileged'])
         self.assertEqual(True, actual_response.context['is_assigner'])
-        self.assertEqual('', actual_response.context['message'])
+        self.assertEqual(0, len(list(actual_response.context.get('messages'))))
         self.assertEqual(labs, actual_response.context['labs'])
         self.assertEqual(tas, actual_response.context['tas'])
+
+    def test_course_details_no_course_id(self):
+        actual_response = self.client.get('/course_details/?section=001')
+        self.assertEqual('/view_courses/', actual_response['Location'])
+
+    def test_course_details_no_section(self):
+        actual_response = self.client.get('/course_details/?courseid=CS417')
+        self.assertEqual('/view_courses/', actual_response['Location'])
+
+    def test_course_details_course_dne(self):
+        actual_response = self.client.get('/course_details/?courseid=CS361&section=001')
+        self.assertEqual('/view_courses/', actual_response['Location'])
+
+    def test_course_details_not_ins_for_course(self):
+        self.account.roles = 0x2
+        self.account.save()
+
+        actual_response = self.client.get('/course_details/?courseid=CS417&section=001')
+        self.assertEqual('/view_courses/', actual_response['Location'])
+
+    def test_course_details_not_ta_for_course(self):
+        self.account.roles = 0x1
+        self.account.save()
+
+        actual_response = self.client.get('/course_details/?courseid=CS417&section=001')
+        self.assertEqual('/view_courses/', actual_response['Location'])

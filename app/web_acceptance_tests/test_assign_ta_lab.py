@@ -32,10 +32,14 @@ class TestAssignTaLab(TestCase):
         actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': "801",
                                                                 'courseid': "CS417",
                                                                 'coursesection': "001",
-                                                                'ta': 'test_ta'})
+                                                                'ta': 'test_ta'}, follow=True)
 
-        self.assertEqual(expected_response, self.client.session['message'])
-        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+        # self.assertEqual(expected_response, self.client.session['message'])
+        # self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+        self.assertRedirects(actual_response, '/course_details/?courseid=CS417&section=001')
+
+        message = list(actual_response.context.get('messages'))[0]
+        self.assertEqual(message.message, expected_response)
 
     def test_assign_ta_lab_multiple_happy_path(self):
         expected_response = "test_ta assigned to CS417-001, lab 801.\n" + \
@@ -44,10 +48,14 @@ class TestAssignTaLab(TestCase):
         actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': ["801", "802"],
                                                                 'courseid': "CS417",
                                                                 'coursesection': "001",
-                                                                'ta': 'test_ta'})
+                                                                'ta': 'test_ta'}, follow=True)
 
-        self.assertEqual(expected_response, self.client.session['message'])
-        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+        # self.assertEqual(expected_response, self.client.session['message'])
+        # self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+        self.assertRedirects(actual_response, '/course_details/?courseid=CS417&section=001')
+
+        message = list(actual_response.context.get('messages'))[0]
+        self.assertEqual(message.message, expected_response)
 
     def test_assign_ta_lab_ins_role_only(self):
         self.current_user.roles = 0x2
@@ -60,10 +68,12 @@ class TestAssignTaLab(TestCase):
         actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': "801",
                                                                 'courseid': "CS417",
                                                                 'coursesection': "001",
-                                                                'ta': 'test_ta'})
+                                                                'ta': 'test_ta'}, follow=True)
 
-        self.assertEqual(expected_response, self.client.session['message'])
-        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+        self.assertRedirects(actual_response, '/course_details/?courseid=CS417&section=001')
+
+        message = list(actual_response.context.get('messages'))[0]
+        self.assertEqual(message.message, expected_response)
 
     def test_assign_ta_lab_no_sections_remaining(self):
         self.ta_course_rel.remaining_sections = 0
@@ -74,10 +84,12 @@ class TestAssignTaLab(TestCase):
         actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': "801",
                                                                 'courseid': "CS417",
                                                                 'coursesection': "001",
-                                                                'ta': 'test_ta'})
+                                                                'ta': 'test_ta'}, follow=True)
 
-        self.assertEqual(expected_response, self.client.session['message'])
-        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+        self.assertRedirects(actual_response, '/course_details/?courseid=CS417&section=001')
+
+        message = list(actual_response.context.get('messages'))[0]
+        self.assertEqual(message.message, expected_response)
 
     def test_assign_ta_lab_already_assigned(self):
         self.lab1.ta = self.ta
@@ -88,10 +100,12 @@ class TestAssignTaLab(TestCase):
         actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': "801",
                                                                 'courseid': "CS417",
                                                                 'coursesection': "001",
-                                                                'ta': 'test_ta'})
+                                                                'ta': 'test_ta'}, follow=True)
 
-        self.assertEqual(expected_response, self.client.session['message'])
-        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+        self.assertRedirects(actual_response, '/course_details/?courseid=CS417&section=001')
+
+        message = list(actual_response.context.get('messages'))[0]
+        self.assertEqual(message.message, expected_response)
 
     def test_assign_ta_lab_replace_ta(self):
         ta = Account.objects.create(username="replaced_ta", password="p", name="n", is_logged_in=False, roles=0x1)
@@ -109,10 +123,12 @@ class TestAssignTaLab(TestCase):
         actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': "801",
                                                                 'courseid': "CS417",
                                                                 'coursesection': "001",
-                                                                'ta': 'test_ta'})
+                                                                'ta': 'test_ta'}, follow=True)
 
-        self.assertEqual(expected_response, self.client.session['message'])
-        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+        self.assertRedirects(actual_response, '/course_details/?courseid=CS417&section=001')
+
+        message = list(actual_response.context.get('messages'))[0]
+        self.assertEqual(message.message, expected_response)
 
     def test_assign_ta_lab_multiple_lab_replace_one_ta(self):
         ta = Account.objects.create(username="replaced_ta", password="p", name="n", is_logged_in=False, roles=0x1)
@@ -124,14 +140,17 @@ class TestAssignTaLab(TestCase):
         self.lab1.ta = ta
         self.lab1.save()
 
-        expected_response = "replaced_ta has been removed from CS417-001, lab 801. test_ta assigned to CS417-001, lab 801.\n" + \
+        expected_response = "replaced_ta has been removed from CS417-001, lab 801." \
+                            " test_ta assigned to CS417-001, lab 801.\n" + \
                             "test_ta assigned to CS417-001, lab 802.\n" + \
                             "0 section(s) remaining for test_ta."
 
         actual_response = self.client.post('/assign_ta_labs/', {'lab_sections[]': ["801", "802"],
                                                                 'courseid': "CS417",
                                                                 'coursesection': "001",
-                                                                'ta': 'test_ta'})
+                                                                'ta': 'test_ta'}, follow=True)
 
-        self.assertEqual(expected_response, self.client.session['message'])
-        self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
+        self.assertRedirects(actual_response, '/course_details/?courseid=CS417&section=001')
+
+        message = list(actual_response.context.get('messages'))[0]
+        self.assertEqual(message.message, expected_response)

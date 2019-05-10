@@ -21,9 +21,7 @@ class TestLogin(TestCase):
 
     def test_login_someone_else_already_logged_in_post(self):
         s = self.client.session
-        s.update({
-            "username": 'otheruser',
-        })
+        s.update({"username": 'otheruser'})
         s.save()
 
         data = {
@@ -59,9 +57,7 @@ class TestLogin(TestCase):
 
     def test_login_already_logged_in_get(self):
         s = self.client.session
-        s.update({
-            "username": 'otheruser',
-        })
+        s.update({"username": 'otheruser'})
         s.save()
 
         actual_response = self.client.get('/login/')

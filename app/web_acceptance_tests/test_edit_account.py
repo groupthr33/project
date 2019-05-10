@@ -44,9 +44,7 @@ class TestEditAccount(TestCase):
 
     def test_update_contact_account_dne_get(self):
         s = self.client.session
-        s.update({
-            "username": 'Rick'
-        })
+        s.update({"username": 'Rick'})
         s.save()
 
         actual_response = self.client.get('/edit_account/?username=mike')
@@ -54,9 +52,7 @@ class TestEditAccount(TestCase):
 
     def test_edit_account_happy_path_post(self):
         s = self.client.session
-        s.update({
-            "username": self.user.username,
-        })
+        s.update({"username": self.user.username})
         s.save()
 
         data = {'username': self.user.username, 'name': self.user.name,

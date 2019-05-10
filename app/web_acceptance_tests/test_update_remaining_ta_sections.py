@@ -13,3 +13,4 @@ class TestUpdateRemainingTaSections(TestCase):
 
     def test_update_remaining_ta_sections_happy_path(self):
         self.fail()
+

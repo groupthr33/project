@@ -9,9 +9,7 @@ class TestLogout(TestCase):
 
     def test_logout_happy_path(self):
         s = self.client.session
-        s.update({
-            "username": 'otheruser',
-        })
+        s.update({"username": 'otheruser'})
         s.save()
 
         actual_response = self.client.post('/logout/')
