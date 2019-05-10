@@ -34,8 +34,6 @@ class TestAssignTaLab(TestCase):
                                                                 'coursesection': "001",
                                                                 'ta': 'test_ta'}, follow=True)
 
-        # self.assertEqual(expected_response, self.client.session['message'])
-        # self.assertEqual('/course_details/?courseid=CS417&section=001', actual_response['Location'])
         self.assertRedirects(actual_response, '/course_details/?courseid=CS417&section=001')
 
         message = list(actual_response.context.get('messages'))[0]

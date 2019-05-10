@@ -20,24 +20,9 @@ class TestSetPassword(TestCase):
 
         self.assertEqual(0, len(list(actual_response.context.get('messages'))))
 
-    # def test_set_password_success_get(self):
-    #     s = self.client.session
-    #     s.update({
-    #         "username": self.user.username,
-    #         "message": 'Success'
-    #     })
-    #     s.save()
-    #
-    #     with self.assertTemplateUsed('main/set_password.html'):
-    #         actual_response = self.client.get('/set_password/')
-    #
-    #     self.assertEqual('Success', actual_response.context['message'])
-
     def test_set_password_happy_path_post(self):
         s = self.client.session
-        s.update({
-            "username": self.user.username,
-        })
+        s.update({"username": self.user.username})
         s.save()
 
         actual_response = self.client.post('/set_password/', {'old_password':'thepassword', 'new_password':'pass'},
@@ -50,9 +35,7 @@ class TestSetPassword(TestCase):
 
     def test_set_password_incorrect_old_password(self):
         s = self.client.session
-        s.update({
-            "username": self.user.username,
-        })
+        s.update({"username": self.user.username})
         s.save()
 
         actual_response = self.client.post('/set_password/', {'old_password': 'password', 'new_password': 'pass'},

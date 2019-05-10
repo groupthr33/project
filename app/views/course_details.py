@@ -11,14 +11,10 @@ class CourseDetails(View):
     def get(self, request):
         course_id = request.GET.get('courseid', None)
         course_section = request.GET.get('section', None)
-        # message = request.session.get('message', '')
         username = request.session.get('username', '')
         is_privileged = self.auth_service.is_authorized(username, 0xC)
 
         user_details = self.account_service.get_account_details(username)
-
-        # if 'message' in request.session:
-        #     del request.session['message']
 
         if course_id is None or course_section is None:
             return redirect('/view_courses/')
