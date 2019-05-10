@@ -14,6 +14,16 @@ class TestSendNotifications(TestCase):
         self.session['username'] = 'the_user'
         self.session.save()
 
-    def test_send_notifications_happy_path(self):
-            # TODO: do this
-            self.fail()
+    def test_notify_all_happy_path_post(self):
+        data = {
+            'message': 'test message'
+        }
+
+        actual_response = self.client.post('/notify_all/', data)
+        message = list(actual_response.context.get('messages'))[0]
+        self.assertRedirects(actual_response, '/notify_all/')
+        self.assertEqual('All users notified.', message.message)
+
+    def test_notify_all_happy_path_get(self):
+        with self.assertTemplateUsed('main/notify.html'):
+            self.client.get('/notify_all/')

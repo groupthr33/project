@@ -10,9 +10,7 @@ class TestUpdateContact(TestCase):
 
     def test_update_contact_happy_path_get(self):
         s = self.client.session
-        s.update({
-            "username": self.user.username,
-        })
+        s.update({"username": self.user.username})
         s.save()
 
         with self.assertTemplateUsed('main/edit_account.html'):
