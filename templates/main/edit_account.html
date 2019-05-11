@@ -28,7 +28,9 @@
                 <label for="roles[]">TA</label><br/>
             {% endif %}
             <input name="submit-button" type="submit" value="Update" id="update-btn"/>
-            <input formaction="/del_account/" name="delete-button" type="submit" value="DELETE ACCOUNT" class="delete-btn"/>
+            {% if is_privileged %}
+                <input formaction="/del_account/" name="delete-button" type="submit" value="DELETE ACCOUNT" class="delete-btn"/>
+            {% endif %}
             <div class="message">{{ message }}</div>
         </form>
     </div>
