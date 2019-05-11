@@ -24,8 +24,6 @@ class EditAccount(View):
                        'message': 'Account updated.' if message == 'true' else ''})
 
     def post(self, request):
-        print(request.POST)
-
         username = request.POST.get('username', '')
         name = request.POST.get('name', '')
         phoneNumber = request.POST.get('phonenumber', '')

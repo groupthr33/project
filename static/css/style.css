@@ -178,10 +178,20 @@ a.disabled {
     color: white;
 }
 
-#view-contact-username-input, #view-course-input {
+#view-contact-username-input, #view-course-input, #twitter-text-area {
     margin: 5px;
     height: 25px;
     border-radius: 4px;
+}
+
+#twitter-text-area{
+    width: 75%;
+    height: 100%;
+}
+
+#twitter-img{
+    width: 15%;
+    cursor: pointer;
 }
 
 .page form input[type="text"],

@@ -4,7 +4,7 @@ from app.models.account import Account
 
 class AccountService:
 
-    def create_account(self, username, name, roles):
+    def create_account(self, username: str, name: str, roles: list) -> str:
         accounts = Account.objects.filter(username__iexact=username)
         if accounts.count() != 0:
             return f"Account with username {username} already exists."
@@ -17,7 +17,7 @@ class AccountService:
         Account.objects.create(username=username, name=name, roles=role_string, email=username+'@uwm.edu')
         return f"Account for user {username} successfully created with roles {', '.join(roles)}."
 
-    def update_contact_info(self, username, field, new_value):
+    def update_contact_info(self, username: str, field: str, new_value) -> str:
         accounts = Account.objects.filter(username__iexact=username)
 
         valid_fields = ["phone_number", "address", "name"]
@@ -34,7 +34,7 @@ class AccountService:
 
         return f"Your {field} has been updated to {new_value}"
 
-    def update_account_info(self, username, values):
+    def update_account_info(self, username: str, values):
         accounts = Account.objects.filter(username__iexact=username)
 
         if accounts.count() == 0:
@@ -58,7 +58,7 @@ class AccountService:
 
         return contact_info
 
-    def get_accounts(self):
+    def get_accounts(self) -> list:
         accounts = Account.objects.all()
         account_objects = []
 
@@ -84,7 +84,7 @@ class AccountService:
                 'email': account.email,
                 'roles': role_string}
 
-    def view_account_details(self, username):
+    def view_account_details(self, username: str) -> str:
         accounts = Account.objects.filter(username__iexact=username)
         if accounts.count() == 0:
             return f"User does not exist."
@@ -92,12 +92,12 @@ class AccountService:
 
         return self.create_acc_string(account)
 
-    def create_acc_string(self, account):
+    def create_acc_string(self, account) -> str:
         return f"Account username: {account.username}\nName: {account.name}\n" \
             f"Roles: {AccountUtil.decode_roles(account.roles)}\nPhone Number: {account.phone_number}\n" \
             f"Address: {account.address}"
 
-    def view_accounts(self):
+    def view_accounts(self) -> str:
         accounts = Account.objects.all()
 
         info = ""
@@ -106,7 +106,7 @@ class AccountService:
 
         return info
 
-    def delete_account(self, username):
+    def delete_account(self, username: str):
         try:
             account = Account.objects.get(username__iexact=username)
         except Account.DoesNotExist:

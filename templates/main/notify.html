@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+{% extends "main/nav.html" %}
+{% load staticfiles %}
+{% block command-content %}
+    <div class="page">
+        <form style="position: relative; display: inline;" method="post" action="/notify/">
+            {% csrf_token %}
+            <textarea name="message" id="twitter-text-area"></textarea>
+            <input id="twitter-img" type="image" src="{% static "twitter.png" %}" alt="Submit Form"/>
+            {% if messages %}
+                {% for message in messages %}
+                    <pre>{{ message }}</pre>
+                {% endfor %}
+            {% endif %}
+        </form>
+    </div>
+{% endblock command-content %}

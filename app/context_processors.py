@@ -13,7 +13,8 @@ def commands(request):
         Command("cr_course", "Create Course", 0xC, True),
         Command("my_courses", "My Courses", 0x2, True),
         Command("view_courses", "Courses", 0xC, True),
-        Command("my_courses_ta", "My Courses Ta", 0x1, True)
+        Command("my_courses_ta", "My Courses Ta", 0x1, True),
+        Command("notify", "Notify", 0xA, True),
     ]
 
     allowed_commands = [command for command in cmds
